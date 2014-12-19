@@ -1,0 +1,1 @@
+%{"bcrypt": {:git, "git://github.com/opscode/erlang-bcrypt.git", "7515e80a5e16f62aef149709f6cc09995dd480be", []}}
