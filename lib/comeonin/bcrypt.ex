@@ -11,7 +11,7 @@ defmodule Comeonin.Bcrypt do
   is 31.
   """
   def gensalt(log_rounds) when log_rounds >= 4 and log_rounds <= 31 do
-    {:ok, salt} = :bcrypt.gensalt(log_rounds)
+    {:ok, salt} = :bcrypt.gen_salt(log_rounds)
     salt
   end
   def gensalt(_) do

@@ -25,4 +25,12 @@ defmodule ComeoninTest do
     assert_raise ArgumentError, fn -> Bcrypt.gensalt(3) end
     assert_raise ArgumentError, fn -> Bcrypt.gensalt(32) end
   end
+
+  test "hashing and checking passwords" do
+    hash = Comeonin.hash_password("password")
+    assert Comeonin.check_password("password", hash) == true
+    assert Comeonin.check_password("passwor", hash) == false
+    assert Comeonin.check_password("passwords", hash) == false
+    assert Comeonin.check_password("pasword", hash) == false
+  end
 end
