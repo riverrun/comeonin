@@ -12,17 +12,17 @@ defmodule ComeoninTest do
       ["0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
         "$2a$05$abcdefghijklmnopqrstuu", "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui"]]
     for {password, salt, stored_hash} <- test_vectors do
-      {:ok, hash} = Bcrypt.hash_password(password, salt)
+      {:ok, hash} = Bcrypt.hashpw(password, salt)
       assert :erlang.list_to_binary(hash) == stored_hash
     end
   end
 
   test "Bcrypt dummy check" do
-    assert Bcrypt.dummy_check == false
+    assert Bcrypt.checkpw == false
   end
 
   test "Bcrypt log_rounds error" do
-    assert_raise ArgumentError, fn -> Bcrypt.gen_salt(3) end
-    assert_raise ArgumentError, fn -> Bcrypt.gen_salt(32) end
+    assert_raise ArgumentError, fn -> Bcrypt.gensalt(3) end
+    assert_raise ArgumentError, fn -> Bcrypt.gensalt(32) end
   end
 end

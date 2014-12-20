@@ -5,31 +5,47 @@ defmodule Comeonin do
   At the moment, this just supports Bcrypt.
   """
 
-  alias Comeonin.Bcrypt
+  import Comeonin.Bcrypt
 
   @doc """
   Hash the password.
   """
   def hash_password(password, log_rounds \\ 10) do
-    salt = Bcrypt.gen_salt(log_rounds)
-    Bcrypt.hash_password(password, salt)
+    salt = gensalt(log_rounds)
+    hashpw(password, salt)
   end
 
   @doc """
   Check the password.
   """
   def check_password(password, stored_hash) do
-    Bcrypt.check_password(password, stored_hash)
+    checkpw(password, stored_hash)
   end
+  def check_password, do: checkpw
 
   @doc """
-  Perform a dummy check for a user that does not exist.
-  This always returns false.
+  This is a convenience function to check the password of a user
+  from a database (ecto) query.
 
-  The reason for implementing this check is in order to make
-  user enumeration via timing attacks more difficult.
+  ##Example use
+
+      def login(username, password) do
+        query = from user in Coolapp.User,
+                where: user.username == ^username,
+                select: user
+        newuser = Coolapp.Repo.one(query)
+        Comeonin.check_user(password, newuser)
+      end
+
+  In the above example, `Coolapp.User` needs to have an entry for `password`.
+  The `username` also needs to be unique.
   """
-  def dummy_check do
-    Bcrypt.check_password("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK")
+  def check_user(password, user) when is_map(user) do
+    if Map.has_key?(user, :password) do
+      checkpw(password, user.password)
+    else
+      checkpw
+    end
   end
+  def check_user(_, _), do: checkpw
 end
