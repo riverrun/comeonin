@@ -21,6 +21,18 @@ defmodule ComeoninTest do
     assert Bcrypt.checkpw == false
   end
 
+  test "Bcrypt four log_rounds" do
+    four = Comeonin.hash_password("default", 4)
+    assert Comeonin.check_password("default", four) == true
+    assert Comeonin.check_password("deffault", four) == false
+  end
+
+  test "Bcrypt twelve log_rounds" do
+    twelve = Comeonin.hash_password("default", 12)
+    assert Comeonin.check_password("default", twelve) == true
+    assert Comeonin.check_password("dfault", twelve) == false
+  end
+
   test "Bcrypt log_rounds error" do
     assert_raise ArgumentError, fn -> Bcrypt.gensalt(3) end
     assert_raise ArgumentError, fn -> Bcrypt.gensalt(32) end
