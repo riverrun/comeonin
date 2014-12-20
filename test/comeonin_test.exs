@@ -16,4 +16,13 @@ defmodule ComeoninTest do
       assert :erlang.list_to_binary(hash) == stored_hash
     end
   end
+
+  test "Bcrypt dummy check" do
+    assert Bcrypt.dummy_check == false
+  end
+
+  test "Bcrypt log_rounds error" do
+    assert_raise ArgumentError, fn -> Bcrypt.gen_salt(3) end
+    assert_raise ArgumentError, fn -> Bcrypt.gen_salt(32) end
+  end
 end

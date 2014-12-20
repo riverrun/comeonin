@@ -6,7 +6,10 @@ Password authorization (bcrypt, etc.) library for Elixir.
 
 This library is intended to make authorizing users more straightforward.
 
-At the moment, it only supports Bcrypt.
+At the moment, it only supports bcrypt.
+
+In the future, we might also support sha512_crypt, pbkdf2_sha512,
+and / or scrypt, depending on demand.
 
 ###Usage
 
