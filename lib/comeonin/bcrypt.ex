@@ -37,10 +37,10 @@ defmodule Comeonin.Bcrypt do
   The reason for implementing this check is in order to make
   user enumeration via timing attacks more difficult.
   """
-  def checkpw(password, stored_hash) do
+  def checkpw(password, hash) do
     password = String.to_char_list(password)
-    {:ok, hash} = :bcrypt.hashpw(password, stored_hash)
-    :erlang.list_to_binary(hash) == stored_hash
+    hash = String.to_char_list(hash)
+    {:ok, hash} == :bcrypt.hashpw(password, hash)
   end
   def checkpw do
     checkpw("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy")

@@ -17,6 +17,8 @@ defmodule Comeonin do
 
   @doc """
   Check the password.
+
+  The password should be an Elixir string.
   """
   def check_password(password, stored_hash) do
     Bcrypt.checkpw(password, stored_hash)
@@ -33,16 +35,16 @@ defmodule Comeonin do
         query = from user in Coolapp.User,
                 where: user.username == ^username,
                 select: user
-        newuser = Coolapp.Repo.one(query)
-        Comeonin.check_user(password, newuser)
+        Coolapp.Repo.one(query) |> Comeonin.check_user(password)
       end
 
-  In the above example, `Coolapp.User` needs to have an entry for `password`.
+  In the above example, `Coolapp.User` needs to be a map or struct,
+  and it must have an entry for `password`.
   The `username` also needs to be unique.
   """
-  def check_user(password, user) when is_map(user) do
+  def check_user(user, password) when is_map(user) do
     if Map.has_key?(user, :password) do
-      Bcrypt.checkpw(password, user.password)
+      Bcrypt.checkpw(user.password, password)
     else
       Bcrypt.checkpw
     end
