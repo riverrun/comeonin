@@ -44,10 +44,18 @@ defmodule Comeonin do
   """
   def check_user(user, password) when is_map(user) do
     if Map.has_key?(user, :password) do
-      Bcrypt.checkpw(user.password, password)
+      if Bcrypt.checkpw(password, user.password) == true do
+        user
+      else
+        nil
+      end
     else
       Bcrypt.checkpw
+      nil
     end
   end
-  def check_user(_, _), do: Bcrypt.checkpw
+  def check_user(_, _) do
+    Bcrypt.checkpw
+    nil
+  end
 end
