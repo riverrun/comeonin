@@ -3,46 +3,69 @@ defmodule ComeoninTest do
 
   alias Comeonin.Bcrypt
 
-  test "Openwall Bcrypt tests" do
-    test_vectors = [
-      ["U*U", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW"],
-      ["U*U*", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"],
-      ["U*U*U", "$2a$05$XXXXXXXXXXXXXXXXXXXXXO", "$2a$05$XXXXXXXXXXXXXXXXXXXXXOAcXxm9kjPGEMsLznoKqmqw7tc8WCx4a"],
-      ["", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy"],
-      ["0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        "$2a$05$abcdefghijklmnopqrstuu", "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui"]]
-    for {password, salt, stored_hash} <- test_vectors do
-      {:ok, hash} = Bcrypt.hashpw(password, salt)
-      assert :erlang.list_to_binary(hash) == stored_hash
+  def check_vectors(data) do
+    for {password, salt, stored_hash} <- data do
+      assert Bcrypt.hashpass(password, salt) == stored_hash
     end
+  end
+
+  test "Openwall Bcrypt tests" do
+   [{"U*U",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW"},
+    {"U*U*",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"},
+    {"U*U*U",
+     "$2a$05$XXXXXXXXXXXXXXXXXXXXXO",
+     "$2a$05$XXXXXXXXXXXXXXXXXXXXXOAcXxm9kjPGEMsLznoKqmqw7tc8WCx4a"},
+    {"",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy"},
+    {"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+     "$2a$05$abcdefghijklmnopqrstuu",
+     "$2a$05$abcdefghijklmnopqrstuu5s2v8.iXieOjg/.AySBTTZIIVFJeBui"}]
+    |> check_vectors
+  end
+
+  test "OpenBSD Bcrypt tests" do
+   [{"\xa3",
+     "$2b$05$/OK.fbVrR/bpIqNJ5ianF.",
+     "$2b$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"},
+    {"\xa3",
+     "$2a$05$/OK.fbVrR/bpIqNJ5ianF.",
+     "$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"},
+    {"\xff\xff\xa3",
+     "$2b$05$/OK.fbVrR/bpIqNJ5ianF.",
+     "$2b$05$/OK.fbVrR/bpIqNJ5ianF.CE5elHaaO4EbggVDjb8P19RukzXSM3e"},
+    {"000000000000000000000000000000000000000000000000000000000000000000000000",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2a$05$CCCCCCCCCCCCCCCCCCCCC.6.O1dLNbjod2uo0DVcW.jHucKbPDdHS"},
+    {"000000000000000000000000000000000000000000000000000000000000000000000000",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.6.O1dLNbjod2uo0DVcW.jHucKbPDdHS"}]
+    |> check_vectors
+  end
+
+  test "Long password Bcrypt tests" do
+   [{"012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.XxrQqgBi/5Sxuq9soXzDtjIZ7w5pMfK"},
+   {"0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.",
+     "$2b$05$CCCCCCCCCCCCCCCCCCCCC.XxrQqgBi/5Sxuq9soXzDtjIZ7w5pMfK"}]
+    |> check_vectors
   end
 
   test "Bcrypt dummy check" do
     assert Bcrypt.checkpw == false
   end
 
-  test "Bcrypt four log_rounds" do
-    four = Comeonin.hash_password("default", 4)
-    assert Comeonin.check_password("default", four) == true
-    assert Comeonin.check_password("deffault", four) == false
-  end
-
-  test "Bcrypt twelve log_rounds" do
-    twelve = Comeonin.hash_password("default", 12)
-    assert Comeonin.check_password("default", twelve) == true
-    assert Comeonin.check_password("dfault", twelve) == false
-  end
-
-  test "Bcrypt log_rounds error" do
-    assert_raise ArgumentError, fn -> Bcrypt.gensalt(3) end
-    assert_raise ArgumentError, fn -> Bcrypt.gensalt(32) end
-  end
-
   test "hashing and checking passwords" do
-    hash = Comeonin.hash_password("password")
-    assert Comeonin.check_password("password", hash) == true
-    assert Comeonin.check_password("passwor", hash) == false
-    assert Comeonin.check_password("passwords", hash) == false
-    assert Comeonin.check_password("pasword", hash) == false
+    hash = Comeonin.hashpwsalt("password")
+    assert Comeonin.checkpw("password", hash) == true
+    assert Comeonin.checkpw("passwor", hash) == false
+    assert Comeonin.checkpw("passwords", hash) == false
+    assert Comeonin.checkpw("pasword", hash) == false
   end
 end
