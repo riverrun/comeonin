@@ -31,6 +31,7 @@ defmodule Comeonin.Bcrypt do
   Hash the password using Bcrypt.
   """
   def hashpass(password, salt) do
+    salt = String.to_char_list(salt)
     String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
   end
   def hashpw(_password, _salt) do
@@ -44,7 +45,8 @@ defmodule Comeonin.Bcrypt do
   """
   def hashpwsalt(password) do
     salt = gen_salt(@log_rounds)
-    hashpass(password, salt)
+    String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
+    #hashpw(password, salt)
   end
 
   @doc """
