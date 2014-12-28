@@ -8,11 +8,12 @@ defmodule Comeonin do
   alias Comeonin.Bcrypt
 
   @doc """
-  Hash the password.
+  Hash the password with a salt.
+
+  The salt is randomly generated.
   """
-  def hash_password(password, log_rounds \\ 10) do
-    salt = Bcrypt.gensalt(log_rounds)
-    Bcrypt.hashpw(password, salt)
+  def hashpwsalt(password) do
+    Bcrypt.hashpwsalt(password)
   end
 
   @doc """
@@ -20,10 +21,10 @@ defmodule Comeonin do
 
   The password should be an Elixir string.
   """
-  def check_password(password, stored_hash) do
+  def checkpw(password, stored_hash) do
     Bcrypt.checkpw(password, stored_hash)
   end
-  def check_password, do: Bcrypt.checkpw
+  def checkpw, do: Bcrypt.checkpw
 
   @doc """
   This is a convenience function to check the password of a user

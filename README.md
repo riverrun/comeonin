@@ -4,36 +4,50 @@ Password authorization (bcrypt, etc.) library for Elixir.
 
 ###Features / subjects for discussion
 
-This library is intended to make authorizing users very straightforward.
+This library is intended to make it very straightforward for developers
+to authorize users in as secure a manner as possible.
 
-At the moment, it only supports bcrypt, but in the future, we might also
-support sha512_crypt, pbkdf2_sha512, and / or scrypt, depending on demand.
+At the moment, Comeonin only supports bcrypt, and that might be the
+only hashing scheme that we do support. However, we might also support
+any of the following schemes if there is any demand for them.
+
+* sha512_crypt
+* pbkdf2_sha512
+* scrypt
+
+## Installation
+
+1. Add comeonin to your `mix.exs` dependencies
+
+  ```elixir
+  defp deps do
+    [ {:comeonin, github: "elixircnx/comeonin"} ]
+  end
+  ```
+
+2. List `:comeonin` as an application dependency
+
+  ```elixir
+  def application do
+    [applications: [:logger, :comeonin]]
+  end
+  ```
+
+3. Run `mix do deps.get, compile`
 
 ###Usage
 
-Add comeonin to your `mix.exs` dependencies:
+There are functions to generate a salt `Comeonin.Bcrypt.gen_salt`
+and then use that salt to hash a password `Comeonin.Bcrypt.hashpw`, but there are
+also the following two convenience functions (with examples):
 
-    defp deps do
-        [
-            {:comeonin, github: "elixircnx/comeonin"}
-        ]
-    end
+* hashpwsalt -- generate a salt and then use that salt to hash a password
 
-List `:comeonin` as an application dependency
+    hash = Comeonin.hashpwsalt("hard2guess")
 
-Run `mix do deps.get, compile`
+* checkpw -- check the password against the stored hash
 
-The two most important functions are `hash_password` and `check_password`.
-
-`hash_password` takes two arguments, the plaintext password and an optional
-value for the number of rounds, which default to log 10:
-
-    hash = Comeonin.hash_password("hard2guess")
-
-`check_password` takes two arguments, the plaintext password and the
-stored hash:
-
-    Comeonin.check_password("hard2guess", stored_hash)
+    Comeonin.checkpw("hard2guess", stored_hash)
 
 This will return `true` if the password is correct, and `false` if
 the password is wrong.
