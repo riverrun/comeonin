@@ -25,7 +25,7 @@ defmodule Comeonin.Bcrypt do
   end
   def gen_salt(_), do: gen_salt(@log_rounds)
 
-  def encode_salt(_rand_num, _log_rounds) do
+  defp encode_salt(_rand_num, _log_rounds) do
     exit(:nif_library_not_loaded)
   end
 
@@ -36,7 +36,7 @@ defmodule Comeonin.Bcrypt do
     salt = String.to_char_list(salt)
     String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
   end
-  def hashpw(_password, _salt) do
+  defp hashpw(_password, _salt) do
     exit(:nif_library_not_loaded)
   end
 
@@ -48,7 +48,6 @@ defmodule Comeonin.Bcrypt do
   def hashpwsalt(password) do
     salt = gen_salt(@log_rounds)
     String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
-    #hashpw(password, salt)
   end
 
   @doc """

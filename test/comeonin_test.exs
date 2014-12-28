@@ -68,4 +68,15 @@ defmodule ComeoninTest do
     assert Comeonin.checkpw("passwords", hash) == false
     assert Comeonin.checkpw("pasword", hash) == false
   end
+
+  test "gen_salt number of rounds" do
+    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8)) == true
+    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20)) == true
+  end
+
+  test "wrong input to gen_salt" do
+    assert :lists.prefix('$2b$04$', Bcrypt.gen_salt(3)) == true
+    assert :lists.prefix('$2b$31$', Bcrypt.gen_salt(32)) == true
+    assert :lists.prefix('$2b$12$', Bcrypt.gen_salt(["wrong type"])) == true
+  end
 end
