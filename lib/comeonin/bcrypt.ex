@@ -63,17 +63,17 @@ defmodule Comeonin.Bcrypt do
   Compares the two binaries in constant time to avoid timing attacks.
   """
   def secure_check(hash, stored) do
-    if byte_size(hash) == byte_size(stored) do
-      arithmetic_compare(hash, stored, 0) == 0
+    if length(hash) == length(stored) do
+      secure_check(hash, stored, 0) == 0
     else
       false
     end
   end
-  defp secure_check(<<x, left :: binary>>, <<y, right :: binary>>, acc) do
+  defp secure_check([h|hs], [s|ss], acc) do
     import Bitwise
-    secure_check(left, right, acc ||| (x ^^^ y))
+    secure_check(hs, ss, acc ||| (h ^^^ s))
   end
-  defp secure_check("", "", acc) do
+  defp secure_check([], [], acc) do
     acc
   end
 end
