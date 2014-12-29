@@ -79,4 +79,13 @@ defmodule ComeoninTest do
     assert :lists.prefix('$2b$31$', Bcrypt.gen_salt(32)) == true
     assert :lists.prefix('$2b$12$', Bcrypt.gen_salt(["wrong type"])) == true
   end
+
+  test "wrong input to hashpass" do
+    assert_raise ArgumentError, fn ->
+      Bcrypt.hashpass("U*U", "$2a$05$CCCCCCCCCCCCCCCCCCC.")
+    end
+    assert_raise ArgumentError, fn ->
+      Bcrypt.hashpass(["U*U"], "$2a$05$CCCCCCCCCCCCCCCCCCCCC.")
+    end
+  end
 end
