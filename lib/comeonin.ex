@@ -21,7 +21,8 @@ defmodule Comeonin do
   when the username cannot be found. It performs a hash, but then
   returns false. This can be used to make user enumeration more
   difficult. This function takes no arguments, as in the example
-  below.
+  below, which shows how you might validate a user if you were
+  using ecto.
 
   ##Example for checking a password
 

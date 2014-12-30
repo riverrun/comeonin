@@ -51,8 +51,16 @@ also the following three convenience functions (with examples):
 
 * dummy_checkpw -- calculate a hash and return false
 
-    Comeonin.checkpw
+    Comeonin.dummy_checkpw
 
 This last function is to be used when the username cannot be found.
 It is to prevent a potential attacker enumerating the users by timing
 the responses.
+
+###Status
+
+The bcrypt implementation is based on the latest OpenBSD version, which
+fixed a small issue that affected some passwords longer than 72 characters.
+It has been thoroughly tested in a development environment, but it has
+not had much testing in production. In addition, it has only been tested
+on Linux.
