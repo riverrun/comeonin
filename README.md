@@ -54,7 +54,3 @@ the password is wrong.
 
 There is also an experimental `check_user` function, which can work
 with the output from an ecto query.
-
-####License
-
-MIT

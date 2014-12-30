@@ -2,13 +2,17 @@ defmodule Mix.Tasks.Compile.Comeonin do
   @shortdoc "Compiles Comeonin"
   def run(_) do
     if Mix.shell.cmd("make priv/bcrypt_nif.so") != 0 do
-      raise Mix.Error, message: "could not run `make priv/bcrypt_nif.so`. Do you have make and gcc installed?"
+      raise Mix.Error, message: "could not run `make priv/bcrypt_nif.so`."
     end
   end
 end
 
 defmodule Comeonin.Mixfile do
   use Mix.Project
+
+  @description """
+  Authentication tool -- supports Bcrypt.
+  """
 
   def project do
     [app: :comeonin,
