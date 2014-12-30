@@ -8,9 +8,10 @@ defmodule Comeonin do
   alias Comeonin.Bcrypt
 
   @doc """
-  Hash the password with a salt.
+  Hash the password with a salt which is randomly generated.
 
-  The salt is randomly generated.
+  The password needs to be a string. Input of any other type
+  will result in an error.
   """
   def hashpwsalt(password) do
     Bcrypt.hashpwsalt(password)

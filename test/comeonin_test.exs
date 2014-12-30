@@ -74,6 +74,13 @@ defmodule ComeoninTest do
     assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20)) == true
   end
 
+  test "gen_salt length of salt" do
+    assert length(Bcrypt.gen_salt) == 29
+    assert length(Bcrypt.gen_salt(8)) == 29
+    assert length(Bcrypt.gen_salt(20)) == 29
+    assert length(Bcrypt.gen_salt("wrong input but still works")) == 29
+  end
+
   test "wrong input to gen_salt" do
     assert :lists.prefix('$2b$04$', Bcrypt.gen_salt(3)) == true
     assert :lists.prefix('$2b$31$', Bcrypt.gen_salt(32)) == true
@@ -81,10 +88,10 @@ defmodule ComeoninTest do
   end
 
   test "wrong input to hashpass" do
-    assert_raise ArgumentError, fn ->
+    assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Bcrypt.hashpass("U*U", "$2a$05$CCCCCCCCCCCCCCCCCCC.")
     end
-    assert_raise ArgumentError, fn ->
+    assert_raise ArgumentError, "Wrong type. The password needs to be a string.", fn ->
       Bcrypt.hashpass(["U*U"], "$2a$05$CCCCCCCCCCCCCCCCCCCCC.")
     end
   end
