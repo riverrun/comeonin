@@ -65,17 +65,19 @@ defmodule Comeonin.Bcrypt do
   Check the password.
 
   The check is performed in constant time to avoid timing attacks.
-
-  Perform a dummy check for a user that does not exist.
-  This always returns false. The reason for implementing this check is
-  in order to make user enumeration by timing responses more difficult.
   """
   def checkpw(password, hash) do
     password = String.to_char_list(password)
     hash = String.to_char_list(hash)
     hashpw(password, hash) |> Tools.secure_check(hash)
   end
-  def checkpw do
+
+  @doc """
+  Perform a dummy check for a user that does not exist.
+  This always returns false. The reason for implementing this check is
+  in order to make user enumeration by timing responses more difficult.
+  """
+  def dummy_checkpw do
     checkpw("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy")
     false
   end

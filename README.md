@@ -39,7 +39,7 @@ any of the following schemes if there is any demand for them.
 
 There are functions to generate a salt `Comeonin.Bcrypt.gen_salt`
 and then use that salt to hash a password `Comeonin.Bcrypt.hashpw`, but there are
-also the following two convenience functions (with examples):
+also the following three convenience functions (with examples):
 
 * hashpwsalt -- generate a salt and then use that salt to hash a password
 
@@ -49,8 +49,10 @@ also the following two convenience functions (with examples):
 
     Comeonin.checkpw("hard2guess", stored_hash)
 
-This will return `true` if the password is correct, and `false` if
-the password is wrong.
+* dummy_checkpw -- calculate a hash and return false
 
-There is also an experimental `check_user` function, which can work
-with the output from an ecto query.
+    Comeonin.checkpw
+
+This last function is to be used when the username cannot be found.
+It is to prevent a potential attacker enumerating the users by timing
+the responses.

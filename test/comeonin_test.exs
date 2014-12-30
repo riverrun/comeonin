@@ -58,7 +58,7 @@ defmodule ComeoninTest do
   end
 
   test "Bcrypt dummy check" do
-    assert Bcrypt.checkpw == false
+    assert Bcrypt.dummy_checkpw == false
   end
 
   test "hashing and checking passwords" do
