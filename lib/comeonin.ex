@@ -2,7 +2,7 @@ defmodule Comeonin do
   @moduledoc """
   Module to make authorization of users more straightforward.
 
-  At the moment, this just supports Bcrypt.
+  At the moment, this just supports bcrypt.
 
   There are functions for generating a salt with different numbers of
   rounds, and then using that salt to hash a password. However, most
@@ -32,7 +32,10 @@ defmodule Comeonin do
                 select: user
         Coolapp.Repo.one(query) |> check_login(password)
       end
-      defp check_login(nil, _), do: Comeonin.dummy_checkpw
+      defp check_login(nil, _) do
+        Comeonin.dummy_checkpw
+        nil
+      end
       defp check_login(user, password), do: Comeonin.checkpw(password, user.password)
   """
 

@@ -1,6 +1,15 @@
 defmodule Comeonin.Bcrypt do
   @moduledoc """
-  Module to handle Bcrypt authentication.
+  Module to handle bcrypt authentication.
+
+  Bcrypt is a key derivation function for passwords designed by Niels Provos
+  and David Mazières. Bcrypt uses a salt to protect against offline attacks.
+  It is also an adaptive function, which means that it can be configured
+  to remain slow and resistant to brute-force attacks even as computational
+  power increases.
+
+  This bcrypt implementation is based on the latest OpenBSD version, which
+  fixed a small issue that affected some passwords longer than 72 characters.
   """
 
   alias Comeonin.Tools
@@ -33,7 +42,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   @doc """
-  Hash the password using Bcrypt.
+  Hash the password using bcrypt.
   """
   def hashpass(password, salt) when is_binary(salt) do
     if String.length(salt) == 29 do
