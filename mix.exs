@@ -23,10 +23,13 @@ defmodule Comeonin.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [:crypto, :logger]]
   end
 
   defp deps do
-    []
+    [
+      {:earmark, "~> 0.1", only: :docs},
+      {:ex_doc, "~> 0.6", only: :docs}
+    ]
   end
 end

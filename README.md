@@ -64,3 +64,7 @@ fixed a small issue that affected some passwords longer than 72 characters.
 It has been thoroughly tested in a development environment, but it has
 not had much testing in production. In addition, it has only been tested
 on Linux.
+
+###License
+
+BSD. For full details, please read the LICENSE file.
