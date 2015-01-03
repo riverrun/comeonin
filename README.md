@@ -1,8 +1,10 @@
-##Comeonin
+# Comeonin
+[![Hex.pm
+Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 
 Password authorization (bcrypt, etc.) library for Elixir.
 
-###Features / subjects for discussion
+## Features / subjects for discussion
 
 This library is intended to make it very straightforward for developers
 to authorize users in as secure a manner as possible.
@@ -21,7 +23,7 @@ any of the following schemes if there is any demand for them.
 
   ```elixir
   defp deps do
-    [ {:comeonin, github: "elixircnx/comeonin"} ]
+    [ {:comeonin, "~> 0.1.0"} ]
   end
   ```
 
@@ -35,7 +37,7 @@ any of the following schemes if there is any demand for them.
 
 3. Run `mix do deps.get, compile`
 
-###Usage
+## Usage
 
 There are functions to generate a salt `Comeonin.Bcrypt.gen_salt`
 and then use that salt to hash a password `Comeonin.Bcrypt.hashpw`, but there are
@@ -43,21 +45,31 @@ also the following three convenience functions (with examples):
 
 * hashpwsalt -- generate a salt and then use that salt to hash a password
 
-    hash = Comeonin.hashpwsalt("hard2guess")
+  ```elixir
+  hash = Comeonin.hashpwsalt("hard2guess")
+  ```
 
 * checkpw -- check the password against the stored hash
 
-    Comeonin.checkpw("hard2guess", stored_hash)
+  ```elixir
+  Comeonin.checkpw("hard2guess", stored_hash)
+  ```
 
 * dummy_checkpw -- calculate a hash and return false
 
-    Comeonin.dummy_checkpw
+  ```elixir
+  Comeonin.dummy_checkpw
+  ```
 
 This last function is to be used when the username cannot be found.
 It is to prevent a potential attacker enumerating the users by timing
 the responses.
 
-###Status
+## Documentation
+
+http://hexdocs.pm/comeonin
+
+## Status
 
 The bcrypt implementation is based on the latest OpenBSD version, which
 fixed a small issue that affected some passwords longer than 72 characters.
@@ -65,6 +77,6 @@ It has been thoroughly tested in a development environment, but it has
 not had much testing in production. In addition, it has only been tested
 on Linux.
 
-###License
+## License
 
 BSD. For full details, please read the LICENSE file.
