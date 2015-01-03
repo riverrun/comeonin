@@ -11,15 +11,21 @@ defmodule Comeonin.Mixfile do
   use Mix.Project
 
   @description """
-  Authentication tool -- supports Bcrypt.
+  Password authorization (bcrypt, pbkdf2_sha512) library for Elixir.
   """
 
   def project do
-    [app: :comeonin,
+    [
+      app: :comeonin,
       version: "0.1.0",
       elixir: "~> 1.0",
+      name: "Comeonin",
+      description: @description,
+      package: package,
+      source_url: "https://github.com/elixircnx/comeonin",
       compilers: [:comeonin, :elixir, :app],
-      deps: deps]
+      deps: deps
+    ]
   end
 
   def application do
@@ -28,8 +34,17 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:earmark, "~> 0.1", only: :docs},
-      {:ex_doc, "~> 0.6", only: :docs}
+      {:earmark, "~> 0.1", only: :dev},
+      {:ex_doc,  "~> 0.7", only: :dev}
     ]
+  end
+
+  defp package do
+   [
+     contributors: ["David Whitlock", "Ben Sharman"],
+     licenses: ["BSD"],
+     links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
+              "Docs"   => "http://hexdocs.pm/comeonin"}
+   ]
   end
 end
