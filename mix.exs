@@ -11,7 +11,7 @@ defmodule Comeonin.Mixfile do
   use Mix.Project
 
   @description """
-  Authentication tool -- supports Bcrypt.
+  Password authorization (bcrypt, pbkdf2_sha512) library for Elixir.
   """
 
   def project do
