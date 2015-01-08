@@ -25,7 +25,7 @@ it will also support `pbkdf2_sha512`.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 0.1.0"} ]
+    [ {:comeonin, "~> 0.1.1"} ]
   end
   ```
 
