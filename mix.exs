@@ -1,8 +1,13 @@
 defmodule Mix.Tasks.Compile.Comeonin do
   @shortdoc "Compiles Comeonin"
+
   def run(_) do
-    if Mix.shell.cmd("make priv/bcrypt_nif.so") != 0 do
-      raise Mix.Error, message: "could not run `make priv/bcrypt_nif.so`."
+    if match? {:win32, _}, :os.type do
+      {result, _error_code} = System.cmd("nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"], stderr_to_stdout: true)
+      Mix.shell.info result
+    else
+      {result, _error_code} = System.cmd("make", ["priv/bcrypt_nif.so"], stderr_to_stdout: true)
+      Mix.shell.info result
     end
   end
 end
@@ -40,11 +45,11 @@ defmodule Comeonin.Mixfile do
   end
 
   defp package do
-   [
-     contributors: ["David Whitlock", "Ben Sharman"],
-     licenses: ["BSD"],
-     links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
-              "Docs"   => "http://hexdocs.pm/comeonin"}
-   ]
+    [
+      contributors: ["David Whitlock", "Ben Sharman"],
+      licenses: ["BSD"],
+      links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
+        "Docs"   => "http://hexdocs.pm/comeonin"}
+    ]
   end
 end

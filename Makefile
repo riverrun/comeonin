@@ -1,11 +1,15 @@
-ERLANG_PATH:=$(shell erl -eval 'io:format("~s~n", [lists:concat([code:root_dir(), "/erts-", erlang:system_info(version), "/include"])])' -s init stop -noshell)
-CFLAGS_BCRYPT=-g -fPIC -O3
-CFLAGS=$(CFLAGS_BCRYPT) -Ic_src
-ERLANG_FLAGS=-I$(ERLANG_PATH)
-EBIN_DIR=ebin
+CFLAGS = -g -O3 -Wall
 
-ifeq ($(shell uname),Darwin)
-    OPTIONS=-dynamiclib -undefined dynamic_lookup
+ERLANG_PATH = $(shell erl -eval 'io:format("~s", [lists:concat([code:root_dir(), "/erts-", erlang:system_info(version), "/include"])])' -s init stop -noshell)
+CFLAGS += -I$(ERLANG_PATH)
+CFLAGS += -Ic_src
+
+ifneq ($(OS),Windows_NT)
+	CFLAGS += -fPIC
+
+	ifeq ($(shell uname),Darwin)
+		LDFLAGS += -dynamiclib -undefined dynamic_lookup
+	endif
 endif
 
 NIF_SRC=\
@@ -13,12 +17,12 @@ NIF_SRC=\
 	c_src/bcrypt.c\
 	c_src/blowfish.c
 
-all: compile
+all: comeonin
 
 priv/bcrypt_nif.so:
-	$(CC) $(CFLAGS) $(ERLANG_FLAGS) -shared $(OPTIONS) $(NIF_SRC) -o $@
+	$(CC) $(CFLAGS) -shared $(LDFLAGS) -o $@ $(NIF_SRC)
 
-compile:
+comeonin:
 	mix compile
 
-.PHONY: all compile
+.PHONY: all comeonin
