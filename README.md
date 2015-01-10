@@ -76,8 +76,10 @@ http://hexdocs.pm/comeonin
 The bcrypt implementation is based on the latest OpenBSD version, which
 fixed a small issue that affected some passwords longer than 72 characters.
 It has been thoroughly tested in a development environment, but it has
-not had much testing in production. In addition, it has only been tested
-on Linux.
+not had much testing in production.
+
+Comeonin has been tested on Linux and OS X, but it has not been tested
+on Windows. If you have any problems with the build, please let us know.
 
 ## License
 
