@@ -69,6 +69,10 @@ the responses.
 
 http://hexdocs.pm/comeonin
 
+## Requirements
+
+OTP version 17.3 or later
+
 ## Status
 
 The bcrypt implementation is based on the latest OpenBSD version, which
