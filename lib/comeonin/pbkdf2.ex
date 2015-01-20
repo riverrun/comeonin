@@ -1,6 +1,12 @@
 defmodule Comeonin.Pbkdf2 do
   @moduledoc """
-  Info about pbkdf and reasons for choosing sha512.
+  Pbkdf2 is a password-based key derivation function
+  that uses a password, a variable-length salt and an iteration
+  count and applies a pseudorandom function to these to
+  produce a key.
+
+  The original implementation used SHA-1 as the pseudorandom function,
+  but this version uses HMAC-SHA-512.
   """
 
   use Bitwise

@@ -1,6 +1,6 @@
 defmodule Comeonin.Tools do
   @moduledoc """
-  Module that provides tools for the various hashing algorithms.
+  Module that provides various tools for the hashing algorithms.
   """
 
   import Bitwise
@@ -13,7 +13,8 @@ defmodule Comeonin.Tools do
   end
 
   @doc """
-  Encode using base64.
+  Encode using an adapted base64 alphabet (using `.`
+  instead of `+` and with no padding.
   """
   def encode64(<<>>), do: <<>>
   def encode64(data) do
@@ -31,7 +32,8 @@ defmodule Comeonin.Tools do
   end
 
   @doc """
-  Decode using base64.
+  Decode using an adapted base64 alphabet (using `.`
+  instead of `+` and with no padding.
   """
   def decode64(<<>>), do: <<>>
   def decode64(data) do
