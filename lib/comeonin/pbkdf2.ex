@@ -5,6 +5,7 @@ defmodule Comeonin.Pbkdf2 do
 
   use Bitwise
   alias Comeonin.Base64
+  alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
 
@@ -13,22 +14,26 @@ defmodule Comeonin.Pbkdf2 do
   `hashpwsalt` functions.
   """
   def gen_salt(salt_length \\ 16) do
-    :crypto.rand_bytes(salt_length) |> Base64.encode
+    :crypto.rand_bytes(salt_length)
   end
 
   @doc """
   Hash the password using pbkdf2_sha512.
   """
-  def hashpass(password, salt, rounds \\ 1000, length \\ 64) do
-    pbkdf2(password, salt, rounds, length) |> finish(salt, rounds)
+  def hashpass(password, salt, rounds \\ 20000, length \\ 64) do
+    pbkdf2(password, salt, rounds, length) |> format(salt, rounds)
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
   """
-  def hashpwsalt(password) do
-    salt = gen_salt()
-    hashpass(password, salt)
+  def hashpwsalt(password, salt_length \\ 16, rounds \\ 20000, length \\ 64) do
+    salt = gen_salt(salt_length)
+    hashpass(password, salt, rounds, length)
+  end
+
+  defp format(hash, salt, rounds) do
+    "$pbkdf2-sha512$#{rounds}$#{salt |> Base64.encode}$#{hash |> Base64.encode}"
   end
 
   @doc """
@@ -37,9 +42,11 @@ defmodule Comeonin.Pbkdf2 do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    {_, _, rounds, salt, hash} = String.split(hash, "$")
-    pbkdf2(password, salt, rounds, 64) |> Tools.secure_check(hash)
-    #hashpass(password, salt, rounds) |> Tools.secure_check(hash)
+    [_, _, rounds, salt, hash] = String.split(hash, "$")
+    pbkdf2(password, Base64.decode(salt), String.to_integer(rounds), 64)
+    |> Base64.encode
+    |> String.to_char_list
+    |> Tools.secure_check(String.to_char_list(hash))
   end
 
   @doc """
@@ -48,11 +55,8 @@ defmodule Comeonin.Pbkdf2 do
   in order to make user enumeration by timing responses more difficult.
   """
   def dummy_checkpw do
+    checkpw("password", "$pbkdf2-sha512$4096$c2FsdA$0Zexsz2wFD4BixLz0dFHnmzevcyXxcD4f2kC4HL0V7UUPzBgJkGz1VzTNZiMs2uEN2Bg7NUy4Dm3QqI5Q0ry1Q")
     false
-  end
-
-  defp finish(hash, salt, rounds) do
-    "$pbkdf2-sha512$#{rounds}$#{salt}$#{hash |> Base64.encode}"
   end
 
   defp pbkdf2(password, salt, rounds, length) do
@@ -64,16 +68,16 @@ defmodule Comeonin.Pbkdf2 do
   end
 
   defp pbkdf2(_password, _salt, _rounds, max_length, _block_index, acc, length)
-      when length >= max_length do
-    key = acc |> Enum.reverse |> IO.inspect |> IO.iodata_to_binary
+  when length >= max_length do
+    key = acc |> Enum.reverse |> IO.iodata_to_binary
     <<bin::binary-size(max_length), _::binary>> = key
     bin
   end
   defp pbkdf2(password, salt, rounds, max_length, block_index, acc, length) do
-    initial = :crypto.hmac(:sha512, password, <<salt::binary, block_index::integer-size(64)>>)
+    initial = :crypto.hmac(:sha512, password, <<salt::binary, block_index::integer-size(32)>>)
     block = iterate(password, rounds - 1, initial, initial)
     pbkdf2(password, salt, rounds, max_length, block_index + 1,
-             [block | acc], byte_size(block) + length)
+    [block | acc], byte_size(block) + length)
   end
 
   defp iterate(_password, 0, _prev, acc), do: acc
