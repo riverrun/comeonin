@@ -62,11 +62,11 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "hashing and checking passwords" do
-    hash = Comeonin.hashpwsalt("password")
-    assert Comeonin.checkpw("password", hash) == true
-    assert Comeonin.checkpw("passwor", hash) == false
-    assert Comeonin.checkpw("passwords", hash) == false
-    assert Comeonin.checkpw("pasword", hash) == false
+    hash = Bcrypt.hashpwsalt("password")
+    assert Bcrypt.checkpw("password", hash) == true
+    assert Bcrypt.checkpw("passwor", hash) == false
+    assert Bcrypt.checkpw("passwords", hash) == false
+    assert Bcrypt.checkpw("pasword", hash) == false
   end
 
   test "gen_salt number of rounds" do
