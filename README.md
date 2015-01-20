@@ -5,10 +5,9 @@ Password authorization (bcrypt, pbkdf2_sha512) library for Elixir.
 This library is intended to make it very straightforward for developers
 to authorize users in as secure a manner as possible.
 
-At the moment, Comeonin only supports `bcrypt`, but in the near future
-it will also support `pbkdf2_sha512`.
+Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
-###Features
+## Features
 
 * Comeonin uses the most secure, up-to-date hashing schemes.
 * It is easy to use.
@@ -17,7 +16,7 @@ it will also support `pbkdf2_sha512`.
     * Each function has sensible, secure defaults.
 * It provides good documentation.
 
-###Installation
+## Installation
 
 1. Add comeonin to your `mix.exs` dependencies
 
