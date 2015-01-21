@@ -18,9 +18,6 @@ defmodule Comeonin.Tools do
 
   ## Examples
 
-      iex> Comeonin.Tools.encode64("foobar")
-      "Zm9vYmFy"
-
       iex> Comeonin.Tools.encode64 "spamandeggs"
       "c3BhbWFuZGVnZ3M"
   """
@@ -44,9 +41,6 @@ defmodule Comeonin.Tools do
   instead of `+` and with no padding.
 
   ## Examples
-
-      iex> Comeonin.Tools.decode64("Zm9vYmFy")
-      "foobar"
 
       iex> Comeonin.Tools.decode64("c3BhbWFuZGVnZ3M")
       "spamandeggs"

@@ -4,8 +4,8 @@ defmodule Comeonin.Pbkdf2Test do
   alias Comeonin.Pbkdf2
 
   def check_vectors(data) do
-    for {password, salt, rounds, length, stored_hash} <- data do
-      assert Pbkdf2.hashpass(password, salt, rounds, length) == stored_hash
+    for {password, salt, rounds, stored_hash} <- data do
+      assert Pbkdf2.hashpass(password, salt, rounds) == stored_hash
     end
   end
 
@@ -14,17 +14,14 @@ defmodule Comeonin.Pbkdf2Test do
       {"",
         <<115, 97, 108, 116>>,
         1024,
-        64,
         "$pbkdf2-sha512$1024$c2FsdA$xHRxDO333TEJTVDgqjz9xltmBrTyrJLUyrnY7tfcrqe2ewobAK8fOHr6oD9Tqz0zU4cXrH5E.QQfctLUyu6N7A"},
       {"password",
         <<>>,
         1024,
-        64,
         "$pbkdf2-sha512$1024$$GABWyrGTs3ovDBwRO8V68EZO.L4dCVi2e19wRI/s4q2seodgNoBFpxpC4wSr066E4IjWG0uLLlDF4r5bTUGeow"},
       {"password",
         <<115, 97, 108, 116>>,
         4096,
-        64,
         "$pbkdf2-sha512$4096$c2FsdA$0Zexsz2wFD4BixLz0dFHnmzevcyXxcD4f2kC4HL0V7UUPzBgJkGz1VzTNZiMs2uEN2Bg7NUy4Dm3QqI5Q0ry1Q"}
     ]
   |> check_vectors

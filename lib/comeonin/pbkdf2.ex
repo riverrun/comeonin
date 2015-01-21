@@ -13,28 +13,31 @@ defmodule Comeonin.Pbkdf2 do
   alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
+  @rounds 40000
+  @length_key 64
+  @salt_length 16
 
   @doc """
   Generate a salt for use with the `hashpass` and
   `hashpwsalt` functions.
   """
-  def gen_salt(salt_length \\ 16) do
+  def gen_salt(salt_length \\ @salt_length) do
     :crypto.rand_bytes(salt_length)
   end
 
   @doc """
   Hash the password using pbkdf2_sha512.
   """
-  def hashpass(password, salt, rounds \\ 20000, length \\ 64) do
-    pbkdf2(password, salt, rounds, length) |> format(salt, rounds)
+  def hashpass(password, salt, rounds \\ @rounds) do
+    pbkdf2(password, salt, rounds, @length_key) |> format(salt, rounds)
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
   """
-  def hashpwsalt(password, salt_length \\ 16, rounds \\ 20000, length \\ 64) do
+  def hashpwsalt(password, salt_length \\ @salt_length, rounds \\ @rounds) do
     salt = gen_salt(salt_length)
-    hashpass(password, salt, rounds, length)
+    hashpass(password, salt, rounds)
   end
 
   defp format(hash, salt, rounds) do

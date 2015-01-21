@@ -6,7 +6,7 @@ defmodule Comeonin do
 
   ## Use
 
-  Import the algorithm you want to use -- either `Comeonin.Bcrypt`
+  Import, or alias, the algorithm you want to use -- either `Comeonin.Bcrypt`
   or `Comeonin.Pbkdf2`.
 
   To hash a password with the default options:
@@ -27,4 +27,26 @@ defmodule Comeonin do
   but then returns false. This can be used to make user enumeration more
   difficult.
   """
+
+  @doc """
+  A function to help the developer decide how many log_rounds to use
+  when using bcrypt. A higher number of rounds will increase the
+  computational complexity of the bcrypt hashing function and will
+  therefore make it slower.
+  """
+  def time_bcrypt(log_rounds \\ 12) do
+    {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])
+    IO.puts "Rounds: #{log_rounds}, Time: #{time} ms"
+  end
+
+  @doc """
+  A function to help the developer decide how many rounds to use
+  when using pbkdf2. A higher number of rounds will increase the
+  computational complexity of the key derivation function and will
+  therefore make it slower.
+  """
+  def time_pbkdf2(rounds \\ 40000) do
+    {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", 16, rounds])
+    IO.puts "Rounds: #{rounds}, Time: #{time} ms"
+  end
 end
