@@ -38,8 +38,12 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
 ## Usage
 
-Import the algorithm you want to use -- either `Comeonin.Bcrypt`
+Either import or alias the algorithm you want to use -- either `Comeonin.Bcrypt`
 or `Comeonin.Pbkdf2`.
+
+Both algorithms use similar naming conventions so as to make it easy to switch
+between them. Both have the `hashpwsalt` function, which is a convenience
+function that automatically generates a salt and then hashes the password.
 
 To hash a password with the default options:
 
