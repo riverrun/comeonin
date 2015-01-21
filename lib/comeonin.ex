@@ -53,7 +53,7 @@ defmodule Comeonin do
   """
   def time_bcrypt(log_rounds \\ 12) do
     {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])
-    IO.puts "Rounds: #{log_rounds}, Time: #{time} ms"
+    IO.puts "Rounds: #{log_rounds}, Time: #{time / 1000} ms"
   end
 
   @doc """
@@ -62,6 +62,6 @@ defmodule Comeonin do
   """
   def time_pbkdf2(rounds \\ 40000) do
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", 16, rounds])
-    IO.puts "Rounds: #{rounds}, Time: #{time} ms"
+    IO.puts "Rounds: #{rounds}, Time: #{time / 1000} ms"
   end
 end
