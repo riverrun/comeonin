@@ -38,31 +38,26 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
 ## Usage
 
-There are functions to generate a salt `Comeonin.Bcrypt.gen_salt`
-and then use that salt to hash a password `Comeonin.Bcrypt.hashpw`, but there are
-also the following three convenience functions (with examples):
+Import the algorithm you want to use -- either `Comeonin.Bcrypt`
+or `Comeonin.Pbkdf2`.
 
-* hashpwsalt -- generate a salt and then use that salt to hash a password
+To hash a password with the default options:
 
-  ```elixir
-  hash = Comeonin.hashpwsalt("hard2guess")
-  ```
+    hash = hashpwsalt("difficult2guess")
 
-* checkpw -- check the password against the stored hash
+See each module's documentation for more information about
+all the available options.
 
-  ```elixir
-  Comeonin.checkpw("hard2guess", stored_hash)
-  ```
+To check a password against the stored hash, use the `checkpw`
+function. This takes two arguments: the plaintext password and
+the stored hash:
 
-* dummy_checkpw -- calculate a hash and return false
+    checkpw(password, stored_hash)
 
-  ```elixir
-  Comeonin.dummy_checkpw
-  ```
-
-This last function is to be used when the username cannot be found.
-It is to prevent a potential attacker enumerating the users by timing
-the responses.
+There is also a `dummy_checkpw` function, which takes no arguments
+and is to be used when the username cannot be found. It performs a hash,
+but then returns false. This can be used to make user enumeration more
+difficult.
 
 ## Documentation
 

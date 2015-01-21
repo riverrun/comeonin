@@ -27,9 +27,8 @@ defmodule Comeonin.Bcrypt do
   `hashpwsalt` functions.
 
   The log_rounds parameter determines the computational complexity
-  of the hashing. Its default is 12, the minimum is 4, and the maximum
-  is 31. If less than 4 is input, 4 will be used, and if more than
-  31 is input, 31 will be used.
+  of the generation of the salt. Its default is 12, the minimum is 4,
+  and the maximum is 31.
   """
   def gen_salt(log_rounds) when is_integer(log_rounds) do
     :crypto.rand_bytes(16) |> encode_salt(log_rounds)
@@ -64,9 +63,12 @@ defmodule Comeonin.Bcrypt do
 
   @doc """
   Hash the password with a salt which is randomly generated.
+
+  There is an option to change the log_rounds parameter, which
+  affects the complexity of the generation of the salt.
   """
-  def hashpwsalt(password) do
-    salt = gen_salt(@log_rounds)
+  def hashpwsalt(password, log_rounds \\ @log_rounds) do
+    salt = gen_salt(log_rounds)
     hashpass(password, salt)
   end
 

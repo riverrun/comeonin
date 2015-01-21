@@ -15,6 +15,14 @@ defmodule Comeonin.Tools do
   @doc """
   Encode using an adapted base64 alphabet (using `.`
   instead of `+` and with no padding.
+
+  ## Examples
+
+      iex> Comeonin.Tools.encode64("foobar")
+      "Zm9vYmFy"
+
+      iex> Comeonin.Tools.encode64 "spamandeggs"
+      "c3BhbWFuZGVnZ3M"
   """
   def encode64(<<>>), do: <<>>
   def encode64(data) do
@@ -34,6 +42,14 @@ defmodule Comeonin.Tools do
   @doc """
   Decode using an adapted base64 alphabet (using `.`
   instead of `+` and with no padding.
+
+  ## Examples
+
+      iex> Comeonin.Tools.decode64("Zm9vYmFy")
+      "foobar"
+
+      iex> Comeonin.Tools.decode64("c3BhbWFuZGVnZ3M")
+      "spamandeggs"
   """
   def decode64(<<>>), do: <<>>
   def decode64(data) do
