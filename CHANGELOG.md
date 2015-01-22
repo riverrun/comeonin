@@ -4,6 +4,7 @@
 
 * Enhancements
   * Improved documentation about the recommended time the functions should take.
+  * Increased default number of rounds for pbkdf2_sha512 from 40000 to 60000.
 
 * Changes
   * Removed the `salt_length` optional argument from `Comeonin.Pbkdf2.hashpwsalt`. The only optional argument to this function is now the number of rounds.
