@@ -23,10 +23,10 @@ defmodule Comeonin.Pbkdf2 do
   is 1024. The default is 16.
   """
   def gen_salt(salt_length \\ @salt_length) do
-    if salt_length < 16 or salt_length > 1024 do
-      raise ArgumentError, message: "The salt is the wrong length."
-    else
+    if salt_length >= 16 and salt_length <= 1024 do
       :crypto.rand_bytes(salt_length)
+    else
+      raise ArgumentError, message: "The salt is the wrong length."
     end
   end
 
