@@ -34,22 +34,23 @@ defmodule Comeonin do
   certain time frame. In addition, they can be configured to run slower,
   which can help offset some of the hardware improvements made over time.
 
-  In the case of bcrypt, the number of log_rounds can be increased to make
-  it more complex, and slower. The minimum number is 4 and the maximum is
-  31. The default is 12.
-  
-  As for pbkdf2, the number of rounds can be increased to make it slower.
-  The maximum number of rounds is 4294967295 and the default is 40000.
+  It is recommended to make the key derivation function as slow as the
+  user can tolerate. The actual recommended time for the function will vary
+  depending on the nature of the application, but somewhere between 250 milliseconds
+  and a second or more would probably be appropriate for most applications.
 
-  It is recommended to make the function as slow as possible, balancing
-  the inconvenience to the user with security considerations. To help
-  you make this decision, this module provides timing functions for
-  bcrypt and pbkdf2.
+  To help you decide how slow to make the function, this module provides
+  convenience timing functions for bcrypt and pbkdf2.
+
   """
 
   @doc """
   A function to help the developer decide how many log_rounds to use
   when using bcrypt.
+
+  The number of log_rounds can be increased to make this function more
+  complex, and slower. The minimum number is 4 and the maximum is
+  31. The default is 12.
   """
   def time_bcrypt(log_rounds \\ 12) do
     {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])
@@ -59,9 +60,12 @@ defmodule Comeonin do
   @doc """
   A function to help the developer decide how many rounds to use
   when using pbkdf2.
+  
+  The number of rounds can be increased to make it slower.
+  The maximum number of rounds is 4294967295 and the default is 60000.
   """
-  def time_pbkdf2(rounds \\ 40000) do
-    {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", 16, rounds])
+  def time_pbkdf2(rounds \\ 60000) do
+    {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", rounds])
     IO.puts "Rounds: #{rounds}, Time: #{time / 1000} ms"
   end
 end

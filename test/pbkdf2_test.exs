@@ -38,4 +38,13 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("passwords", hash) == false
     assert Pbkdf2.checkpw("pasword", hash) == false
   end
+
+  test "wrong input to gen_salt" do
+    assert_raise ArgumentError, "The salt is the wrong length.", fn ->
+      Pbkdf2.gen_salt(15)
+    end
+    assert_raise ArgumentError, "The salt is the wrong length.", fn ->
+      Pbkdf2.gen_salt(1025)
+    end
+  end
 end

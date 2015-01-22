@@ -13,30 +13,35 @@ defmodule Comeonin.Pbkdf2 do
   alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
-  @rounds 40000
-  @length_key 64
+  @rounds 60000
   @salt_length 16
 
   @doc """
-  Generate a salt for use with the `hashpass` and
-  `hashpwsalt` functions.
+  Generate a salt for use with the `hashpass` function.
+
+  The minimum length of the salt is 16 and the maximum length
+  is 1024. The default is 16.
   """
   def gen_salt(salt_length \\ @salt_length) do
-    :crypto.rand_bytes(salt_length)
+    if salt_length < 16 or salt_length > 1024 do
+      raise ArgumentError, message: "The salt is the wrong length."
+    else
+      :crypto.rand_bytes(salt_length)
+    end
   end
 
   @doc """
   Hash the password using pbkdf2_sha512.
   """
   def hashpass(password, salt, rounds \\ @rounds) do
-    pbkdf2(password, salt, rounds, @length_key) |> format(salt, rounds)
+    pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
   """
-  def hashpwsalt(password, salt_length \\ @salt_length, rounds \\ @rounds) do
-    salt = gen_salt(salt_length)
+  def hashpwsalt(password, rounds \\ @rounds) do
+    salt = gen_salt(@salt_length)
     hashpass(password, salt, rounds)
   end
 

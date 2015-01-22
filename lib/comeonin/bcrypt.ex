@@ -23,8 +23,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   @doc """
-  Generate a salt for use with the `hashpw`, `hashpass` and
-  `hashpwsalt` functions.
+  Generate a salt for use with the `hashpass` function.
 
   The log_rounds parameter determines the computational complexity
   of the generation of the salt. Its default is 12, the minimum is 4,
