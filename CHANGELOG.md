@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.0-dev
+## v0.2.1 (2015-01-23)
 
 * Enhancements
   * Improved documentation about the recommended time the functions should take.
@@ -13,6 +13,7 @@
 
 * Enhancements
   * Added support for pbkdf2_sha512.
+  * Added Travis integration.
   * Added timing functions to help developers adjust the complexity of the key derivation functions.
 
 * Changes
