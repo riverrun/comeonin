@@ -68,7 +68,7 @@ defmodule Comeonin.Pbkdf2 do
   in order to make user enumeration by timing responses more difficult.
   """
   def dummy_checkpw do
-    checkpw("password", "$pbkdf2-sha512$4096$c2FsdA$0Zexsz2wFD4BixLz0dFHnmzevcyXxcD4f2kC4HL0V7UUPzBgJkGz1VzTNZiMs2uEN2Bg7NUy4Dm3QqI5Q0ry1Q")
+    hashpwsalt("password")
     false
   end
 

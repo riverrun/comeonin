@@ -88,7 +88,7 @@ defmodule Comeonin.Bcrypt do
   in order to make user enumeration by timing responses more difficult.
   """
   def dummy_checkpw do
-    checkpw("", "$2a$05$CCCCCCCCCCCCCCCCCCCCC.7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy")
+    hashpwsalt("password")
     false
   end
 end

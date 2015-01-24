@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-dev
+
+* Enhancements
+  * Improved implementation of dummy check.
+
 ## v0.2.1 (2015-01-23)
 
 * Enhancements
