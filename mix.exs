@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
   @shortdoc "Compiles Comeonin"
 
   def run(_) do
+    File.mkdir("priv")
     if match? {:win32, _}, :os.type do
       {result, _error_code} = System.cmd("nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"], stderr_to_stdout: true)
       Mix.shell.info result
@@ -46,6 +47,7 @@ defmodule Comeonin.Mixfile do
 
   defp package do
     [
+      files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
       contributors: ["David Whitlock", "Ben Sharman"],
       licenses: ["BSD"],
       links: %{"GitHub" => "https://github.com/elixircnx/comeonin",

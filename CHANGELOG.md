@@ -2,14 +2,12 @@
 
 ## 0.3.0-dev
 
-* Enhancements
-  * Improved implementation of dummy check.
-
-## v0.2.1 (2015-01-23)
+## v0.2.2 (2015-01-25)
 
 * Enhancements
   * Improved documentation about the recommended time the functions should take.
   * Increased default number of rounds for pbkdf2_sha512 from 40000 to 60000.
+  * Improved implementation of dummy check.
 
 * Changes
   * Removed the `salt_length` optional argument from `Comeonin.Pbkdf2.hashpwsalt`. The only optional argument to this function is now the number of rounds.
