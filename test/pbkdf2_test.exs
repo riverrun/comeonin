@@ -49,6 +49,16 @@ defmodule Comeonin.Pbkdf2Test do
   |> check_vectors
   end
 
+  test "Consistency tests" do
+   [{"funferal",
+     <<192, 39, 248, 127, 11, 37, 71, 252, 74, 75, 244, 70, 129, 27, 51, 71>>,
+     "$pbkdf2-sha512$60000$wCf4fwslR/xKS/RGgRszRw$QJHazw8zTaY0HvGQF1Slb07Ug9DFFLjoq63aORwhA.o/OM.e9UpxldolWyCNLv3duHuxpEWoZtGHfm3VTFCqpg"},
+   {"he's N0t the Me551ah!",
+     <<60, 130, 11, 97, 11, 23, 236, 250, 227, 233, 56, 1, 86, 131, 41, 163>>,
+     "$pbkdf2-sha512$60000$PIILYQsX7Prj6TgBVoMpow$tsPUY4uMzTbJuv81xxZzsUGvT1LGjk9EfJuAYoZH9KaCSGH90J8BuQwY4Jb0JZbwOI00BSR4hDBVmn3Z8V.Ywg"}]
+    |> check_vectors
+  end
+
   test "pbkdf2 dummy check" do
     assert Pbkdf2.dummy_checkpw == false
   end

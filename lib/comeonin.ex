@@ -49,8 +49,8 @@ defmodule Comeonin do
   when using bcrypt.
 
   The number of log_rounds can be increased to make this function more
-  complex, and slower. The minimum number is 4 and the maximum is
-  31. The default is 12.
+  complex, and slower. The minimum number is 4 and the maximum is 31.
+  The default is 12.
   """
   def time_bcrypt(log_rounds \\ 12) do
     {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])

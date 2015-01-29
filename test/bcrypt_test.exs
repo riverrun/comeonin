@@ -57,6 +57,16 @@ defmodule Comeonin.BcryptTest do
     |> check_vectors
   end
 
+  test "Consistency tests" do
+   [{"p@5sw0rd",
+     "$2b$12$zQ4CooEXdGqcwi0PHsgc8e",
+     "$2b$12$zQ4CooEXdGqcwi0PHsgc8eAf0DLXE/XHoBE8kCSGQ97rXwuClaPam"},
+   {"C'est bon, la vie!",
+     "$2b$12$cbo7LZ.wxgW4yxAA5Vqlv.",
+     "$2b$12$cbo7LZ.wxgW4yxAA5Vqlv.KR6QFPt4qCdc9RYJNXxa/rbUOp.1sw."}]
+    |> check_vectors
+  end
+
   test "Bcrypt dummy check" do
     assert Bcrypt.dummy_checkpw == false
   end
