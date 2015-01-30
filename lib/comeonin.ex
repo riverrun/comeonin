@@ -43,10 +43,12 @@ defmodule Comeonin do
 
   It is recommended to make the key derivation function as slow as the
   user can tolerate. The actual recommended time for the function will vary
-  depending on the nature of the application, but somewhere between 250 milliseconds
-  and a second or more would probably be appropriate for most applications.
-  See http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf
-  for more details.
+  depending on the nature of the application. According to the following NIST
+  recommendations (http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf),
+  having the function take several seconds might be acceptable if the user
+  only has to login once every session. However, if an application requires
+  the user to login several times an hour, it would probably be better to
+  limit the hashing function to about 250 milliseconds.
 
   To help you decide how slow to make the function, this module provides
   convenience timing functions for bcrypt and pbkdf2.
@@ -59,7 +61,9 @@ defmodule Comeonin do
 
   The number of log_rounds can be increased to make this function more
   complex, and slower. The minimum number is 4 and the maximum is 31.
-  The default is 12.
+  The default is 12, but this is not necessarily the recommended number.
+  The ideal number of log_rounds will depend on the nature of your application
+  and the hardware being used.
   """
   def time_bcrypt(log_rounds \\ 12) do
     {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])
@@ -70,8 +74,10 @@ defmodule Comeonin do
   A function to help the developer decide how many rounds to use
   when using pbkdf2.
 
-  The number of rounds can be increased to make it slower.
-  The maximum number of rounds is 4294967295 and the default is 60_000.
+  The number of rounds can be increased to make it slower. The maximum number
+  of rounds is 4294967295. The default is 60_000, but this is not necessarily
+  the recommended number. The ideal number of log_rounds will depend on the
+  nature of your application and the hardware being used.
   """
   def time_pbkdf2(rounds \\ 60_000) do
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", rounds])
