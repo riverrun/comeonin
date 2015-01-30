@@ -1,6 +1,7 @@
 defmodule Comeonin do
   @moduledoc """
-  Module to make authorization of users more straightforward.
+  Comeonin aims to make the secure authorization of users
+  more straightforward.
 
   Comeonin supports bcrypt and pbkdf2_sha512.
 
@@ -16,6 +17,10 @@ defmodule Comeonin do
   See each module's documentation for more information about
   all the available options.
 
+  If you want more control over the generation of the salt, and, in
+  the case of pbkdf2, the length of salt, you can use the `gen_salt`
+  function and then pass the output to the `hashpass` function.
+
   To check a password against the stored hash, use the `checkpw`
   function. This takes two arguments: the plaintext password and
   the stored hash:
@@ -25,7 +30,9 @@ defmodule Comeonin do
   There is also a `dummy_checkpw` function, which takes no arguments
   and is to be used when the username cannot be found. It performs a hash,
   but then returns false. This can be used to make user enumeration more
-  difficult.
+  difficult. However, there are many cases in which an attacker will
+  already know the username(s), and in these cases, this function will
+  be of little use.
 
   ## Adjusting the speed / complexity of bcrypt and pbkdf2
 
@@ -38,6 +45,8 @@ defmodule Comeonin do
   user can tolerate. The actual recommended time for the function will vary
   depending on the nature of the application, but somewhere between 250 milliseconds
   and a second or more would probably be appropriate for most applications.
+  See http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf
+  for more details.
 
   To help you decide how slow to make the function, this module provides
   convenience timing functions for bcrypt and pbkdf2.
@@ -60,11 +69,11 @@ defmodule Comeonin do
   @doc """
   A function to help the developer decide how many rounds to use
   when using pbkdf2.
-  
+
   The number of rounds can be increased to make it slower.
-  The maximum number of rounds is 4294967295 and the default is 60000.
+  The maximum number of rounds is 4294967295 and the default is 60_000.
   """
-  def time_pbkdf2(rounds \\ 60000) do
+  def time_pbkdf2(rounds \\ 60_000) do
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", rounds])
     IO.puts "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
   end

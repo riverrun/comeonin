@@ -13,7 +13,7 @@ defmodule Comeonin.Pbkdf2 do
   alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
-  @rounds 60000
+  @rounds 60_000
   @salt_length 16
 
   @doc """
