@@ -34,6 +34,18 @@ defmodule Comeonin do
   already know the username(s), and in these cases, this function will
   be of little use.
 
+  ## Choosing an algorithm
+
+  Bcrypt and pbkdf2_sha512 are both highly secure key derivation functions.
+  They have no known vulnerabilities and their algorithms have been used
+  and widely reviewed for at least 10 years. They are also designed
+  to be `future-adaptable` (see the section below about speed / complexity
+  for more details), and so we do not recommend one over the other.
+  
+  However, if your application needs to use a hashing function that has been
+  recommended by a recognized standards body, then you will need to
+  use pbkdf2_sha512, which has been recommended by NIST.
+
   ## Adjusting the speed / complexity of bcrypt and pbkdf2
 
   Both bcrypt and pbkdf2 are designed to be computationally intensive and
