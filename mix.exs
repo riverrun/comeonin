@@ -3,13 +3,17 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   def run(_) do
     File.mkdir("priv")
-    if match? {:win32, _}, :os.type do
-      {result, _error_code} = System.cmd("nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"], stderr_to_stdout: true)
-      Mix.shell.info result
-    else
-      {result, _error_code} = System.cmd("make", ["priv/bcrypt_nif.so"], stderr_to_stdout: true)
-      Mix.shell.info result
+    {exec, args} = case :os.type do
+      {:win32, _} ->
+        {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
+      {:unix, :freebsd} ->
+        {"gmake", ["priv/bcrypt_nif.so"]}
+      _ ->
+        {"make", ["priv/bcrypt_nif.so"]}
     end
+
+    {result, _error_code} = System.cmd(exec, args, stderr_to_stdout: true)
+    Mix.shell.info result
   end
 end
 
