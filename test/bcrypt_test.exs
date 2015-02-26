@@ -105,4 +105,12 @@ defmodule Comeonin.BcryptTest do
       Bcrypt.hashpass(["U*U"], "$2a$05$CCCCCCCCCCCCCCCCCCCCC.")
     end
   end
+
+  test "bcrypt_log_rounds configuration" do
+    prefix = '$2b$10$'
+    Application.put_env(:comeonin, :bcrypt_log_rounds, 10)
+    assert :lists.prefix(prefix, Bcrypt.gen_salt)
+    assert String.starts_with?(Bcrypt.hashpwsalt("password"), to_string(prefix))
+    Application.delete_env(:comeonin, :bcrypt_log_rounds)
+  end
 end
