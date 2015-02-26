@@ -11,9 +11,9 @@ defmodule Comeonin.Pbkdf2 do
 
   use Bitwise
   alias Comeonin.Tools
+  alias Comeonin.Config
 
   @max_length bsl(1, 32) - 1
-  @rounds 60_000
   @salt_length 16
 
   @doc """
@@ -33,15 +33,15 @@ defmodule Comeonin.Pbkdf2 do
   @doc """
   Hash the password using pbkdf2_sha512.
   """
-  def hashpass(password, salt, rounds \\ @rounds) do
+  def hashpass(password, salt, rounds \\ Config.pbkdf2_rounds) do
     pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
   """
-  def hashpwsalt(password, rounds \\ @rounds) do
-    salt = gen_salt(@salt_length)
+  def hashpwsalt(password, rounds \\ Config.pbkdf2_rounds) do
+    salt = gen_salt
     hashpass(password, salt, rounds)
   end
 

@@ -13,9 +13,9 @@ defmodule Comeonin.Bcrypt do
   """
 
   alias Comeonin.Tools
+  alias Comeonin.Config
 
   @on_load {:init, 0}
-  @log_rounds 12
 
   def init do
     path = :filename.join(:code.priv_dir(:comeonin), 'bcrypt_nif')
@@ -32,8 +32,8 @@ defmodule Comeonin.Bcrypt do
   def gen_salt(log_rounds) when is_integer(log_rounds) do
     :crypto.rand_bytes(16) |> encode_salt(log_rounds)
   end
-  def gen_salt(_), do: gen_salt(@log_rounds)
-  def gen_salt, do: gen_salt(@log_rounds)
+  def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
+  def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
 
   defp encode_salt(_rand_num, _log_rounds) do
     exit(:nif_library_not_loaded)
@@ -66,7 +66,7 @@ defmodule Comeonin.Bcrypt do
   There is an option to change the log_rounds parameter, which
   affects the complexity of the generation of the salt.
   """
-  def hashpwsalt(password, log_rounds \\ @log_rounds) do
+  def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
     salt = gen_salt(log_rounds)
     hashpass(password, salt)
   end

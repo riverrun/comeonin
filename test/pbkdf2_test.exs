@@ -79,4 +79,12 @@ defmodule Comeonin.Pbkdf2Test do
       Pbkdf2.gen_salt(1025)
     end
   end
+
+  test "pbkdf2_rounds configuration" do
+    prefix = "$pbkdf2-sha512$12000$"
+    Application.put_env(:comeonin, :pbkdf2_rounds, 12_000)
+    assert String.starts_with?(Pbkdf2.hashpass("password", Pbkdf2.gen_salt), prefix)
+    assert String.starts_with?(Pbkdf2.hashpwsalt("password"), prefix)
+    Application.delete_env(:comeonin, :pbkdf2_rounds)
+  end
 end
