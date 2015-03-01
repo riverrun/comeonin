@@ -26,7 +26,9 @@ defmodule Comeonin.Config do
   `prod.exs` and `test.exs`, and add the configuration values to
   the respective file.
 
-  For example, in `test.exs`:
+  For example, in `test.exs` and `dev.exs`:
+
+      use Mix.Config
 
       config :comeonin,
         bcrypt_log_rounds: 4,
@@ -34,9 +36,15 @@ defmodule Comeonin.Config do
 
   And in `prod.exs`:
 
+      use Mix.Config
+
       config :comeonin,
         bcrypt_log_rounds: 14,
         pbkdf2_rounds: 100_000
+
+  If you use separate files for the different environments, remember
+  to include the `import_config "#{Mix.env}.exs"` command in the
+  `config.exs` file.
   """
 
   def bcrypt_log_rounds do
