@@ -14,7 +14,7 @@ defmodule Comeonin.Tools do
 
   @doc """
   Encode using an adapted base64 alphabet (using `.`
-  instead of `+` and with no padding.
+  instead of `+` and with no padding).
 
   ## Examples
 
@@ -38,7 +38,7 @@ defmodule Comeonin.Tools do
 
   @doc """
   Decode using an adapted base64 alphabet (using `.`
-  instead of `+` and with no padding.
+  instead of `+` and with no padding).
 
   ## Examples
 

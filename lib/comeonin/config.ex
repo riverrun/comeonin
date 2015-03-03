@@ -3,14 +3,14 @@ defmodule Comeonin.Config do
   This module provides an abstraction layer for configuration.
   The following are valid configuration items.
 
-  Please read the documentation for the main `Comeonin` module,
-  which explains why the default values are not always the best
-  values to use.
-
   | name               | type    | default |
   | :----------------- | :------ | ------: |
   | bcrypt_log_rounds  | integer | 12      |
   | pbkdf2_rounds      | integer | 60000   |
+
+  Please read the documentation for the main `Comeonin` module,
+  which explains why the default values are not always the best
+  values to use.
 
   ## Examples
 
@@ -43,8 +43,8 @@ defmodule Comeonin.Config do
         pbkdf2_rounds: 100_000
 
   If you use separate files for the different environments, remember
-  to include the `import_config "#{Mix.env}.exs"` command in the
-  `config.exs` file.
+  to add, or uncomment, the line `import_config "#\{Mix.env\}.exs"`
+  to the `config.exs` file.
   """
 
   def bcrypt_log_rounds do
