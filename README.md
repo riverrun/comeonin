@@ -22,7 +22,7 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 0.2"} ]
+    [ {:comeonin, "~> 0.3"} ]
   end
   ```
 

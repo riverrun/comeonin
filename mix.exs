@@ -27,7 +27,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "0.2.4",
+      version: "0.3.0",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
@@ -52,7 +52,7 @@ defmodule Comeonin.Mixfile do
   defp package do
     [
       files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
-      contributors: ["David Whitlock", "Ben Sharman"],
+      contributors: ["David Whitlock", "Ben Sharman", "Jason M Barnes"],
       licenses: ["BSD"],
       links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
         "Docs"   => "http://hexdocs.pm/comeonin"}
