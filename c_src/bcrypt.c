@@ -1,56 +1,38 @@
-/*	$OpenBSD: bcrypt.c,v 1.24 2008/04/02 19:54:05 millert Exp $	*/
-/*
- * Copyright 1997 Niels Provos <provos@physnet.uni-hamburg.de>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *      This product includes software developed by Niels Provos.
- * 4. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/*	$OpenBSD: bcrypt.c,v 1.52 2015/01/28 23:33:52 tedu Exp $	*/
 
+/*
+ * Copyright (c) 2014 Ted Unangst <tedu@openbsd.org>
+ * Copyright (c) 1997 Niels Provos <provos@umich.edu>
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
 /* This password hashing algorithm was designed by David Mazieres
  * <dm@lcs.mit.edu> and works as follows:
  *
  * 1. state := InitState ()
- * 2. state := ExpandKey (state, salt, password) 3.
- * REPEAT rounds:
+ * 2. state := ExpandKey (state, salt, password)
+ * 3. REPEAT rounds:
+ *      state := ExpandKey (state, 0, password)
  *	state := ExpandKey (state, 0, salt)
- *      state := ExpandKey(state, 0, password)
  * 4. ctext := "OrpheanBeholderScryDoubt"
  * 5. REPEAT 64:
  * 	ctext := Encrypt_ECB (state, ctext);
  * 6. RETURN Concatenate (salt, ctext);
- */
-
-/* This also includes code from the following version:
- * $OpenBSD: bcrypt.c,v 1.46 2014/11/24
  *
- * with the following copyright information:
- * Copyright (c) 2014 Ted Unangst <tedu@openbsd.org>
- * Copyright (c) 1997 Niels Provos <provos@umich.edu>
  */
 
+#include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -66,22 +48,20 @@
 
 #define BCRYPT_VERSION '2'
 #define BCRYPT_MAXSALT 16	/* Precomputation is just so nice */
-#define BCRYPT_BLOCKS 6		/* Ciphertext blocks */
-#define BCRYPT_MINROUNDS 16	/* we have log2(rounds) in salt */
+#define BCRYPT_WORDS 6		/* Ciphertext words */
+#define BCRYPT_MINLOGROUNDS 4	/* we have log2(rounds) in salt */
 
-char *bcrypt(const char *, const char *);
-void encode_salt(char *, uint8_t *, uint16_t, uint8_t);
+#define	BCRYPT_SALTSPACE	(7 + (BCRYPT_MAXSALT * 4 + 2) / 3 + 1)
+#define	BCRYPT_HASHSPACE	61
 
-static void encode_base64(uint8_t *, uint8_t *, size_t);
-static void decode_base64(uint8_t *, size_t, uint8_t *);
+static int encode_base64(char *, const u_int8_t *, size_t);
+static int decode_base64(u_int8_t *, size_t, const char *);
+static void secure_bzero(void *, size_t);
 
-static char    encrypted[_PASSWORD_LEN];
-static char    error[] = ":";
-
-const static uint8_t Base64Code[] =
+static const u_int8_t Base64Code[] =
 "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-const static uint8_t index_64[128] = {
+static const u_int8_t index_64[128] = {
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -101,19 +81,22 @@ const static uint8_t index_64[128] = {
 /*
  * read buflen (after decoding) bytes of data from b64data
  */
-static void
-decode_base64(uint8_t *buffer, size_t len, uint8_t *data)
+static int
+decode_base64(u_int8_t *buffer, size_t len, const char *b64data)
 {
-	uint8_t *bp = buffer;
-	uint8_t *p = data;
-	uint8_t c1, c2, c3, c4;
+	u_int8_t *bp = buffer;
+	const u_int8_t *p = (const u_int8_t *)b64data;
+	u_int8_t c1, c2, c3, c4;
+
 	while (bp < buffer + len) {
 		c1 = CHAR64(*p);
-		c2 = CHAR64(*(p + 1));
-
 		/* Invalid data */
-		if (c1 == 255 || c2 == 255)
-			break;
+		if (c1 == 255)
+			return -1;
+
+		c2 = CHAR64(*(p + 1));
+		if (c2 == 255)
+			return -1;
 
 		*bp++ = (c1 << 2) | ((c2 & 0x30) >> 4);
 		if (bp >= buffer + len)
@@ -121,7 +104,7 @@ decode_base64(uint8_t *buffer, size_t len, uint8_t *data)
 
 		c3 = CHAR64(*(p + 2));
 		if (c3 == 255)
-			break;
+			return -1;
 
 		*bp++ = ((c2 & 0x0f) << 4) | ((c3 & 0x3c) >> 2);
 		if (bp >= buffer + len)
@@ -129,23 +112,25 @@ decode_base64(uint8_t *buffer, size_t len, uint8_t *data)
 
 		c4 = CHAR64(*(p + 3));
 		if (c4 == 255)
-			break;
+			return -1;
 		*bp++ = ((c3 & 0x03) << 6) | c4;
 
 		p += 4;
 	}
+	return 0;
 }
 
 /*
  * Turn len bytes of data into base64 encoded data.
  * This works without = padding.
  */
-static void
-encode_base64(uint8_t *buffer, uint8_t *data, size_t len)
+static int
+encode_base64(char *b64buffer, const u_int8_t *data, size_t len)
 {
-	uint8_t *bp = buffer;
-	uint8_t *p = data;
-	uint8_t c1, c2;
+	u_int8_t *bp = (u_int8_t *)b64buffer;
+	const u_int8_t *p = data;
+	u_int8_t c1, c2;
+
 	while (p < data + len) {
 		c1 = *p++;
 		*bp++ = Base64Code[(c1 >> 2)];
@@ -168,56 +153,63 @@ encode_base64(uint8_t *buffer, uint8_t *data, size_t len)
 		*bp++ = Base64Code[c2 & 0x3f];
 	}
 	*bp = '\0';
+	return 0;
 }
 
 /*
- * Generates a salt for bcrypt.
+ * Generates a salt for this version of crypt.
  */
-void
-encode_salt(char *salt, uint8_t *csalt, uint16_t clen, uint8_t logr)
+int
+encode_salt(char *salt, size_t saltbuflen, uint8_t *csalt, uint16_t clen,
+		int log_rounds)
 {
-	if (logr < 4)
-		logr = 4;
-	else if (logr > 31)
-		logr = 31;
+	if (saltbuflen < BCRYPT_SALTSPACE) {
+		errno = EINVAL;
+		return -1;
+	}
 
-	salt[0] = '$';
-	salt[1] = BCRYPT_VERSION;
-	salt[2] = 'b';
-	salt[3] = '$';
+	if (log_rounds < 4)
+		log_rounds = 4;
+	else if (log_rounds > 31)
+		log_rounds = 31;
 
-	snprintf(salt + 4, 4, "%2.2u$", logr);
-	encode_base64((uint8_t *) salt + 7, csalt, clen);
+	snprintf(salt, saltbuflen, "$2b$%2.2u$", log_rounds);
+	encode_base64(salt + 7, csalt, clen);
+
+	return 0;
 }
 
 /*
  * the core bcrypt function
  */
-char *
-bcrypt(const char *key, const char *salt)
+int
+bcrypt(const char *key, const char *salt, char *encrypted,
+    size_t encryptedlen)
 {
 	blf_ctx state;
-	uint32_t rounds, i, k;
-	uint16_t j;
+	u_int32_t rounds, i, k;
+	u_int16_t j;
 	size_t key_len;
-	uint8_t salt_len, logr, minor;
-	uint8_t ciphertext[4 * BCRYPT_BLOCKS] = "OrpheanBeholderScryDoubt";
-	uint8_t csalt[BCRYPT_MAXSALT];
-	uint32_t cdata[BCRYPT_BLOCKS];
-	int n;
+	u_int8_t salt_len, logr, minor;
+	u_int8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
+	u_int8_t csalt[BCRYPT_MAXSALT];
+	u_int32_t cdata[BCRYPT_WORDS];
 
-	/* Discard "$" identifier */
-	salt++;
+	if (encryptedlen < BCRYPT_HASHSPACE)
+		goto inval;
 
-	if (*salt > BCRYPT_VERSION) {
-		/* How do I handle errors ? Return ':' */
-		return error;
-	}
+	/* Check and discard "$" identifier */
+	if (salt[0] != '$')
+		goto inval;
+	salt += 1;
+
+	if (salt[0] != BCRYPT_VERSION)
+		goto inval;
 
 	/* Check for minor versions */
 	switch ((minor = salt[1])) {
 	case 'a':
-		key_len = (uint8_t)(strlen(key) + 1);
+		key_len = (u_int8_t)(strlen(key) + 1);
 		break;
 	case 'b':
 		/* strlen() returns a size_t, but the function calls
@@ -230,51 +222,53 @@ bcrypt(const char *key, const char *salt)
 		key_len++; /* include the NUL */
 		break;
 	default:
-		 return error;
+		 goto inval;
 	}
 	if (salt[2] != '$')
-		return error;
+		goto inval;
 	/* Discard version + "$" identifier */
 	salt += 3;
 
-	/* Computer power doesn't increase linear, 2^x should be fine */
-	n = atoi(salt);
-	if (n > 31 || n < 0)
-		return error;
-	logr = (uint8_t)n;
-	if ((rounds = (uint32_t) 1 << logr) < BCRYPT_MINROUNDS)
-		return error;
-
+	/* Check and parse num rounds */
+	if (!isdigit((unsigned char)salt[0]) ||
+	    !isdigit((unsigned char)salt[1]) || salt[2] != '$')
+		goto inval;
+	logr = atoi(salt);
+	if (logr < BCRYPT_MINLOGROUNDS || logr > 31)
+		goto inval;
+	/* Computer power doesn't increase linearly, 2^x should be fine */
+	rounds = 1U << logr;
 
 	/* Discard num rounds + "$" identifier */
 	salt += 3;
 
 	if (strlen(salt) * 3 / 4 < BCRYPT_MAXSALT)
-		return error;
+		goto inval;
 
 	/* We dont want the base64 salt but the raw data */
-	decode_base64(csalt, BCRYPT_MAXSALT, (uint8_t *) salt);
+	if (decode_base64(csalt, BCRYPT_MAXSALT, salt))
+		goto inval;
 	salt_len = BCRYPT_MAXSALT;
 
 	/* Setting up S-Boxes and Subkeys */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, csalt, salt_len,
-	    (uint8_t *) key, key_len);
+	    (u_int8_t *) key, key_len);
 	for (k = 0; k < rounds; k++) {
-		Blowfish_expand0state(&state, (uint8_t *) key, key_len);
+		Blowfish_expand0state(&state, (u_int8_t *) key, key_len);
 		Blowfish_expand0state(&state, csalt, salt_len);
 	}
 
 	/* This can be precomputed later */
 	j = 0;
-	for (i = 0; i < BCRYPT_BLOCKS; i++)
-		cdata[i] = Blowfish_stream2word(ciphertext, 4 * BCRYPT_BLOCKS, &j);
+	for (i = 0; i < BCRYPT_WORDS; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, 4 * BCRYPT_WORDS, &j);
 
 	/* Now do the encryption */
 	for (k = 0; k < 64; k++)
-		blf_enc(&state, cdata, BCRYPT_BLOCKS / 2);
+		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
 
-	for (i = 0; i < BCRYPT_BLOCKS; i++) {
+	for (i = 0; i < BCRYPT_WORDS; i++) {
 		ciphertext[4 * i + 3] = cdata[i] & 0xff;
 		cdata[i] = cdata[i] >> 8;
 		ciphertext[4 * i + 2] = cdata[i] & 0xff;
@@ -284,12 +278,44 @@ bcrypt(const char *key, const char *salt)
 		ciphertext[4 * i + 0] = cdata[i] & 0xff;
 	}
 
+
 	snprintf(encrypted, 8, "$2%c$%2.2u$", minor, logr);
-	encode_base64((uint8_t *) encrypted + 7, csalt, BCRYPT_MAXSALT);
-	encode_base64((uint8_t *) encrypted + 7 + 22, ciphertext, 4 * BCRYPT_BLOCKS - 1);
-	memset(&state, 0, sizeof(state));
-	memset(ciphertext, 0, sizeof(ciphertext));
-	memset(csalt, 0, sizeof(csalt));
-	memset(cdata, 0, sizeof(cdata));
-	return encrypted;
+	encode_base64(encrypted + 7, csalt, BCRYPT_MAXSALT);
+	encode_base64(encrypted + 7 + 22, ciphertext, 4 * BCRYPT_WORDS - 1);
+	secure_bzero(&state, sizeof(state));
+	secure_bzero(ciphertext, sizeof(ciphertext));
+	secure_bzero(csalt, sizeof(csalt));
+	secure_bzero(cdata, sizeof(cdata));
+	return 0;
+
+inval:
+	errno = EINVAL;
+	return -1;
+}
+
+/*
+ * A typical memset() or bzero() call can be optimized away due to "dead store
+ * elimination" by sufficiently intelligent compilers.  This is a problem for
+ * the above bcrypt() function which tries to zero-out several temporary
+ * buffers before returning.  If these calls get optimized away, then these
+ * buffers might leave sensitive information behind.  There are currently no
+ * standard, portable functions to handle this issue -- thus the
+ * implementation below.
+ *
+ * This function cannot be optimized away by dead store elimination, but it
+ * will be slower than a normal memset() or bzero() call.  Given that the
+ * bcrypt algorithm is designed to consume a large amount of time, the change
+ * will likely be negligible.
+ */
+static void
+secure_bzero(void *buf, size_t len)
+{
+	if (buf == NULL || len == 0) {
+		return;
+	}
+
+	volatile unsigned char *ptr = buf;
+	while (len--) {
+		*ptr++ = 0;
+	}
 }

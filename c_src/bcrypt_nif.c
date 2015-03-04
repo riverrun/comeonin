@@ -22,8 +22,12 @@
 #include "erl_nif.h"
 #include "erl_blf.h"
 
-char *bcrypt(const char *, const char *);
-void encode_salt(char *, uint8_t *, uint16_t, uint8_t);
+#define BCRYPT_MAXSALT 16	/* Precomputation is just so nice */
+#define BCRYPT_SALTSPACE	(7 + (BCRYPT_MAXSALT * 4 + 2) / 3 + 1)
+#define BCRYPT_HASHSPACE	61
+
+int bcrypt(const char *, const char *, char *, size_t);
+void encode_salt(char *, size_t, uint8_t *, uint16_t, int);
 
 static ERL_NIF_TERM erl_encode_salt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -44,7 +48,8 @@ static ERL_NIF_TERM erl_encode_salt(ErlNifEnv* env, int argc, const ERL_NIF_TERM
         return enif_make_badarg(env);
     }
 
-    encode_salt((char *)bin.data, (uint8_t*)csalt.data, csalt.size, log_rounds);
+    encode_salt((char *)bin.data, bin.size, (uint8_t*)csalt.data, csalt.size,
+            log_rounds);
     enif_release_binary(&csalt);
 
     return enif_make_string(env, (char *)bin.data, ERL_NIF_LATIN1);
@@ -54,7 +59,7 @@ static ERL_NIF_TERM hashpw(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     char pw[1024];
     char salt[1024];
-    char *ret = NULL;
+    char encrypted[BCRYPT_HASHSPACE];
 
     (void)memset(&pw, '\0', sizeof(pw));
     (void)memset(&salt, '\0', sizeof(salt));
@@ -65,11 +70,12 @@ static ERL_NIF_TERM hashpw(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     if (enif_get_string(env, argv[1], salt, sizeof(salt), ERL_NIF_LATIN1) < 1)
         return enif_make_badarg(env);
 
-    if (NULL == (ret = bcrypt(pw, salt)) || 0 == strcmp(ret, ":")) {
+    if (bcrypt(pw, salt, encrypted, sizeof(encrypted)) ||
+            0 == strcmp(encrypted, ":")) {
         return enif_make_badarg(env);
     }
 
-    return enif_make_string(env, ret, ERL_NIF_LATIN1);
+    return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =
