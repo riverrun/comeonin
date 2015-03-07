@@ -30,9 +30,10 @@ defmodule Comeonin do
   There is also a `dummy_checkpw` function, which takes no arguments
   and is to be used when the username cannot be found. It performs a hash,
   but then returns false. This can be used to make user enumeration more
-  difficult. However, there are many cases in which an attacker will
-  already know the username(s), and in these cases, this function will
-  be of little use.
+  difficult. If an attacker already knows, or can guess, the username,
+  this function will not be of any use, and so if you are going to use
+  this function, it should be used with a policy of creating usernames
+  that are not made public and are difficult to guess.
 
   ## Choosing an algorithm
 
