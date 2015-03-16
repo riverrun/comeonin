@@ -1,6 +1,14 @@
 # Changelog
 
-## 0.3.0-dev
+## 0.3.0 (2015-03-04)
+
+* Enhancements
+  * Updated bcrypt to version 1.5.2.
+
+## v0.2.4 (2015-02-26)
+
+* Enhancements
+  * Added configuration options for number of log_rounds, or rounds.
 
 ## v0.2.2 (2015-01-25)
 

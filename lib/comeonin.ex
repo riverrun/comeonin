@@ -1,7 +1,10 @@
 defmodule Comeonin do
   @moduledoc """
-  Comeonin aims to make the secure authorization of users
-  more straightforward.
+  Comeonin is a password hashing library that aims to make the
+  secure validation of passwords as straightforward as possible.
+
+  It also provides extensive documentation to help
+  developers keep their apps secure.
 
   Comeonin supports bcrypt and pbkdf2_sha512.
 

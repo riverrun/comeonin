@@ -1,4 +1,4 @@
-The underlying blowfish code is derived from OpenBSD libc and is
+The underlying blowfish code is derived from OpenBSD and is
 subject to the following license:
 
 Blowfish block cipher for OpenBSD
@@ -33,7 +33,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-The underlying bcrypt (hashing) code is derived from OpenBSD libc and is
+The underlying bcrypt (hashing) code is derived from OpenBSD and is
 subject to the following license:
 
 Copyright (c) 2014 Ted Unangst <tedu@openbsd.org>

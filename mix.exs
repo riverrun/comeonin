@@ -21,7 +21,7 @@ defmodule Comeonin.Mixfile do
   use Mix.Project
 
   @description """
-  Password authorization (bcrypt, pbkdf2_sha512) library for Elixir.
+  Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
   """
 
   def project do
