@@ -34,15 +34,18 @@ defmodule Comeonin.Pbkdf2 do
   Hash the password using pbkdf2_sha512.
   """
   def hashpass(password, salt, rounds \\ Config.pbkdf2_rounds) do
-    pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
+    if is_binary(salt) do
+      pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
+    else
+      raise ArgumentError, message: "Wrong type. The salt needs to be a string."
+    end
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
   """
   def hashpwsalt(password, rounds \\ Config.pbkdf2_rounds) do
-    salt = gen_salt
-    hashpass(password, salt, rounds)
+    hashpass(password, gen_salt, rounds)
   end
 
   defp format(hash, salt, rounds) do

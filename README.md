@@ -83,6 +83,11 @@ not had much testing in production.
 Comeonin has been tested on Linux, OS X and FreeBSD, but it has not been tested
 on Windows. If you have any problems with the build, please let us know.
 
+## TODO
+
+* The current implementation of bcrypt blocks the Erlang VM during its execution.
+Changes need to be made to it so that the Erlang VM remains responsive.
+
 ## License
 
 BSD. For full details, please read the LICENSE file.

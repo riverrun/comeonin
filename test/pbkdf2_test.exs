@@ -71,12 +71,24 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("pasword", hash) == false
   end
 
+  test "gen_salt length of salt" do
+    assert byte_size(Pbkdf2.gen_salt) == 16
+    assert byte_size(Pbkdf2.gen_salt(32)) == 32
+    assert byte_size(Pbkdf2.gen_salt(64)) == 64
+  end
+
   test "wrong input to gen_salt" do
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Pbkdf2.gen_salt(15)
     end
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Pbkdf2.gen_salt(1025)
+    end
+  end
+
+  test "wrong input to hashpass" do
+    assert_raise ArgumentError, "Wrong type. The salt needs to be a string.", fn ->
+      Pbkdf2.hashpass("password", 'dontusecharlists')
     end
   end
 

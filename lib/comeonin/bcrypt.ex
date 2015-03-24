@@ -44,8 +44,7 @@ defmodule Comeonin.Bcrypt do
   """
   def hashpass(password, salt) when is_binary(salt) do
     if String.length(salt) == 29 do
-      salt = String.to_char_list(salt)
-      hashpass(password, salt)
+      hashpass(password, String.to_char_list(salt))
     else
       raise ArgumentError, message: "The salt is the wrong length."
     end
@@ -67,8 +66,7 @@ defmodule Comeonin.Bcrypt do
   affects the complexity of the generation of the salt.
   """
   def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
-    salt = gen_salt(log_rounds)
-    hashpass(password, salt)
+    hashpass(password, gen_salt(log_rounds))
   end
 
   @doc """
