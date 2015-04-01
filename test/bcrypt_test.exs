@@ -68,20 +68,20 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "Bcrypt dummy check" do
-    refute Bcrypt.dummy_checkpw
+    assert Bcrypt.dummy_checkpw == false
   end
 
   test "hashing and checking passwords" do
     hash = Bcrypt.hashpwsalt("password")
-    assert Bcrypt.checkpw("password", hash)
-    refute Bcrypt.checkpw("passwor", hash)
-    refute Bcrypt.checkpw("passwords", hash)
-    refute Bcrypt.checkpw("pasword", hash)
+    assert Bcrypt.checkpw("password", hash) == true
+    assert Bcrypt.checkpw("passwor", hash) == false
+    assert Bcrypt.checkpw("passwords", hash) == false
+    assert Bcrypt.checkpw("pasword", hash) == false
   end
 
   test "gen_salt number of rounds" do
-    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8))
-    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20))
+    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8)) == true
+    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20)) == true
   end
 
   test "gen_salt length of salt" do

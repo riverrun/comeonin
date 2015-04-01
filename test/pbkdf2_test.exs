@@ -60,15 +60,15 @@ defmodule Comeonin.Pbkdf2Test do
   end
 
   test "pbkdf2 dummy check" do
-    refute Pbkdf2.dummy_checkpw
+    assert Pbkdf2.dummy_checkpw == false
   end
 
   test "hashing and checking passwords" do
     hash = Pbkdf2.hashpwsalt("password")
-    assert Pbkdf2.checkpw("password", hash)
-    refute Pbkdf2.checkpw("passwor", hash)
-    refute Pbkdf2.checkpw("passwords", hash)
-    refute Pbkdf2.checkpw("pasword", hash)
+    assert Pbkdf2.checkpw("password", hash) == true
+    assert Pbkdf2.checkpw("passwor", hash) == false
+    assert Pbkdf2.checkpw("passwords", hash) == false
+    assert Pbkdf2.checkpw("pasword", hash) == false
   end
 
   test "gen_salt length of salt" do
