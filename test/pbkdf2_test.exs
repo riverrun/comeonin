@@ -9,24 +9,6 @@ defmodule Comeonin.Pbkdf2Test do
     end
   end
 
-  test "basic pbkdf2_sha512 tests" do
-    [
-      {"",
-        <<115, 97, 108, 116>>,
-        1024,
-        "$pbkdf2-sha512$1024$c2FsdA$xHRxDO333TEJTVDgqjz9xltmBrTyrJLUyrnY7tfcrqe2ewobAK8fOHr6oD9Tqz0zU4cXrH5E.QQfctLUyu6N7A"},
-      {"password",
-        <<>>,
-        1024,
-        "$pbkdf2-sha512$1024$$GABWyrGTs3ovDBwRO8V68EZO.L4dCVi2e19wRI/s4q2seodgNoBFpxpC4wSr066E4IjWG0uLLlDF4r5bTUGeow"},
-      {"password",
-        <<115, 97, 108, 116>>,
-        4096,
-        "$pbkdf2-sha512$4096$c2FsdA$0Zexsz2wFD4BixLz0dFHnmzevcyXxcD4f2kC4HL0V7UUPzBgJkGz1VzTNZiMs2uEN2Bg7NUy4Dm3QqI5Q0ry1Q"}
-    ]
-  |> check_vectors
-  end
-
   test "Python passlib pbkdf2_sha512 tests" do
     [
       {"password",
@@ -83,6 +65,12 @@ defmodule Comeonin.Pbkdf2Test do
     end
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Pbkdf2.gen_salt(1025)
+    end
+  end
+
+  test "trying to run hashpass without a salt" do
+    assert_raise ArgumentError, "The salt is the wrong length.", fn ->
+      Pbkdf2.hashpass("password", "")
     end
   end
 

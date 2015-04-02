@@ -80,8 +80,8 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "gen_salt number of rounds" do
-    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8)) == true
-    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20)) == true
+    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8))
+    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20))
   end
 
   test "gen_salt length of salt" do
@@ -95,6 +95,12 @@ defmodule Comeonin.BcryptTest do
     assert :lists.prefix('$2b$04$', Bcrypt.gen_salt(3))
     assert :lists.prefix('$2b$31$', Bcrypt.gen_salt(32))
     assert :lists.prefix('$2b$12$', Bcrypt.gen_salt(["wrong type"]))
+  end
+
+  test "trying to run hashpass without a salt" do
+    assert_raise ArgumentError, "The salt is the wrong length.", fn ->
+      Bcrypt.hashpass("U*U", "")
+    end
   end
 
   test "wrong input to hashpass" do
