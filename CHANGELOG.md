@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2015-03-04)
+
+* Enhancements
+  * Updated pbkdf2_sha512 to prevent users from calling `hashpass` without a salt.
+
 ## 0.3.0 (2015-03-04)
 
 * Enhancements

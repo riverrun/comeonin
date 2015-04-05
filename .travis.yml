@@ -5,6 +5,7 @@ elixir:
 otp_release:
   - 17.0
   - 17.3
+  - 17.4
 sudo: false
 after_script:
   - mix deps.get --only docs

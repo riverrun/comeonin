@@ -71,7 +71,11 @@ http://hexdocs.pm/comeonin
 
 ## Requirements
 
-OTP version 17.3 or later
+OTP version 17.0 or later
+
+For users of Ubuntu, or any other Debian-based distro, we recommend downloading
+erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
+as the version of erlang in the repositories is usually quite old.
 
 ## Status
 
