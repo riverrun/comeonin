@@ -30,6 +30,12 @@
  * 6. RETURN Concatenate (salt, ctext);
  *
  */
+/* The scheduler-friendly Erlang NIF version of this password hashing
+ * algorithm was implemented by Jason M Barnes.
+ */
+
+// TODO remove when done debugging
+#include <stdio.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -39,6 +45,7 @@
 #include <string.h>
 #include <pwd.h>
 
+#include "erl_nif.h"
 #include "erl_blf.h"
 
 /* This implementation is adaptable to current computing power.
@@ -180,11 +187,10 @@ encode_salt(char *salt, size_t saltbuflen, uint8_t *csalt, uint16_t clen,
 }
 
 /*
- * the core bcrypt function
+ * initialization routine for the bcrypt algorithm
  */
-int
-bcrypt(const char *key, const char *salt, char *encrypted,
-    size_t encryptedlen)
+ERL_NIF_TERM
+bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	blf_ctx state;
 	u_int32_t rounds, i, k;
@@ -194,6 +200,26 @@ bcrypt(const char *key, const char *salt, char *encrypted,
 	u_int8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
 	u_int8_t csalt[BCRYPT_MAXSALT];
 	u_int32_t cdata[BCRYPT_WORDS];
+	char key[1024];
+	char saltbuf[1024];
+	const char *salt = saltbuf;
+	char encrypted[BCRYPT_HASHSPACE];
+	size_t encryptedlen = sizeof(encrypted);
+
+	if (argc != 2) {
+		goto inval;
+	}
+
+	/* Get our password and salt from argv */
+	(void)memset(&key, '\0', sizeof(key));
+	(void)memset(&saltbuf, '\0', sizeof(saltbuf));
+	if (!enif_get_string(env, argv[0], key, sizeof(key), ERL_NIF_LATIN1)) {
+		goto inval;
+	}
+	if (!enif_get_string(env, argv[1], saltbuf, sizeof(saltbuf),
+				ERL_NIF_LATIN1)) {
+		goto inval;
+	}
 
 	if (encryptedlen < BCRYPT_HASHSPACE)
 		goto inval;
@@ -254,6 +280,8 @@ bcrypt(const char *key, const char *salt, char *encrypted,
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, csalt, salt_len,
 	    (u_int8_t *) key, key_len);
+
+	// FIXME This for-loop is the part that takes the most time.
 	for (k = 0; k < rounds; k++) {
 		Blowfish_expand0state(&state, (u_int8_t *) key, key_len);
 		Blowfish_expand0state(&state, csalt, salt_len);
@@ -286,11 +314,10 @@ bcrypt(const char *key, const char *salt, char *encrypted,
 	secure_bzero(ciphertext, sizeof(ciphertext));
 	secure_bzero(csalt, sizeof(csalt));
 	secure_bzero(cdata, sizeof(cdata));
-	return 0;
+	return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
 
 inval:
-	errno = EINVAL;
-	return -1;
+	return enif_make_badarg(env);
 }
 
 /*
