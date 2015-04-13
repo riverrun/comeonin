@@ -26,7 +26,7 @@
 #define BCRYPT_SALTSPACE	(7 + (BCRYPT_MAXSALT * 4 + 2) / 3 + 1)
 #define BCRYPT_HASHSPACE	61
 
-ERL_NIF_TERM bcrypt_init(ErlNifEnv *, int, const ERL_NIF_TERM *);
+ERL_NIF_TERM bcrypt(ErlNifEnv *, int, const ERL_NIF_TERM *);
 void encode_salt(char *, size_t, uint8_t *, uint16_t, int);
 
 static ERL_NIF_TERM erl_encode_salt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -57,7 +57,7 @@ static ERL_NIF_TERM erl_encode_salt(ErlNifEnv* env, int argc, const ERL_NIF_TERM
 
 static ERL_NIF_TERM hashpw(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    return enif_schedule_nif(env, "bcrypt_init", 0, bcrypt_init, 2, argv);
+    return enif_schedule_nif(env, "bcrypt", 0, bcrypt, 2, argv);
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =

@@ -63,6 +63,8 @@
 
 static int encode_base64(char *, const u_int8_t *, size_t);
 static int decode_base64(u_int8_t *, size_t, const char *);
+static ERL_NIF_TERM bcrypt_expandstate(ErlNifEnv *, int, const ERL_NIF_TERM *);
+static ERL_NIF_TERM bcrypt_fini(ErlNifEnv *, int, const ERL_NIF_TERM *);
 static void secure_bzero(void *, size_t);
 
 static const u_int8_t Base64Code[] =
@@ -190,29 +192,23 @@ encode_salt(char *salt, size_t saltbuflen, uint8_t *csalt, uint16_t clen,
  * initialization routine for the bcrypt algorithm
  */
 ERL_NIF_TERM
-bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+bcrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-	blf_ctx state;
-	u_int32_t rounds, i, k;
-	u_int16_t j;
+	ErlNifBinary state;
+	u_int32_t rounds;
 	size_t key_len;
-	u_int8_t salt_len, logr, minor;
-	u_int8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
-	u_int8_t csalt[BCRYPT_MAXSALT];
-	u_int32_t cdata[BCRYPT_WORDS];
+	u_int8_t logr, minor;
+	ErlNifBinary csalt;
 	char key[1024];
 	char saltbuf[1024];
 	const char *salt = saltbuf;
-	char encrypted[BCRYPT_HASHSPACE];
-	size_t encryptedlen = sizeof(encrypted);
+	ERL_NIF_TERM newargv[7];
 
 	if (argc != 2) {
 		goto inval;
 	}
 
 	/* Get our password and salt from argv */
-	(void)memset(&key, '\0', sizeof(key));
-	(void)memset(&saltbuf, '\0', sizeof(saltbuf));
 	if (!enif_get_string(env, argv[0], key, sizeof(key), ERL_NIF_LATIN1)) {
 		goto inval;
 	}
@@ -220,9 +216,6 @@ bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 				ERL_NIF_LATIN1)) {
 		goto inval;
 	}
-
-	if (encryptedlen < BCRYPT_HASHSPACE)
-		goto inval;
 
 	/* Check and discard "$" identifier */
 	if (salt[0] != '$')
@@ -272,20 +265,115 @@ bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 		goto inval;
 
 	/* We dont want the base64 salt but the raw data */
-	if (decode_base64(csalt, BCRYPT_MAXSALT, salt))
+	if (!enif_alloc_binary(BCRYPT_MAXSALT, &csalt))
 		goto inval;
-	salt_len = BCRYPT_MAXSALT;
+	if (decode_base64((u_int8_t *)csalt.data, csalt.size, salt))
+		goto inval_release_csalt;
 
 	/* Setting up S-Boxes and Subkeys */
-	Blowfish_initstate(&state);
-	Blowfish_expandstate(&state, csalt, salt_len,
-	    (u_int8_t *) key, key_len);
+	if (!enif_alloc_binary(sizeof(blf_ctx), &state))
+		goto inval_release_csalt;
+	Blowfish_initstate((blf_ctx *) state.data);
+	Blowfish_expandstate((blf_ctx *) state.data, (u_int8_t *) csalt.data,
+			csalt.size, (u_int8_t *) key, key_len);
 
-	// FIXME This for-loop is the part that takes the most time.
-	for (k = 0; k < rounds; k++) {
-		Blowfish_expand0state(&state, (u_int8_t *) key, key_len);
-		Blowfish_expand0state(&state, csalt, salt_len);
+	/* Schedule key expansion */
+	newargv[0] = enif_make_binary(env, &state);
+	newargv[1] = enif_make_binary(env, &csalt);
+	newargv[2] = argv[0]; /* key variable */
+	newargv[3] = enif_make_ulong(env, (unsigned long)key_len);
+	newargv[4] = enif_make_ulong(env, (unsigned long)rounds);
+	newargv[5] = enif_make_ulong(env, (unsigned long)minor);
+	newargv[6] = enif_make_ulong(env, (unsigned long)logr);
+	return enif_schedule_nif(env, "bcrypt_expandstate", 0,
+			bcrypt_expandstate, 7, newargv);
+
+inval_release_csalt:
+	enif_release_binary(&csalt);
+inval:
+	return enif_make_badarg(env);
+}
+
+/*
+ * expand the Blowfish key state
+ */
+static ERL_NIF_TERM
+bcrypt_expandstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+	u_int32_t k;
+	ErlNifBinary state, csalt;
+	unsigned long key_len_arg, rounds_arg, minor_arg, logr_arg;
+	char key[1024];
+	size_t key_len;
+	u_int32_t rounds;
+	ERL_NIF_TERM newargv[4];
+
+	/* Initialize our data from argv */
+	if (argc != 7 || !enif_inspect_binary(env, argv[0], &state))
+		return enif_make_badarg(env);
+	if (!enif_inspect_binary(env, argv[1], &csalt)) {
+		enif_release_binary(&state);
+		return enif_make_badarg(env);
 	}
+	if (!enif_get_string(env, argv[2], key, sizeof(key), ERL_NIF_LATIN1) ||
+	    !enif_get_ulong(env, argv[3], &key_len_arg) ||
+	    !enif_get_ulong(env, argv[4], &rounds_arg) ||
+	    !enif_get_ulong(env, argv[5], &minor_arg) ||
+	    !enif_get_ulong(env, argv[6], &logr_arg)) {
+		enif_release_binary(&state);
+		enif_release_binary(&csalt);
+		return enif_make_badarg(env);
+	}
+	key_len = (size_t)key_len_arg;
+	rounds = (u_int32_t)rounds_arg;
+
+	/* Expand state */
+	for (k = 0; k < rounds; k++) {
+		Blowfish_expand0state((blf_ctx *) state.data, (u_int8_t *) key,
+				key_len);
+		Blowfish_expand0state((blf_ctx *) state.data,
+				(u_int8_t *) csalt.data, csalt.size);
+	}
+
+	/* Schedule finalization routine */
+	newargv[0] = enif_make_binary(env, &state);
+	newargv[1] = enif_make_binary(env, &csalt);
+	newargv[2] = argv[5]; /* minor variable */
+	newargv[3] = argv[6]; /* logr variable */
+	return enif_schedule_nif(env, "bcrypt_fini", 0, bcrypt_fini, 4, newargv);
+}
+
+/*
+ * finalization routine for the bcrypt algorithm
+ * encrypt and return the new hash
+ */
+static ERL_NIF_TERM
+bcrypt_fini(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+	u_int32_t i, k;
+	u_int16_t j;
+	u_int8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
+	u_int32_t cdata[BCRYPT_WORDS];
+	char encrypted[BCRYPT_HASHSPACE];
+	ErlNifBinary state, csalt;
+	unsigned long minor_arg, logr_arg;
+	u_int8_t logr, minor;
+
+	/* Initialize our data from argv */
+	if (argc != 4 || !enif_inspect_binary(env, argv[0], &state))
+		return enif_make_badarg(env);
+	if (!enif_inspect_binary(env, argv[1], &csalt)) {
+		enif_release_binary(&state);
+		return enif_make_badarg(env);
+	}
+	if (!enif_get_ulong(env, argv[2], &minor_arg) ||
+	    !enif_get_ulong(env, argv[3], &logr_arg)) {
+		enif_release_binary(&state);
+		enif_release_binary(&csalt);
+		return enif_make_badarg(env);
+	}
+	minor = (u_int8_t)minor_arg;
+	logr = (u_int8_t)logr_arg;
 
 	/* This can be precomputed later */
 	j = 0;
@@ -294,7 +382,7 @@ bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
 	/* Now do the encryption */
 	for (k = 0; k < 64; k++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+		blf_enc((blf_ctx *) state.data, cdata, BCRYPT_WORDS / 2);
 
 	for (i = 0; i < BCRYPT_WORDS; i++) {
 		ciphertext[4 * i + 3] = cdata[i] & 0xff;
@@ -306,18 +394,16 @@ bcrypt_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 		ciphertext[4 * i + 0] = cdata[i] & 0xff;
 	}
 
-
 	snprintf(encrypted, 8, "$2%c$%2.2u$", minor, logr);
-	encode_base64(encrypted + 7, csalt, BCRYPT_MAXSALT);
+	encode_base64(encrypted + 7, (const u_int8_t *) csalt.data, BCRYPT_MAXSALT);
 	encode_base64(encrypted + 7 + 22, ciphertext, 4 * BCRYPT_WORDS - 1);
-	secure_bzero(&state, sizeof(state));
+	secure_bzero(state.data, state.size);
+	enif_release_binary(&state);
 	secure_bzero(ciphertext, sizeof(ciphertext));
-	secure_bzero(csalt, sizeof(csalt));
+	secure_bzero(csalt.data, csalt.size);
+	enif_release_binary(&csalt);
 	secure_bzero(cdata, sizeof(cdata));
 	return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
-
-inval:
-	return enif_make_badarg(env);
 }
 
 /*
