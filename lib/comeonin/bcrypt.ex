@@ -12,10 +12,11 @@ defmodule Comeonin.Bcrypt do
   fixed a small issue that affected some passwords longer than 72 characters.
   """
 
+  use Bitwise
   alias Comeonin.Tools
   alias Comeonin.Config
 
-  @on_load {:init, 0}
+  #@on_load {:init, 0}
 
   def init do
     path = :filename.join(:code.priv_dir(:comeonin), 'bcrypt_nif')
@@ -29,34 +30,70 @@ defmodule Comeonin.Bcrypt do
   of the generation of the salt. Its default is 12, the minimum is 4,
   and the maximum is 31.
   """
-  def gen_salt(log_rounds) when is_integer(log_rounds) do
-    :crypto.rand_bytes(16) |> encode_salt(log_rounds)
+  def gen_salt(log_rounds) when log_rounds in 4..31 do
+    :crypto.rand_bytes(16) |> format(log_rounds)
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
 
-  defp encode_salt(_rand_num, _log_rounds) do
-    exit(:nif_library_not_loaded)
-  end
-
   @doc """
   Hash the password using bcrypt.
   """
-  def hashpass(password, salt) when is_binary(salt) do
-    if String.length(salt) == 29 do
-      hashpass(password, String.to_char_list(salt))
+  def hashpass(password, salt) when is_binary(salt) and is_binary(password) do
+    if byte_size(salt) == 29 do
+      hashpw(password, salt)
     else
       raise ArgumentError, message: "The salt is the wrong length."
     end
   end
-  def hashpass(password, salt) when is_binary(password) do
-    String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
-  end
   def hashpass(_password, _salt) do
-    raise ArgumentError, message: "Wrong type. The password needs to be a string."
+    raise ArgumentError, message: "Wrong type. The password and salt need to be strings."
   end
-  defp hashpw(_password, _salt) do
-    exit(:nif_library_not_loaded)
+
+  def hashpw(password, salt) do
+    [_, prefix, rounds, salt] = String.split(salt, "$")
+    bcrypt(password, salt, prefix, rounds) |> format(salt, rounds)
+  end
+
+  defp format(salt, rounds) do
+    "$2b$#{rounds}$#{Tools.bcrypt64enc(salt)}"
+  end
+  defp format(hash, salt, rounds) do
+    "$2b$#{rounds}$#{Tools.bcrypt64enc(salt)}$#{Tools.bcrypt64enc(hash)}"
+  end
+
+  defp bcrypt(key, salt, prefix, rounds) do
+    key_len = byte_size(key) + 1
+    if prefix == "2b" and key_len > 73, do: key_len = 73
+    {logr, salt} = check_salt(salt, rounds)
+    expand_keys(key, key_len, logr, salt)
+    bcrypt_encrypt
+    finalize
+  end
+
+  defp check_salt(salt, rounds) when rounds in 4..31 do
+    {bsl(1, String.to_integer(rounds)), Tools.bcrypt64dec(salt)}
+  end
+  defp check_salt(_, _), do: raise(ArgumentError, message: "Wrong number of rounds.")
+
+  defp expand_keys(key, key_len, logr, salt, salt_len \\ 16) do
+    #blowfish_initstate(blf_ctx state)
+    #blowfish_expandstate(blf_ctx state, salt, salt_len, key, key_len)
+    #blowfish_expand0state in loop(blf_ctx state, key, key_len) loop is logr long
+  end
+
+  defp bcrypt_encrypt() do
+    #another NIF?
+  end
+
+  defp finalize() do
+    Tools.bcrypt64enc
+  end
+
+  defp iterate(_password, 0, _prev, acc), do: acc
+  defp iterate(password, round, prev, acc) do
+    #next = :crypto.hmac(:sha512, password, prev)
+    #iterate(password, round - 1, next, :crypto.exor(next, acc))
   end
 
   @doc """
@@ -75,9 +112,8 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    password = String.to_char_list(password)
-    hash = String.to_char_list(hash)
-    hashpw(password, hash) |> Tools.secure_check(hash)
+    [_, prefix, rounds, salt, hash] = String.split(hash, "$")
+    bcrypt(password, salt, prefix, rounds) |> Tools.secure_check(hash)
   end
 
   @doc """
