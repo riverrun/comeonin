@@ -22,66 +22,78 @@
 #include "erl_nif.h"
 #include "erl_blf.h"
 
-#define BCRYPT_MAXSALT 16	/* Precomputation is just so nice */
-#define BCRYPT_SALTSPACE	(7 + (BCRYPT_MAXSALT * 4 + 2) / 3 + 1)
-#define BCRYPT_HASHSPACE	61
+#define BCRYPT_WORDS 6
 
-int bcrypt(const char *, const char *, char *, size_t);
-void encode_salt(char *, size_t, uint8_t *, uint16_t, int);
+bf_init(blf_ctx *c)
+bf_expand(blf_ctx *c, const uint8_t *data, uint16_t databytes,
+		const uint8_t *key, uint16_t keybytes);
+bf_expand0(blf_ctx *c, const uint8_t *key, uint16_t keybytes);
+bf_encrypt(blf_ctx *c)
 
-static ERL_NIF_TERM erl_encode_salt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    ErlNifBinary csalt, bin;
-    unsigned long log_rounds;
+	if (!enif_inspect_binary(env, argv[0], &state)) {
+		return enif_make_badarg(env);
+	}
 
-    if (!enif_inspect_binary(env, argv[0], &csalt) || 16 != csalt.size) {
-        return enif_make_badarg(env);
-    }
-
-    if (!enif_get_ulong(env, argv[1], &log_rounds)) {
-        enif_release_binary(&csalt);
-        return enif_make_badarg(env);
-    }
-
-    if (!enif_alloc_binary(64, &bin)) {
-        enif_release_binary(&csalt);
-        return enif_make_badarg(env);
-    }
-
-    encode_salt((char *)bin.data, bin.size, (uint8_t*)csalt.data, csalt.size,
-            log_rounds);
-    enif_release_binary(&csalt);
-
-    return enif_make_string(env, (char *)bin.data, ERL_NIF_LATIN1);
+	Blowfish_initstate(&state);
 }
 
-static ERL_NIF_TERM hashpw(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    char pw[1024];
-    char salt[1024];
-    char encrypted[BCRYPT_HASHSPACE];
+	if (!enif_inspect_binary(env, argv[0], &state)) {
+		return enif_make_badarg(env);
+	}
 
-    (void)memset(&pw, '\0', sizeof(pw));
-    (void)memset(&salt, '\0', sizeof(salt));
+	Blowfish_expandstate(&state, csalt, salt_len,
+			(u_int8_t *) key, key_len);
+}
 
-    if (enif_get_string(env, argv[0], pw, sizeof(pw), ERL_NIF_LATIN1) < 1)
-        return enif_make_badarg(env);
+static ERL_NIF_TERM bf_expand0(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+	if (!enif_inspect_binary(env, argv[0], &state)) {
+		return enif_make_badarg(env);
+	}
 
-    if (enif_get_string(env, argv[1], salt, sizeof(salt), ERL_NIF_LATIN1) < 1)
-        return enif_make_badarg(env);
+	Blowfish_expand0state(&state, (u_int8_t *) key, key_len);
+	Blowfish_expand0state(&state, csalt, salt_len);
+}
 
-    if (bcrypt(pw, salt, encrypted, sizeof(encrypted)) ||
-            0 == strcmp(encrypted, ":")) {
-        return enif_make_badarg(env);
-    }
+static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+	i, k;
+	cdata;
+	ciphertext;
 
-    return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
+	if (!enif_inspect_binary(env, argv[0], &state)) {
+		return enif_make_badarg(env);
+	}
+
+	j = 0;
+	for (i = 0; i < BCRYPT_WORDS; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, 4 * BCRYPT_WORDS, &j);
+
+	/* Now do the encryption */
+	for (k = 0; k < 64; k++)
+		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+
+	for (i = 0; i < BCRYPT_WORDS; i++) {
+		ciphertext[4 * i + 3] = cdata[i] & 0xff;
+		cdata[i] = cdata[i] >> 8;
+		ciphertext[4 * i + 2] = cdata[i] & 0xff;
+		cdata[i] = cdata[i] >> 8;
+		ciphertext[4 * i + 1] = cdata[i] & 0xff;
+		cdata[i] = cdata[i] >> 8;
+		ciphertext[4 * i + 0] = cdata[i] & 0xff;
+	}
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =
 {
-    {"encode_salt", 2, erl_encode_salt},
-    {"hashpw", 2, hashpw}
+	{"bf_init", 2, bf_init},
+	{"bf_expand", 2, bf_expand},
+	{"bf_expand0", 2, bf_expand0},
+	{"bf_encrypt", 2, bf_encrypt}
 };
 
 ERL_NIF_INIT(Elixir.Comeonin.Bcrypt, bcrypt_nif_funcs, NULL, NULL, NULL, NULL)
