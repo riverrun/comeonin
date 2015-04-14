@@ -49,7 +49,7 @@ defmodule Comeonin.Pbkdf2 do
   end
 
   defp format(hash, salt, rounds) do
-    "$pbkdf2-sha512$#{rounds}$#{salt |> Tools.encode64}$#{hash |> Tools.encode64}"
+    "$pbkdf2-sha512$#{rounds}$#{Tools.encode64(salt)}$#{Tools.encode64(hash)}"
   end
 
   @doc """
