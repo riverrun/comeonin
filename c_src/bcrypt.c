@@ -366,9 +366,9 @@ bcrypt_expandstate(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 			break;
 		gettimeofday(&stop, NULL);
 
-		pct = calc_percent(&total, &stop, &start);
+		pct = calc_percent(&total, &start, &stop);
 		if (enif_consume_timeslice(env, pct)) {
-			/* Scheudle the next slice */
+			/* Schedule the next run */
 			max_per_slice = adjust_max_per_slice(max_per_slice,
 					total, k, start_index);
 
@@ -489,18 +489,18 @@ secure_bzero(void *buf, size_t len)
 }
 
 /*
- * return the percentage of our timeslice (1 millisecond) that has occurred
- * between start and stop
- * called from bcrypt_expandstate()
+ * Return how much of our allotted time (1 millisecond) we have used up
+ * between start and stop.  Update total to reflect the percentage of time
+ * that has so far been used.
  */
 static int
 calc_percent(int *total, struct timeval *start, struct timeval *stop)
 {
 	int pct;
-	struct timeval slice;
+	struct timeval diff;
 
-	timersub(stop, start, &slice);
-	pct = (int)((slice.tv_sec * 1000000 + slice.tv_usec) / 10);
+	timersub(stop, start, &diff);
+	pct = (int)((diff.tv_sec * 1000000 + diff.tv_usec) / 10);
 	*total += pct;
 
 	if (pct > 100)
@@ -512,9 +512,8 @@ calc_percent(int *total, struct timeval *start, struct timeval *stop)
 }
 
 /*
- * take the current max_per_slice, total, index, and start_index and return
- * the value of the new max_per_slice given how much we were able to calculate
- * this slice
+ * Return the optimum max_per_slice value given how much work we were able to
+ * accomplish this time around.
  */
 static unsigned long
 adjust_max_per_slice(int max_per_slice, int total, u_int32_t k,
@@ -522,7 +521,10 @@ adjust_max_per_slice(int max_per_slice, int total, u_int32_t k,
 {
 	int m = total / 100;
 
-	if (m == 1)
+	max_per_slice = k - start_index;
+	if (m == 0)
+		return max_per_slice;
+	else if (m == 1)
 		return max_per_slice - (max_per_slice * (total - 100) / 100);
 	else
 		return max_per_slice / m;
