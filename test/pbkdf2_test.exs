@@ -8,6 +8,24 @@ defmodule Comeonin.Pbkdf2Test do
       assert Pbkdf2.hashpass(password, salt, rounds) == stored_hash
     end
   end
+ 
+  test "base pbkdf2_sha512 tests" do
+    [
+      {"passDATAb00AB7YxDTT",
+        "saltKEYbcTcXHCBxtjD",
+        100_000,
+        "$pbkdf2-sha512$100000$c2FsdEtFWWJjVGNYSENCeHRqRA$rM3Nh5iuXNhYBHOQFe8qEeMlkbe30W92gZswsNSdgOGr6myYIrgKH9/kIeJvVgPsqKR6ZMmgBPta.CKfdi/0Hw"},
+      {"passDATAb00AB7YxDTTl",
+        "saltKEYbcTcXHCBxtjD2",
+        100_000,
+        "$pbkdf2-sha512$100000$c2FsdEtFWWJjVGNYSENCeHRqRDI$WUJWsL1NbJ8hqH97pXcqeRoQ5hEGlPRDZc2UZw5X8a7NeX7x0QAZOHGQRMfwGAJml4Reua2X2X3jarh4aqtQlg"},
+      {"passDATAb00AB7YxDTTlRH2dqxDx19GDxDV1zFMz7E6QVqKIzwOtMnlxQLttpE5",
+        "saltKEYbcTcXHCBxtjD2PnBh44AIQ6XUOCESOhXpEp3HrcGMwbjzQKMSaf63IJe",
+        100_000,
+        "$pbkdf2-sha512$100000$c2FsdEtFWWJjVGNYSENCeHRqRDJQbkJoNDRBSVE2WFVPQ0VTT2hYcEVwM0hyY0dNd2JqelFLTVNhZjYzSUpl$B0R0AchXZuSu1YPeLmv1pnXqvk82GCgclWFvT8H9/m7LwcOYJ4nU/ZQdZYTvU0p4vTeuAlVdlFXo8In9tN.2uw"}
+    ]
+  |> check_vectors
+  end
 
   test "Python passlib pbkdf2_sha512 tests" do
     [
