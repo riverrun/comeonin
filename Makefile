@@ -18,7 +18,7 @@ NIF_SRC=\
 
 all: comeonin
 
-priv/bcrypt_nif.so:
+priv/bcrypt_nif.so: $(NIF_SRC)
 	$(CC) $(CFLAGS) -shared $(LDFLAGS) -o $@ $(NIF_SRC)
 
 comeonin:

@@ -46,7 +46,7 @@ defmodule Comeonin.Bcrypt do
   and the maximum is 31.
   """
   def gen_salt(log_rounds) when log_rounds in 4..31 do
-    :crypto.rand_bytes(16) |> fmt_salt(log_rounds)
+    :crypto.rand_bytes(16) |> fmt_salt(zero_str(log_rounds))
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
@@ -65,21 +65,12 @@ defmodule Comeonin.Bcrypt do
     raise ArgumentError, message: "Wrong type. The password and salt need to be strings."
   end
 
-  def hashpw(password, salt) do
+  defp hashpw(password, salt) do
     {salt, _} = String.split_at(salt, 29)
     [_, prefix, log_rounds, salt] = String.split(salt, "$")
     bcrypt(password, salt, prefix, log_rounds)
     |> :erlang.list_to_binary
-    |> fmt_hash(salt, log_rounds)
-  end
-
-  defp fmt_salt(salt, log_rounds) do
-    if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
-    "#{prefix}#{log_rounds}$#{Tools.bcrypt64enc(salt)}"
-  end
-  defp fmt_hash(hash, salt, log_rounds) do
-    if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
-    "#{prefix}#{log_rounds}$#{salt}#{Tools.bcrypt64enc(hash)}"
+    |> fmt_hash(salt, prefix, zero_str(log_rounds))
   end
 
   defp bcrypt(key, salt, prefix, log_rounds) do
@@ -92,9 +83,9 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
-    key = :erlang.binary_to_list(key)
-    salt = Tools.bcrypt64dec(salt) |> :erlang.binary_to_list
-    {key, salt, bsl(1, log_rounds)}
+    {:erlang.binary_to_list(key),
+      Tools.bcrypt64dec(salt) |> :erlang.binary_to_list,
+      bsl(1, log_rounds)}
   end
   defp prepare_keys(_, _, _) do
     raise ArgumentError, message: "Wrong number of rounds."
@@ -104,6 +95,16 @@ defmodule Comeonin.Bcrypt do
   defp expand_keys(state, key, key_len, salt, rounds) do
     bf_expand(state, key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds - 1)
+  end
+
+  defp zero_str(log_rounds) do
+    if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
+  end
+  defp fmt_salt(salt, log_rounds) do
+    "$2b$#{log_rounds}$#{Tools.bcrypt64enc(salt)}"
+  end
+  defp fmt_hash(hash, salt, prefix, log_rounds) do
+    "$#{prefix}$#{log_rounds}$#{salt}#{Tools.bcrypt64enc(hash)}"
   end
 
   @doc """

@@ -25,18 +25,11 @@
 #define BCRYPT_MAXSALT 16
 #define BCRYPT_WORDS 6
 
-void Blowfish_initstate(blf_ctx *c);
-void Blowfish_expandstate(blf_ctx *c, const uint8_t *data, uint16_t databytes,
-		const uint8_t *key, uint16_t keybytes);
-void Blowfish_expand0state(blf_ctx *c, const uint8_t *key, uint16_t keybytes);
-uint32_t Blowfish_stream2word(const uint8_t *data, uint16_t databytes, uint16_t *current);
-void blf_enc(blf_ctx *c, uint32_t *data, uint16_t blocks);
-
 static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary state;
 	char key[1024];
-	char salt[BCRYPT_MAXSALT];
+	char salt[1024];
 	size_t key_len;
 	unsigned long key_len_arg;
 	uint8_t salt_len;
@@ -51,6 +44,7 @@ static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_alloc_binary(sizeof(blf_ctx), &state))
 		return enif_make_badarg(env);
 
+	printf("%s", salt);
 	Blowfish_initstate((blf_ctx *) state.data);
 	Blowfish_expandstate((blf_ctx *) state.data, (uint8_t *) salt,
 			salt_len, (uint8_t *) key, key_len);
@@ -62,7 +56,7 @@ static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
 {
 	ErlNifBinary state;
 	char key[1024];
-	char salt[BCRYPT_MAXSALT];
+	char salt[1024];
 	size_t key_len;
 	unsigned long key_len_arg;
 	uint8_t salt_len;
@@ -114,7 +108,7 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 		ciphertext[4 * i + 0] = cdata[i] & 0xff;
 	}
 
-	snprintf(encrypted, 24, (const char *) ciphertext);
+	snprintf(encrypted, 24, "%s", (const char *) ciphertext);
 	return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
 }
 
