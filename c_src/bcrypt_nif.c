@@ -24,58 +24,84 @@
 
 #define BCRYPT_WORDS 6
 
-bf_init(blf_ctx *c)
-bf_expand(blf_ctx *c, const uint8_t *data, uint16_t databytes,
+void Blowfish_initstate(blf_ctx *c);
+void Blowfish_expandstate(blf_ctx *c, const uint8_t *data, uint16_t databytes,
 		const uint8_t *key, uint16_t keybytes);
-bf_expand0(blf_ctx *c, const uint8_t *key, uint16_t keybytes);
-bf_encrypt(blf_ctx *c)
+void Blowfish_expand0state(blf_ctx *c, const uint8_t *key, uint16_t keybytes);
+uint32_t Blowfish_stream2word(const uint8_t *data, uint16_t databytes, uint16_t *current);
+void blf_enc(blf_ctx *c, uint32_t *data, uint16_t blocks);
 
 static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-	if (!enif_inspect_binary(env, argv[0], &state)) {
+	ErlNifBinary state, csalt;
+	char key[1024];
+	size_t key_len;
+	unsigned long key_len_arg;
+
+	if (argc != 3 || !enif_get_string(env, argv[0], key, sizeof(key), ERL_NIF_LATIN1) ||
+		!enif_get_ulong(env, argv[1], &key_len_arg))
+		return enif_make_badarg(env);
+	key_len = (size_t) key_len_arg;
+
+	if (!enif_inspect_binary(env, argv[2], &csalt)) {
 		return enif_make_badarg(env);
 	}
 
-	Blowfish_initstate(&state);
+	Blowfish_initstate((blf_ctx *) state.data);
+	Blowfish_expandstate((blf_ctx *) state.data, (uint8_t *) csalt.data,
+			csalt.size, (uint8_t *) key, key_len);
+
+	return enif_make_binary(env, &state);
 }
 
 static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-	if (!enif_inspect_binary(env, argv[0], &state)) {
+	ErlNifBinary state, csalt;
+	char key[1024];
+	size_t key_len;
+	unsigned long key_len_arg;
+
+	if (argc != 4 || !enif_inspect_binary(env, argv[0], &state))
+		return enif_make_badarg(env);
+	if (!enif_inspect_binary(env, argv[1], &csalt)) {
+		enif_release_binary(&state);
 		return enif_make_badarg(env);
 	}
-
-	Blowfish_expandstate(&state, csalt, salt_len,
-			(u_int8_t *) key, key_len);
-}
-
-static ERL_NIF_TERM bf_expand0(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-	if (!enif_inspect_binary(env, argv[0], &state)) {
+	if (!enif_get_string(env, argv[2], key, sizeof(key), ERL_NIF_LATIN1) ||
+			!enif_get_ulong(env, argv[3], &key_len_arg)) {
+		enif_release_binary(&state);
+		enif_release_binary(&csalt);
 		return enif_make_badarg(env);
 	}
+	key_len = (size_t) key_len_arg;
 
-	Blowfish_expand0state(&state, (u_int8_t *) key, key_len);
-	Blowfish_expand0state(&state, csalt, salt_len);
+	Blowfish_expand0state((blf_ctx *) state.data, (uint8_t *) key, key_len);
+	Blowfish_expand0state((blf_ctx *) state.data, (uint8_t *) csalt.data, csalt.size);
+
+	return enif_make_binary(env, &state);
 }
 
 static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-	i, k;
-	cdata;
-	ciphertext;
+	uint32_t i, k;
+	uint16_t j;
+	uint8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
+	uint32_t cdata[BCRYPT_WORDS];
+	char encrypted[61];
+	ErlNifBinary state;
 
-	if (!enif_inspect_binary(env, argv[0], &state)) {
+	/* Initialize our data from argv */
+	if (argc != 1 || !enif_inspect_binary(env, argv[0], &state))
 		return enif_make_badarg(env);
-	}
 
+	/* This can be precomputed later */
 	j = 0;
 	for (i = 0; i < BCRYPT_WORDS; i++)
 		cdata[i] = Blowfish_stream2word(ciphertext, 4 * BCRYPT_WORDS, &j);
 
 	/* Now do the encryption */
 	for (k = 0; k < 64; k++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+		blf_enc((blf_ctx *) state.data, cdata, BCRYPT_WORDS / 2);
 
 	for (i = 0; i < BCRYPT_WORDS; i++) {
 		ciphertext[4 * i + 3] = cdata[i] & 0xff;
@@ -86,14 +112,16 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 		cdata[i] = cdata[i] >> 8;
 		ciphertext[4 * i + 0] = cdata[i] & 0xff;
 	}
+
+	snprintf(encrypted, 61, (const char *) ciphertext);
+	return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =
 {
-	{"bf_init", 2, bf_init},
-	{"bf_expand", 2, bf_expand},
-	{"bf_expand0", 2, bf_expand0},
-	{"bf_encrypt", 2, bf_encrypt}
+	{"bf_init", 3, bf_init},
+	{"bf_expand", 4, bf_expand},
+	{"bf_encrypt", 1, bf_encrypt}
 };
 
 ERL_NIF_INIT(Elixir.Comeonin.Bcrypt, bcrypt_nif_funcs, NULL, NULL, NULL, NULL)

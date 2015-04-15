@@ -16,12 +16,27 @@ defmodule Comeonin.Bcrypt do
   alias Comeonin.Tools
   alias Comeonin.Config
 
-  #@on_load {:init, 0}
+  @on_load {:init, 0}
 
   def init do
     path = :filename.join(:code.priv_dir(:comeonin), 'bcrypt_nif')
     :ok = :erlang.load_nif(path, 0)
   end
+
+  @doc """
+  """
+  def bf_init(key, key_len, salt)
+  def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  """
+  def bf_expand(state, key, key_len, salt)
+  def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  """
+  def bf_encrypt(state)
+  def bf_encrypt(_), do: exit(:nif_library_not_loaded)
 
   @doc """
   Generate a salt for use with the `hashpass` function.
@@ -51,49 +66,42 @@ defmodule Comeonin.Bcrypt do
   end
 
   def hashpw(password, salt) do
-    [_, prefix, rounds, salt] = String.split(salt, "$")
-    bcrypt(password, salt, prefix, rounds) |> format(salt, rounds)
+    [_, prefix, log_rounds, salt] = String.split(salt, "$")
+    bcrypt(password, salt, prefix, log_rounds) |> format(salt, log_rounds)
   end
 
-  defp format(salt, rounds) do
-    "$2b$#{rounds}$#{Tools.bcrypt64enc(salt)}"
+  defp format(salt, log_rounds) do
+    if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
+    "#{prefix}#{log_rounds}$#{Tools.bcrypt64enc(salt)}"
   end
-  defp format(hash, salt, rounds) do
-    "$2b$#{rounds}$#{Tools.bcrypt64enc(salt)}$#{Tools.bcrypt64enc(hash)}"
+  defp format(hash, salt, log_rounds) do
+    if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
+    "#{prefix}#{log_rounds}$#{Tools.bcrypt64enc(salt)}$#{Tools.bcrypt64enc(hash)}"
   end
 
-  defp bcrypt(key, salt, prefix, rounds) do
+  defp bcrypt(key, salt, prefix, log_rounds) do
     key_len = byte_size(key) + 1
     if prefix == "2b" and key_len > 73, do: key_len = 73
-    {logr, salt} = check_salt(salt, rounds)
-    expand_keys(key, key_len, logr, salt)
-    bcrypt_encrypt
-    finalize
+    {rounds, salt} = check_salt(salt, String.to_integer(log_rounds))
+    key = :erlang.binary_to_list(key)
+    salt = :erlang.binary_to_list(salt)
+    bf_init(key, key_len, salt)
+    |> expand_keys(key, key_len, salt, rounds)
+    |> bf_encrypt
   end
 
-  defp check_salt(salt, rounds) when rounds in 4..31 do
-    {bsl(1, String.to_integer(rounds)), Tools.bcrypt64dec(salt)}
+  defp check_salt(salt, log_rounds) when log_rounds in 4..31 do
+    {bsl(1, log_rounds), Tools.bcrypt64dec(salt)}
   end
-  defp check_salt(_, _), do: raise(ArgumentError, message: "Wrong number of rounds.")
-
-  defp expand_keys(key, key_len, logr, salt, salt_len \\ 16) do
-    #blowfish_initstate(blf_ctx state)
-    #blowfish_expandstate(blf_ctx state, salt, salt_len, key, key_len)
-    #blowfish_expand0state in loop(blf_ctx state, key, key_len) loop is logr long
+  defp check_salt(_, log_rounds) do
+    IO.inspect log_rounds
+    raise ArgumentError, message: "Wrong number of rounds."
   end
 
-  defp bcrypt_encrypt() do
-    #another NIF?
-  end
-
-  defp finalize() do
-    Tools.bcrypt64enc
-  end
-
-  defp iterate(_password, 0, _prev, acc), do: acc
-  defp iterate(password, round, prev, acc) do
-    #next = :crypto.hmac(:sha512, password, prev)
-    #iterate(password, round - 1, next, :crypto.exor(next, acc))
+  defp expand_keys(state, _key, _key_len, _salt, 0), do: state
+  defp expand_keys(state, key, key_len, salt, rounds) do
+    bf_expand(state, key, key_len, salt)
+    |> expand_keys(key, key_len, salt, rounds - 1)
   end
 
   @doc """
@@ -112,8 +120,8 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    [_, prefix, rounds, salt, hash] = String.split(hash, "$")
-    bcrypt(password, salt, prefix, rounds) |> Tools.secure_check(hash)
+    [_, prefix, log_rounds, salt, hash] = String.split(hash, "$")
+    bcrypt(password, salt, prefix, log_rounds) |> Tools.secure_check(hash)
   end
 
   @doc """
