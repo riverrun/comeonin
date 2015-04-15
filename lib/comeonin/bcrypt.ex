@@ -66,6 +66,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   def hashpw(password, salt) do
+    {salt, _} = String.split_at(salt, 29)
     [_, prefix, log_rounds, salt] = String.split(salt, "$")
     bcrypt(password, salt, prefix, log_rounds)
     |> :erlang.list_to_binary
@@ -121,10 +122,9 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    [_, prefix, log_rounds, salt_hash] = String.split(hash, "$")
-    {salt, hash} = String.split_at(salt_hash, 22)
-    bcrypt(password, salt, prefix, log_rounds)
-    |> Tools.secure_check(:erlang.binary_to_list(hash))
+    hashpw(password, hash)
+    |> String.to_char_list
+    |> Tools.secure_check(String.to_char_list(hash))
   end
 
   @doc """

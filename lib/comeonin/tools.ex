@@ -102,9 +102,6 @@ defmodule Comeonin.Tools do
   @doc """
   Compares the two binaries in constant time to avoid timing attacks.
   """
-  def secure_check(hash, stored) when is_binary(hash) and is_binary(stored) do
-    secure_check(:erlang.binary_to_list(hash), :erlang.binary_to_list(stored))
-  end
   def secure_check(hash, stored) do
     if length(hash) == length(stored) do
       secure_check(hash, stored, 0) == 0
