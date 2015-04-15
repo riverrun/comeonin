@@ -42,11 +42,11 @@ defmodule Comeonin.Bcrypt do
   Generate a salt for use with the `hashpass` function.
 
   The log_rounds parameter determines the computational complexity
-  of the generation of the salt. Its default is 12, the minimum is 4,
+  of the generation of the password hash. Its default is 12, the minimum is 4,
   and the maximum is 31.
   """
   def gen_salt(log_rounds) when log_rounds in 4..31 do
-    :crypto.rand_bytes(16) |> format(log_rounds)
+    :crypto.rand_bytes(16) |> fmt_salt(log_rounds)
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
@@ -67,34 +67,35 @@ defmodule Comeonin.Bcrypt do
 
   def hashpw(password, salt) do
     [_, prefix, log_rounds, salt] = String.split(salt, "$")
-    bcrypt(password, salt, prefix, log_rounds) |> format(salt, log_rounds)
+    bcrypt(password, salt, prefix, log_rounds)
+    |> :erlang.list_to_binary
+    |> fmt_hash(salt, log_rounds)
   end
 
-  defp format(salt, log_rounds) do
+  defp fmt_salt(salt, log_rounds) do
     if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
     "#{prefix}#{log_rounds}$#{Tools.bcrypt64enc(salt)}"
   end
-  defp format(hash, salt, log_rounds) do
+  defp fmt_hash(hash, salt, log_rounds) do
     if log_rounds < 10, do: prefix = "$2b$0", else: prefix = "$2b$"
-    "#{prefix}#{log_rounds}$#{Tools.bcrypt64enc(salt)}$#{Tools.bcrypt64enc(hash)}"
+    "#{prefix}#{log_rounds}$#{salt}#{Tools.bcrypt64enc(hash)}"
   end
 
   defp bcrypt(key, salt, prefix, log_rounds) do
     key_len = byte_size(key) + 1
     if prefix == "2b" and key_len > 73, do: key_len = 73
-    {rounds, salt} = check_salt(salt, String.to_integer(log_rounds))
-    key = :erlang.binary_to_list(key)
-    salt = :erlang.binary_to_list(salt)
+    {key, salt, rounds} = prepare_keys(key, salt, String.to_integer(log_rounds))
     bf_init(key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds)
     |> bf_encrypt
   end
 
-  defp check_salt(salt, log_rounds) when log_rounds in 4..31 do
-    {bsl(1, log_rounds), Tools.bcrypt64dec(salt)}
+  defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
+    key = :erlang.binary_to_list(key)
+    salt = Tools.bcrypt64dec(salt) |> :erlang.binary_to_list
+    {key, salt, bsl(1, log_rounds)}
   end
-  defp check_salt(_, log_rounds) do
-    IO.inspect log_rounds
+  defp prepare_keys(_, _, _) do
     raise ArgumentError, message: "Wrong number of rounds."
   end
 
@@ -108,7 +109,7 @@ defmodule Comeonin.Bcrypt do
   Hash the password with a salt which is randomly generated.
 
   There is an option to change the log_rounds parameter, which
-  affects the complexity of the generation of the salt.
+  affects the complexity of the generation of the password hash.
   """
   def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
     hashpass(password, gen_salt(log_rounds))
@@ -120,8 +121,10 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    [_, prefix, log_rounds, salt, hash] = String.split(hash, "$")
-    bcrypt(password, salt, prefix, log_rounds) |> Tools.secure_check(hash)
+    [_, prefix, log_rounds, salt_hash] = String.split(hash, "$")
+    {salt, hash} = String.split_at(salt_hash, 22)
+    bcrypt(password, salt, prefix, log_rounds)
+    |> Tools.secure_check(:erlang.binary_to_list(hash))
   end
 
   @doc """
