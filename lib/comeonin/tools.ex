@@ -25,10 +25,10 @@ defmodule Comeonin.Tools do
 
   ## Examples
 
-      iex> Comeonin.Tools.base64enc "spamandeggs"
+      iex> Comeonin.Tools.enc_base64 "spamandeggs"
       "c3BhbWFuZGVnZ3M"
   """
-  def base64enc(data) when is_binary(data) do
+  def enc_base64(data) when is_binary(data) do
     encode64(data, &enc64/1)
   end
 
@@ -38,10 +38,10 @@ defmodule Comeonin.Tools do
 
   ## Examples
 
-      iex> Comeonin.Tools.base64dec "c3BhbWFuZGVnZ3M"
+      iex> Comeonin.Tools.dec_base64 "c3BhbWFuZGVnZ3M"
       "spamandeggs"
   """
-  def base64dec(string) when is_binary(string) do
+  def dec_base64(string) when is_binary(string) do
     decode64(string, &dec64/1)
   end
 
@@ -50,10 +50,10 @@ defmodule Comeonin.Tools do
 
   ## Examples
 
-      iex> Comeonin.Tools.bcrypt64enc "spamandeggs"
+      iex> Comeonin.Tools.enc_bcrypt64 "spamandeggs"
       "a1/fZUDsXETlX1K"
   """
-  def bcrypt64enc(data) when is_binary(data) do
+  def enc_bcrypt64(data) when is_binary(data) do
     encode64(data, &enc64bcrypt/1)
   end
 
@@ -62,10 +62,10 @@ defmodule Comeonin.Tools do
 
   ## Examples
 
-      iex> Comeonin.Tools.bcrypt64dec "a1/fZUDsXETlX1K"
+      iex> Comeonin.Tools.dec_bcrypt64 "a1/fZUDsXETlX1K"
       "spamandeggs"
   """
-  def bcrypt64dec(string) when is_binary(string) do
+  def dec_bcrypt64(string) when is_binary(string) do
     decode64(string, &dec64bcrypt/1)
   end
 

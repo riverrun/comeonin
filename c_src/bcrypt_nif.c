@@ -1,5 +1,8 @@
+/*	$OpenBSD: bcrypt.c,v 1.52 2015/01/28 23:33:52 tedu Exp $	*/
+
 /*
- * Copyright (c) 2011 Hunter Morris <hunter.morris@smarkets.com>
+ * Copyright (c) 2014 Ted Unangst <tedu@openbsd.org>
+ * Copyright (c) 1997 Niels Provos <provos@umich.edu>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,6 +16,22 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+/* This password hashing algorithm was designed by David Mazieres
+ * <dm@lcs.mit.edu> and works as follows:
+ *
+ * 1. state := InitState ()
+ * 2. state := ExpandKey (state, salt, password)
+ * 3. REPEAT rounds:
+ *      state := ExpandKey (state, 0, password)
+ *	state := ExpandKey (state, 0, salt)
+ * 4. ctext := "OrpheanBeholderScryDoubt"
+ * 5. REPEAT 64:
+ * 	ctext := Encrypt_ECB (state, ctext);
+ * 6. RETURN Concatenate (salt, ctext);
+ *
+ * This version is designed to not allow any NIF to run for too long,
+ * and has been implemented by David Whitlock and Jason M Barnes.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +43,7 @@
 
 #define BCRYPT_MAXSALT 16
 #define BCRYPT_WORDS 6
+#define	BCRYPT_HASHLEN 23
 
 static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -78,11 +98,11 @@ static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
 static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary state;
-	uint32_t i, k;
+	uint32_t i, k, m;
 	uint16_t j;
 	uint8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
 	uint32_t cdata[BCRYPT_WORDS];
-	char encrypted[4 * BCRYPT_WORDS];
+	ERL_NIF_TERM encrypted[4 * BCRYPT_WORDS];
 
 	/* Initialize our data from argv */
 	if (argc != 1 || !enif_inspect_binary(env, argv[0], &state))
@@ -107,8 +127,10 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 		ciphertext[4 * i + 0] = cdata[i] & 0xff;
 	}
 
-	snprintf(encrypted, 24, "%s", (const char *) ciphertext);
-	return enif_make_string(env, encrypted, ERL_NIF_LATIN1);
+	for (m = 0; m < BCRYPT_HASHLEN; m++) {
+		encrypted[m] = enif_make_uint(env, ciphertext[m]);
+	}
+	return enif_make_list_from_array(env, encrypted, BCRYPT_HASHLEN);
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =

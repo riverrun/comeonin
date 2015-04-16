@@ -49,7 +49,7 @@ defmodule Comeonin.Pbkdf2 do
   end
 
   defp format(hash, salt, rounds) do
-    "$pbkdf2-sha512$#{rounds}$#{Tools.base64enc(salt)}$#{Tools.base64enc(hash)}"
+    "$pbkdf2-sha512$#{rounds}$#{Tools.enc_base64(salt)}$#{Tools.enc_base64(hash)}"
   end
 
   @doc """
@@ -59,8 +59,8 @@ defmodule Comeonin.Pbkdf2 do
   """
   def checkpw(password, hash) do
     [_, _, rounds, salt, hash] = String.split(hash, "$")
-    pbkdf2(password, Tools.base64dec(salt), String.to_integer(rounds), 64)
-    |> Tools.base64enc
+    pbkdf2(password, Tools.dec_base64(salt), String.to_integer(rounds), 64)
+    |> Tools.enc_base64
     |> String.to_char_list
     |> Tools.secure_check(String.to_char_list(hash))
   end

@@ -24,16 +24,21 @@ defmodule Comeonin.Bcrypt do
   end
 
   @doc """
+  Initialize the P-box and S-box tables with the digits of Pi,
+  and then start the key expansion process.
   """
   def bf_init(key, key_len, salt)
   def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
 
   @doc """
+  The main key expansion function. This function is called
+  2^log_rounds times.
   """
   def bf_expand(state, key, key_len, salt)
   def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
 
   @doc """
+  Encrypt and return the hash.
   """
   def bf_encrypt(state)
   def bf_encrypt(_), do: exit(:nif_library_not_loaded)
@@ -74,7 +79,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp bcrypt(key, salt, prefix, log_rounds) do
-    key_len = byte_size(key) + 1
+    key_len = String.length(key) + 1
     if prefix == "2b" and key_len > 73, do: key_len = 73
     {key, salt, rounds} = prepare_keys(key, salt, String.to_integer(log_rounds))
     bf_init(key, key_len, salt)
@@ -84,7 +89,7 @@ defmodule Comeonin.Bcrypt do
 
   defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
     {String.to_char_list(key),
-      Tools.bcrypt64dec(salt) |> :erlang.binary_to_list,
+      Tools.dec_bcrypt64(salt) |> :erlang.binary_to_list,
       bsl(1, log_rounds)}
   end
   defp prepare_keys(_, _, _) do
@@ -101,17 +106,19 @@ defmodule Comeonin.Bcrypt do
     if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
   end
   defp fmt_salt(salt, log_rounds) do
-    "$2b$#{log_rounds}$#{Tools.bcrypt64enc(salt)}"
+    "$2b$#{log_rounds}$#{Tools.enc_bcrypt64(salt)}"
   end
   defp fmt_hash(hash, salt, prefix, log_rounds) do
-    "$#{prefix}$#{log_rounds}$#{salt}#{Tools.bcrypt64enc(hash)}"
+    "$#{prefix}$#{log_rounds}$#{salt}#{Tools.enc_bcrypt64(hash)}"
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
 
   There is an option to change the log_rounds parameter, which
-  affects the complexity of the generation of the password hash.
+  affects the complexity (and the time taken) of the generation
+  of the password hash. For more details, read the docs for the
+  main `Comeonin` module.
   """
   def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
     hashpass(password, gen_salt(log_rounds))
