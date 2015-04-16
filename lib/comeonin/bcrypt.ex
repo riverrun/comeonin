@@ -83,7 +83,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
-    {:erlang.binary_to_list(key),
+    {String.to_char_list(key),
       Tools.bcrypt64dec(salt) |> :erlang.binary_to_list,
       bsl(1, log_rounds)}
   end

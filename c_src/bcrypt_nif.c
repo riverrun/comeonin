@@ -44,7 +44,6 @@ static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 	if (!enif_alloc_binary(sizeof(blf_ctx), &state))
 		return enif_make_badarg(env);
 
-	printf("%s", salt);
 	Blowfish_initstate((blf_ctx *) state.data);
 	Blowfish_expandstate((blf_ctx *) state.data, (uint8_t *) salt,
 			salt_len, (uint8_t *) key, key_len);
@@ -83,7 +82,7 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 	uint16_t j;
 	uint8_t ciphertext[4 * BCRYPT_WORDS] = "OrpheanBeholderScryDoubt";
 	uint32_t cdata[BCRYPT_WORDS];
-	char encrypted[24];
+	char encrypted[4 * BCRYPT_WORDS];
 
 	/* Initialize our data from argv */
 	if (argc != 1 || !enif_inspect_binary(env, argv[0], &state))
