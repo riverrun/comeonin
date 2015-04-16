@@ -14,7 +14,6 @@ endif
 
 NIF_SRC=\
 	c_src/bcrypt_nif.c\
-	c_src/bcrypt.c\
 	c_src/blowfish.c
 
 all: comeonin

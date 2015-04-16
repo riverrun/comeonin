@@ -12,6 +12,7 @@ defmodule Comeonin.Bcrypt do
   fixed a small issue that affected some passwords longer than 72 characters.
   """
 
+  use Bitwise
   alias Comeonin.Tools
   alias Comeonin.Config
 
@@ -23,47 +24,101 @@ defmodule Comeonin.Bcrypt do
   end
 
   @doc """
+  Initialize the P-box and S-box tables with the digits of Pi,
+  and then start the key expansion process.
+  """
+  def bf_init(key, key_len, salt)
+  def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  The main key expansion function. This function is called
+  2^log_rounds times.
+  """
+  def bf_expand(state, key, key_len, salt)
+  def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  Encrypt and return the hash.
+  """
+  def bf_encrypt(state)
+  def bf_encrypt(_), do: exit(:nif_library_not_loaded)
+
+  @doc """
   Generate a salt for use with the `hashpass` function.
 
   The log_rounds parameter determines the computational complexity
-  of the generation of the salt. Its default is 12, the minimum is 4,
+  of the generation of the password hash. Its default is 12, the minimum is 4,
   and the maximum is 31.
   """
-  def gen_salt(log_rounds) when is_integer(log_rounds) do
-    :crypto.rand_bytes(16) |> encode_salt(log_rounds)
+  def gen_salt(log_rounds) when log_rounds in 4..31 do
+    :crypto.rand_bytes(16) |> fmt_salt(zero_str(log_rounds))
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
 
-  defp encode_salt(_rand_num, _log_rounds) do
-    exit(:nif_library_not_loaded)
-  end
-
   @doc """
   Hash the password using bcrypt.
   """
-  def hashpass(password, salt) when is_binary(salt) do
-    if String.length(salt) == 29 do
-      hashpass(password, String.to_char_list(salt))
+  def hashpass(password, salt) when is_binary(salt) and is_binary(password) do
+    if byte_size(salt) == 29 do
+      hashpw(password, salt)
     else
       raise ArgumentError, message: "The salt is the wrong length."
     end
   end
-  def hashpass(password, salt) when is_binary(password) do
-    String.to_char_list(password) |> hashpw(salt) |> :erlang.list_to_binary
-  end
   def hashpass(_password, _salt) do
-    raise ArgumentError, message: "Wrong type. The password needs to be a string."
+    raise ArgumentError, message: "Wrong type. The password and salt need to be strings."
   end
-  defp hashpw(_password, _salt) do
-    exit(:nif_library_not_loaded)
+
+  defp hashpw(password, salt) do
+    {salt, _} = String.split_at(salt, 29)
+    [_, prefix, log_rounds, salt] = String.split(salt, "$")
+    bcrypt(password, salt, prefix, log_rounds)
+    |> :erlang.list_to_binary
+    |> fmt_hash(salt, prefix, zero_str(log_rounds))
+  end
+
+  defp bcrypt(key, salt, prefix, log_rounds) do
+    key_len = String.length(key) + 1
+    if prefix == "2b" and key_len > 73, do: key_len = 73
+    {key, salt, rounds} = prepare_keys(key, salt, String.to_integer(log_rounds))
+    bf_init(key, key_len, salt)
+    |> expand_keys(key, key_len, salt, rounds)
+    |> bf_encrypt
+  end
+
+  defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
+    {String.to_char_list(key),
+      Tools.dec_bcrypt64(salt) |> :erlang.binary_to_list,
+      bsl(1, log_rounds)}
+  end
+  defp prepare_keys(_, _, _) do
+    raise ArgumentError, message: "Wrong number of rounds."
+  end
+
+  defp expand_keys(state, _key, _key_len, _salt, 0), do: state
+  defp expand_keys(state, key, key_len, salt, rounds) do
+    bf_expand(state, key, key_len, salt)
+    |> expand_keys(key, key_len, salt, rounds - 1)
+  end
+
+  defp zero_str(log_rounds) do
+    if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
+  end
+  defp fmt_salt(salt, log_rounds) do
+    "$2b$#{log_rounds}$#{Tools.enc_bcrypt64(salt)}"
+  end
+  defp fmt_hash(hash, salt, prefix, log_rounds) do
+    "$#{prefix}$#{log_rounds}$#{salt}#{Tools.enc_bcrypt64(hash)}"
   end
 
   @doc """
   Hash the password with a salt which is randomly generated.
 
   There is an option to change the log_rounds parameter, which
-  affects the complexity of the generation of the salt.
+  affects the complexity (and the time taken) of the generation
+  of the password hash. For more details, read the docs for the
+  main `Comeonin` module.
   """
   def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
     hashpass(password, gen_salt(log_rounds))
@@ -75,9 +130,9 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    password = String.to_char_list(password)
-    hash = String.to_char_list(hash)
-    hashpw(password, hash) |> Tools.secure_check(hash)
+    hashpw(password, hash)
+    |> String.to_char_list
+    |> Tools.secure_check(String.to_char_list(hash))
   end
 
   @doc """

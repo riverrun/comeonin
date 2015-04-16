@@ -80,21 +80,21 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "gen_salt number of rounds" do
-    assert :lists.prefix('$2b$08$', Bcrypt.gen_salt(8))
-    assert :lists.prefix('$2b$20$', Bcrypt.gen_salt(20))
+    assert String.starts_with?(Bcrypt.gen_salt(8), "$2b$08$")
+    assert String.starts_with?(Bcrypt.gen_salt(20), "$2b$20$")
   end
 
   test "gen_salt length of salt" do
-    assert length(Bcrypt.gen_salt) == 29
-    assert length(Bcrypt.gen_salt(8)) == 29
-    assert length(Bcrypt.gen_salt(20)) == 29
-    assert length(Bcrypt.gen_salt("wrong input but still works")) == 29
+    assert byte_size(Bcrypt.gen_salt) == 29
+    assert byte_size(Bcrypt.gen_salt(8)) == 29
+    assert byte_size(Bcrypt.gen_salt(20)) == 29
+    assert byte_size(Bcrypt.gen_salt("wrong input but still works")) == 29
   end
 
   test "wrong input to gen_salt" do
-    assert :lists.prefix('$2b$04$', Bcrypt.gen_salt(3))
-    assert :lists.prefix('$2b$31$', Bcrypt.gen_salt(32))
-    assert :lists.prefix('$2b$12$', Bcrypt.gen_salt(["wrong type"]))
+    assert String.starts_with?(Bcrypt.gen_salt(3), "$2b$12$")
+    assert String.starts_with?(Bcrypt.gen_salt(32), "$2b$12$")
+    assert String.starts_with?(Bcrypt.gen_salt(["wrong type"]), "$2b$12$")
   end
 
   test "trying to run hashpass without a salt" do
@@ -107,16 +107,16 @@ defmodule Comeonin.BcryptTest do
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Bcrypt.hashpass("U*U", "$2a$05$CCCCCCCCCCCCCCCCCCC.")
     end
-    assert_raise ArgumentError, "Wrong type. The password needs to be a string.", fn ->
+    assert_raise ArgumentError, "Wrong type. The password and salt need to be strings.", fn ->
       Bcrypt.hashpass(["U*U"], "$2a$05$CCCCCCCCCCCCCCCCCCCCC.")
     end
   end
 
   test "bcrypt_log_rounds configuration" do
-    prefix = '$2b$10$'
+    prefix = "$2b$10$"
     Application.put_env(:comeonin, :bcrypt_log_rounds, 10)
-    assert :lists.prefix(prefix, Bcrypt.gen_salt)
-    assert String.starts_with?(Bcrypt.hashpwsalt("password"), to_string(prefix))
+    assert String.starts_with?(Bcrypt.gen_salt, prefix)
+    assert String.starts_with?(Bcrypt.hashpwsalt("password"), prefix)
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
   end
 end
