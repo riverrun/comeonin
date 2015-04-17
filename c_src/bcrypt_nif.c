@@ -45,6 +45,8 @@
 #define BCRYPT_WORDS 6
 #define	BCRYPT_HASHLEN 23
 
+static void secure_bzero(void *, size_t);
+
 static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary state;
@@ -130,7 +132,38 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 	for (m = 0; m < BCRYPT_HASHLEN; m++) {
 		encrypted[m] = enif_make_uint(env, ciphertext[m]);
 	}
+	secure_bzero(state.data, state.size);
+	enif_release_binary(&state);
+	secure_bzero(ciphertext, sizeof(ciphertext));
+	secure_bzero(cdata, sizeof(cdata));
 	return enif_make_list_from_array(env, encrypted, BCRYPT_HASHLEN);
+}
+
+/*
+ * A typical memset() or bzero() call can be optimized away due to "dead store
+ * elimination" by sufficiently intelligent compilers.  This is a problem for
+ * the above bf_encrypt() function which tries to zero-out several temporary
+ * buffers before returning.  If these calls get optimized away, then these
+ * buffers might leave sensitive information behind.  There are currently no
+ * standard, portable functions to handle this issue -- thus the
+ * implementation below.
+ *
+ * This function cannot be optimized away by dead store elimination, but it
+ * will be slower than a normal memset() or bzero() call.  Given that the
+ * bcrypt algorithm is designed to consume a large amount of time, the change
+ * will likely be negligible.
+ */
+static void
+secure_bzero(void *buf, size_t len)
+{
+	if (buf == NULL || len == 0) {
+		return;
+	}
+
+	volatile unsigned char *ptr = buf;
+	while (len--) {
+		*ptr++ = 0;
+	}
 }
 
 static ErlNifFunc bcrypt_nif_funcs[] =
