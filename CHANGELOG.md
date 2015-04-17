@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.1 (2015-04-17)
+
+* Enhancements
+  * Updated bcrypt implementation to only call C functions for the most expensive operations.
+
+## 0.5.0 (2015-04-14)
+
+* Enhancements
+  * Updated bcrypt implementation so that long-running NIFs are cut to a minimum.
+
 ## 0.4.0 (2015-04-05)
 
 * Enhancements
