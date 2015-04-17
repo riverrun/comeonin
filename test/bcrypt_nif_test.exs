@@ -1,4 +1,4 @@
-defmodule Comeonin.BcryptTest do
+defmodule Comeonin.BcryptNifTest do
   use ExUnit.Case
 
   alias Comeonin.Bcrypt
