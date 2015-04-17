@@ -100,6 +100,20 @@ defmodule Comeonin.Tools do
   end
 
   @doc """
+  Use erlang's crypto.strong_rand_bytes by default. Falls back to
+  crypto.rand_bytes if there is too little entropy for strong_rand_bytes
+  to work.
+  """
+  def random_bytes(number) do
+    try do
+      :crypto.strong_rand_bytes(number)
+    rescue
+      _error ->
+        :crypto.rand_bytes(number)
+    end
+  end
+
+  @doc """
   Compares the two binaries in constant time to avoid timing attacks.
   """
   def secure_check(hash, stored) do

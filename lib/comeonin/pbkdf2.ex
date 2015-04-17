@@ -24,7 +24,7 @@ defmodule Comeonin.Pbkdf2 do
   """
   def gen_salt(salt_length \\ @salt_length)
   def gen_salt(salt_length) when salt_length in 16..1024 do
-    :crypto.rand_bytes(salt_length)
+    Tools.random_bytes(salt_length)
   end
   def gen_salt(_) do
     raise ArgumentError, message: "The salt is the wrong length."
