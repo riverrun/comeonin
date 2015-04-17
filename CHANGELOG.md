@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.1 (2015-04-17)
+## 0.6.0 (2015-04-17)
 
 * Enhancements
   * Updated bcrypt implementation to only call C functions for the most expensive operations.

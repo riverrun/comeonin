@@ -24,7 +24,7 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 0.5"} ]
+    [ {:comeonin, "~> 0.6"} ]
   end
   ```
 
@@ -76,16 +76,6 @@ OTP version 17.0 or later
 For users of Ubuntu, or any other Debian-based distro, we recommend downloading
 erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
 as the version of erlang in the repositories is usually quite old.
-
-## Status
-
-The bcrypt implementation is based on the latest OpenBSD version, which
-fixed a small issue that affected some passwords longer than 72 characters.
-It has been thoroughly tested in a development environment, but it has
-not had much testing in production.
-
-Comeonin has been tested on Linux, OS X and FreeBSD, but it has not been tested
-on Windows. If you have any problems with the build, please let us know.
 
 ## License
 
