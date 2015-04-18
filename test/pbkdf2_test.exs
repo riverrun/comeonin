@@ -1,5 +1,5 @@
 defmodule Comeonin.Pbkdf2Test do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias Comeonin.Pbkdf2
 

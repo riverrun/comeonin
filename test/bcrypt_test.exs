@@ -1,5 +1,5 @@
 defmodule Comeonin.BcryptTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias Comeonin.Bcrypt
 
@@ -112,9 +112,19 @@ defmodule Comeonin.BcryptTest do
     end
   end
 
+  test "length of state output by NIFs" do
+    salt_as_list = Bcrypt.gen_salt |> :erlang.binary_to_list
+    for {key, key_len} <- [{'', 1}, {'password', 9}] do
+      state = Bcrypt.bf_init(key, key_len, salt_as_list)
+      assert byte_size(state) == 4168
+      expanded = Bcrypt.bf_expand(state, key, key_len, salt_as_list)
+      assert byte_size(expanded) == 4168
+    end
+  end
+
   test "bcrypt_log_rounds configuration" do
-    prefix = "$2b$10$"
-    Application.put_env(:comeonin, :bcrypt_log_rounds, 10)
+    prefix = "$2b$08$"
+    Application.put_env(:comeonin, :bcrypt_log_rounds, 08)
     assert String.starts_with?(Bcrypt.gen_salt, prefix)
     assert String.starts_with?(Bcrypt.hashpwsalt("password"), prefix)
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
