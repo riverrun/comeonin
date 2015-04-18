@@ -74,7 +74,7 @@ defmodule Comeonin.Bcrypt do
     {salt, _} = String.split_at(salt, 29)
     [_, prefix, log_rounds, salt] = String.split(salt, "$")
     bcrypt(password, salt, prefix, log_rounds)
-    |> :erlang.list_to_binary
+    |> :binary.list_to_bin
     |> fmt_hash(salt, prefix, zero_str(log_rounds))
   end
 
@@ -89,7 +89,7 @@ defmodule Comeonin.Bcrypt do
 
   defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
     {String.to_char_list(key),
-      Tools.dec_bcrypt64(salt) |> :erlang.binary_to_list,
+      Tools.dec_bcrypt64(salt) |> :binary.bin_to_list,
       bsl(1, log_rounds)}
   end
   defp prepare_keys(_, _, _) do

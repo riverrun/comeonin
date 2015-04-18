@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0 (2015-04-18)
+
+* Enhancements
+  * Use crypto.strong_rand_bytes by default for generating random numbers.
+
 ## 0.6.0 (2015-04-17)
 
 * Enhancements
