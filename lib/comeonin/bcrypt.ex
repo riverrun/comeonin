@@ -15,6 +15,7 @@ defmodule Comeonin.Bcrypt do
   use Bitwise
   alias Comeonin.Tools
   alias Comeonin.Config
+  alias Comeonin.Base64
 
   @on_load {:init, 0}
 
@@ -51,7 +52,7 @@ defmodule Comeonin.Bcrypt do
   and the maximum is 31.
   """
   def gen_salt(log_rounds) when log_rounds in 4..31 do
-    Tools.random_bytes(16) |> fmt_salt(zero_str(log_rounds))
+    Tools.random_bytes(16) |> :binary.bin_to_list |> fmt_salt(zero_str(log_rounds))
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
@@ -61,7 +62,7 @@ defmodule Comeonin.Bcrypt do
   """
   def hashpass(password, salt) when is_binary(salt) and is_binary(password) do
     if byte_size(salt) == 29 do
-      hashpw(password, salt)
+      hashpw(to_char_list(password), to_char_list(salt))
     else
       raise ArgumentError, message: "The salt is the wrong length."
     end
@@ -71,28 +72,24 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp hashpw(password, salt) do
-    {salt, _} = String.split_at(salt, 29)
-    [_, prefix, log_rounds, salt] = String.split(salt, "$")
+    [prefix, log_rounds, salt] = Enum.take(salt, 29) |> :string.tokens('$')
     bcrypt(password, salt, prefix, log_rounds)
-    |> :binary.list_to_bin
     |> fmt_hash(salt, prefix, zero_str(log_rounds))
   end
 
   defp bcrypt(key, salt, prefix, log_rounds) do
-    key_len = String.length(key) + 1
+    key_len = length(key) + 1
     if prefix == "2b" and key_len > 73, do: key_len = 73
-    {key, salt, rounds} = prepare_keys(key, salt, String.to_integer(log_rounds))
+    {salt, rounds} = prepare_keys(salt, List.to_integer(log_rounds))
     bf_init(key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds)
     |> bf_encrypt
   end
 
-  defp prepare_keys(key, salt, log_rounds) when log_rounds in 4..31 do
-    {String.to_char_list(key),
-      Tools.dec_bcrypt64(salt) |> :binary.bin_to_list,
-      bsl(1, log_rounds)}
+  defp prepare_keys(salt, log_rounds) when log_rounds in 4..31 do
+    {Base64.dec_bcrypt64(salt), bsl(1, log_rounds)}
   end
-  defp prepare_keys(_, _, _) do
+  defp prepare_keys(_, _) do
     raise ArgumentError, message: "Wrong number of rounds."
   end
 
@@ -106,10 +103,10 @@ defmodule Comeonin.Bcrypt do
     if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
   end
   defp fmt_salt(salt, log_rounds) do
-    "$2b$#{log_rounds}$#{Tools.enc_bcrypt64(salt)}"
+    "$2b$#{log_rounds}$#{Base64.enc_bcrypt64(salt)}"
   end
   defp fmt_hash(hash, salt, prefix, log_rounds) do
-    "$#{prefix}$#{log_rounds}$#{salt}#{Tools.enc_bcrypt64(hash)}"
+    "$#{prefix}$#{log_rounds}$#{salt}#{Base64.enc_bcrypt64(hash)}"
   end
 
   @doc """
@@ -130,9 +127,9 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    hashpw(password, hash)
-    |> String.to_char_list
-    |> Tools.secure_check(String.to_char_list(hash))
+    hashpw(to_char_list(password), to_char_list(hash))
+    |> to_char_list
+    |> Tools.secure_check(to_char_list(hash))
   end
 
   @doc """
