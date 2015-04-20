@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0 (2015-04-20)
+
+* Bug fixes
+  * Updated bcrypt to support non-ascii characters in the password (pbkdf2 already supports these characters).
+
 ## 0.7.0 (2015-04-18)
 
 * Enhancements
