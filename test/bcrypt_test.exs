@@ -9,6 +9,14 @@ defmodule Comeonin.BcryptTest do
     end
   end
 
+  def hash_check_password(password, wrong1, wrong2, wrong3) do
+    hash = Bcrypt.hashpwsalt(password)
+    assert Bcrypt.checkpw(password, hash) == true
+    assert Bcrypt.checkpw(wrong1, hash) == false
+    assert Bcrypt.checkpw(wrong2, hash) == false
+    assert Bcrypt.checkpw(wrong3, hash) == false
+  end
+ 
   test "Openwall Bcrypt tests" do
    [{"U*U",
      "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
@@ -63,7 +71,10 @@ defmodule Comeonin.BcryptTest do
      "$2b$12$zQ4CooEXdGqcwi0PHsgc8eAf0DLXE/XHoBE8kCSGQ97rXwuClaPam"},
    {"C'est bon, la vie!",
      "$2b$12$cbo7LZ.wxgW4yxAA5Vqlv.",
-     "$2b$12$cbo7LZ.wxgW4yxAA5Vqlv.KR6QFPt4qCdc9RYJNXxa/rbUOp.1sw."}]
+     "$2b$12$cbo7LZ.wxgW4yxAA5Vqlv.KR6QFPt4qCdc9RYJNXxa/rbUOp.1sw."},
+   {"ἓν οἶδα ὅτι οὐδὲν οἶδα",
+     "$2b$12$LeHKWR2bmrazi/6P22Jpau",
+     "$2b$12$LeHKWR2bmrazi/6P22JpauX5my/eKwwKpWqL7L5iEByBnxNc76FRW"}]
     |> check_vectors
   end
 
@@ -72,36 +83,17 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "hashing and checking passwords" do
-    hash = Bcrypt.hashpwsalt("password")
-    assert Bcrypt.checkpw("password", hash) == true
-    assert Bcrypt.checkpw("passwor", hash) == false
-    assert Bcrypt.checkpw("passwords", hash) == false
-    assert Bcrypt.checkpw("pasword", hash) == false
+    hash_check_password("password", "passwor", "passwords", "pasword")
   end
 
   test "hashing and checking passwords with characters from the extended ascii set" do
-    hash = Bcrypt.hashpwsalt("aáåäeéêëoôö")
-    assert Bcrypt.checkpw("aáåäeéêëoôö", hash) == true
-    assert Bcrypt.checkpw("áåäeéêëoôö", hash) == false
-    assert Bcrypt.checkpw("aáåäeéêoôö", hash) == false
-  end
-
-  test "hashing and checking passwords with spaces" do
-    hash = Bcrypt.hashpwsalt("i am here")
-    assert Bcrypt.checkpw("i am here", hash) == true
-    assert Bcrypt.checkpw("i am  here", hash) == false
-    assert Bcrypt.checkpw("iam here", hash) == false
+    hash_check_password("password", "passwor", "passwords", "pasword")
   end
 
   test "hashing and checking passwords with non-ascii characters" do
-    hash = Bcrypt.hashpwsalt("สวัสดีครับ")
-    assert Bcrypt.checkpw("สวัสดีครับ", hash) == true
-    assert Bcrypt.checkpw("สวัสดีครับค", hash) == false
-    assert Bcrypt.checkpw("วัสดีครับ", hash) == false
-    hash = Bcrypt.hashpwsalt("ἓν οἶδα ὅτι οὐδὲν οἶδα")
-    assert Bcrypt.checkpw("ἓν οἶδα ὅτι οὐδὲν οἶδα", hash) == true
-    assert Bcrypt.checkpw("οἶδα ὅτι οὐδὲν οἶδα", hash) == false
-    assert Bcrypt.checkpw("ἓν οἶδα οὐδὲν οἶδα", hash) == false
+    hash_check_password("Сколько лет, сколько зим", "Сколько лет,сколько зим",
+    "Сколько лет сколько зим", "Сколько лет, сколько")
+    hash_check_password("สวัสดีครับ", "สวัดีครับ", "สวัสสดีครับ", "วัสดีครับ")
   end
 
   test "gen_salt number of rounds" do

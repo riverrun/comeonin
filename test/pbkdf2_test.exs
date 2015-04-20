@@ -8,6 +8,14 @@ defmodule Comeonin.Pbkdf2Test do
       assert Pbkdf2.hashpass(password, salt, rounds) == stored_hash
     end
   end
+
+  def hash_check_password(password, wrong1, wrong2, wrong3) do
+    hash = Pbkdf2.hashpwsalt(password)
+    assert Pbkdf2.checkpw(password, hash) == true
+    assert Pbkdf2.checkpw(wrong1, hash) == false
+    assert Pbkdf2.checkpw(wrong2, hash) == false
+    assert Pbkdf2.checkpw(wrong3, hash) == false
+  end
  
   test "base pbkdf2_sha512 tests" do
     [
@@ -55,7 +63,10 @@ defmodule Comeonin.Pbkdf2Test do
      "$pbkdf2-sha512$60000$wCf4fwslR/xKS/RGgRszRw$QJHazw8zTaY0HvGQF1Slb07Ug9DFFLjoq63aORwhA.o/OM.e9UpxldolWyCNLv3duHuxpEWoZtGHfm3VTFCqpg"},
    {"he's N0t the Me551ah!",
      <<60, 130, 11, 97, 11, 23, 236, 250, 227, 233, 56, 1, 86, 131, 41, 163>>,
-     "$pbkdf2-sha512$60000$PIILYQsX7Prj6TgBVoMpow$tsPUY4uMzTbJuv81xxZzsUGvT1LGjk9EfJuAYoZH9KaCSGH90J8BuQwY4Jb0JZbwOI00BSR4hDBVmn3Z8V.Ywg"}]
+     "$pbkdf2-sha512$60000$PIILYQsX7Prj6TgBVoMpow$tsPUY4uMzTbJuv81xxZzsUGvT1LGjk9EfJuAYoZH9KaCSGH90J8BuQwY4Jb0JZbwOI00BSR4hDBVmn3Z8V.Ywg"},
+   {"ἓν οἶδα ὅτι οὐδὲν οἶδα",
+     <<29, 10, 228, 45, 215, 110, 213, 118, 168, 14, 197, 198, 67, 72, 34, 221>>,
+     "$pbkdf2-sha512$60000$HQrkLddu1XaoDsXGQ0gi3Q$UVkPApVkIkQN0FTQwaKffYoZ5Mbh0712p1GWs9H1Z.fBNQScUWCj/GAUtZDYMkIN3kIi9ORvut.SQ7aBipcpDQ"}]
     |> check_vectors
   end
 
@@ -64,36 +75,17 @@ defmodule Comeonin.Pbkdf2Test do
   end
 
   test "hashing and checking passwords" do
-    hash = Pbkdf2.hashpwsalt("password")
-    assert Pbkdf2.checkpw("password", hash) == true
-    assert Pbkdf2.checkpw("passwor", hash) == false
-    assert Pbkdf2.checkpw("passwords", hash) == false
-    assert Pbkdf2.checkpw("pasword", hash) == false
+    hash_check_password("password", "passwor", "passwords", "pasword")
   end
 
   test "hashing and checking passwords with characters from the extended ascii set" do
-    hash = Pbkdf2.hashpwsalt("aáåäeéêëoôö")
-    assert Pbkdf2.checkpw("aáåäeéêëoôö", hash) == true
-    assert Pbkdf2.checkpw("áåäeéêëoôö", hash) == false
-    assert Pbkdf2.checkpw("aáåäeéêoôö", hash) == false
-  end
-
-  test "hashing and checking passwords with spaces" do
-    hash = Pbkdf2.hashpwsalt("i am here")
-    assert Pbkdf2.checkpw("i am here", hash) == true
-    assert Pbkdf2.checkpw("i am  here", hash) == false
-    assert Pbkdf2.checkpw("iam here", hash) == false
+    hash_check_password("password", "passwor", "passwords", "pasword")
   end
 
   test "hashing and checking passwords with non-ascii characters" do
-    hash = Pbkdf2.hashpwsalt("Сколько лет, сколько зим")
-    assert Pbkdf2.checkpw("Сколько лет, сколько зим", hash) == true
-    assert Pbkdf2.checkpw("Сколько, сколько зим", hash) == false
-    assert Pbkdf2.checkpw("Сколько лет сколько зим", hash) == false
-    hash = Pbkdf2.hashpwsalt("❤♨♈♀♁♂☸☯☔☕")
-    assert Pbkdf2.checkpw("❤♨♈♀♁♂☸☯☔☕", hash) == true
-    assert Pbkdf2.checkpw("❤♨♀♁♂☸☯☔☕", hash) == false
-    assert Pbkdf2.checkpw("❤♨♈♀♁♂☹☯☕", hash) == false
+    hash_check_password("Сколько лет, сколько зим", "Сколько лет,сколько зим",
+    "Сколько лет сколько зим", "Сколько лет, сколько")
+    hash_check_password("สวัสดีครับ", "สวัดีครับ", "สวัสสดีครับ", "วัสดีครับ")
   end
 
   test "gen_salt length of salt" do
