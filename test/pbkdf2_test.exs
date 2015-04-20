@@ -71,6 +71,22 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("pasword", hash) == false
   end
 
+  test "hashing and checking passwords with special characters" do
+    hash = Pbkdf2.hashpwsalt("aáåäeéêëoôö")
+    assert Pbkdf2.checkpw("aáåäeéêëoôö", hash) == true
+    assert Pbkdf2.checkpw("áåäeéêëoôö", hash) == false
+    assert Pbkdf2.checkpw("aáåäeéêoôö", hash) == false
+    assert Pbkdf2.checkpw("aáäeéêëoôö", hash) == false
+  end
+
+  test "hashing and checking passwords with spaces" do
+    hash = Pbkdf2.hashpwsalt("i am here")
+    assert Pbkdf2.checkpw("i am here", hash) == true
+    assert Pbkdf2.checkpw("i am  here", hash) == false
+    assert Pbkdf2.checkpw("iam here", hash) == false
+    assert Pbkdf2.checkpw("i amhere", hash) == false
+  end
+
   test "gen_salt length of salt" do
     assert byte_size(Pbkdf2.gen_salt) == 16
     assert byte_size(Pbkdf2.gen_salt(32)) == 32

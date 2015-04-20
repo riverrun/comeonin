@@ -79,6 +79,22 @@ defmodule Comeonin.BcryptTest do
     assert Bcrypt.checkpw("pasword", hash) == false
   end
 
+  test "hashing and checking passwords with special characters" do
+    hash = Bcrypt.hashpwsalt("aáåäeéêëoôö")
+    assert Bcrypt.checkpw("aáåäeéêëoôö", hash) == true
+    assert Bcrypt.checkpw("áåäeéêëoôö", hash) == false
+    assert Bcrypt.checkpw("aáåäeéêoôö", hash) == false
+    assert Bcrypt.checkpw("aáäeéêëoôö", hash) == false
+  end
+
+  test "hashing and checking passwords with spaces" do
+    hash = Bcrypt.hashpwsalt("i am here")
+    assert Bcrypt.checkpw("i am here", hash) == true
+    assert Bcrypt.checkpw("i am  here", hash) == false
+    assert Bcrypt.checkpw("iam here", hash) == false
+    assert Bcrypt.checkpw("i amhere", hash) == false
+  end
+
   test "gen_salt number of rounds" do
     assert String.starts_with?(Bcrypt.gen_salt(8), "$2b$08$")
     assert String.starts_with?(Bcrypt.gen_salt(20), "$2b$20$")

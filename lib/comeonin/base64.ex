@@ -74,7 +74,7 @@ defmodule Comeonin.Base64 do
   end
 
   defp b64d_ok(val) when is_integer(val), do: val
-  defp b64d_ok(_) do
-    raise ArgumentError, message: "Error. Not a valid character."
+  defp b64d_ok(val) do
+    raise ArgumentError, message: "Could not decode #{val}. It is not a valid character."
   end
 end
