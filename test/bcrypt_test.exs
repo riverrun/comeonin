@@ -29,13 +29,13 @@ defmodule Comeonin.BcryptTest do
   end
 
   test "OpenBSD Bcrypt tests" do
-   [{"\xa3",
+   [{<<0xa3>>,
      "$2b$05$/OK.fbVrR/bpIqNJ5ianF.",
      "$2b$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"},
-    {"\xa3",
+    {<<0xa3>>,
      "$2a$05$/OK.fbVrR/bpIqNJ5ianF.",
      "$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq"},
-    {"\xff\xff\xa3",
+    {<<0xff, 0xff, 0xa3>>,
      "$2b$05$/OK.fbVrR/bpIqNJ5ianF.",
      "$2b$05$/OK.fbVrR/bpIqNJ5ianF.CE5elHaaO4EbggVDjb8P19RukzXSM3e"},
     {"000000000000000000000000000000000000000000000000000000000000000000000000",

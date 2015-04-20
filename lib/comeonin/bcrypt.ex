@@ -62,7 +62,7 @@ defmodule Comeonin.Bcrypt do
   """
   def hashpass(password, salt) when is_binary(salt) and is_binary(password) do
     if byte_size(salt) == 29 do
-      hashpw(to_char_list(password), to_char_list(salt))
+      hashpw(:binary.bin_to_list(password), :binary.bin_to_list(salt))
     else
       raise ArgumentError, message: "The salt is the wrong length."
     end
@@ -127,9 +127,9 @@ defmodule Comeonin.Bcrypt do
   The check is performed in constant time to avoid timing attacks.
   """
   def checkpw(password, hash) do
-    hashpw(to_char_list(password), to_char_list(hash))
-    |> to_char_list
-    |> Tools.secure_check(to_char_list(hash))
+    hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
+    |> :binary.bin_to_list
+    |> Tools.secure_check(:binary.bin_to_list(hash))
   end
 
   @doc """
