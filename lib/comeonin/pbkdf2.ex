@@ -10,8 +10,9 @@ defmodule Comeonin.Pbkdf2 do
   """
 
   use Bitwise
-  alias Comeonin.Tools
+  alias Comeonin.Pbkdf2Base64
   alias Comeonin.Config
+  alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
   @salt_length 16
@@ -49,7 +50,7 @@ defmodule Comeonin.Pbkdf2 do
   end
 
   defp format(hash, salt, rounds) do
-    "$pbkdf2-sha512$#{rounds}$#{Tools.enc_base64(salt)}$#{Tools.enc_base64(hash)}"
+    "$pbkdf2-sha512$#{rounds}$#{Pbkdf2Base64.encode(salt)}$#{Pbkdf2Base64.encode(hash)}"
   end
 
   @doc """
@@ -59,8 +60,8 @@ defmodule Comeonin.Pbkdf2 do
   """
   def checkpw(password, hash) do
     [_, _, rounds, salt, hash] = String.split(hash, "$")
-    pbkdf2(password, Tools.dec_base64(salt), String.to_integer(rounds), 64)
-    |> Tools.enc_base64
+    pbkdf2(password, Pbkdf2Base64.decode(salt), String.to_integer(rounds), 64)
+    |> Pbkdf2Base64.encode
     |> String.to_char_list
     |> Tools.secure_check(String.to_char_list(hash))
   end

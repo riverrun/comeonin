@@ -71,7 +71,7 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("pasword", hash) == false
   end
 
-  test "hashing and checking passwords with special characters" do
+  test "hashing and checking passwords with characters from the extended ascii set" do
     hash = Pbkdf2.hashpwsalt("aáåäeéêëoôö")
     assert Pbkdf2.checkpw("aáåäeéêëoôö", hash) == true
     assert Pbkdf2.checkpw("áåäeéêëoôö", hash) == false

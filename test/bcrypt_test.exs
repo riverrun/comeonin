@@ -79,7 +79,7 @@ defmodule Comeonin.BcryptTest do
     assert Bcrypt.checkpw("pasword", hash) == false
   end
 
-  test "hashing and checking passwords with special characters" do
+  test "hashing and checking passwords with characters from the extended ascii set" do
     hash = Bcrypt.hashpwsalt("aáåäeéêëoôö")
     assert Bcrypt.checkpw("aáåäeéêëoôö", hash) == true
     assert Bcrypt.checkpw("áåäeéêëoôö", hash) == false
