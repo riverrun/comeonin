@@ -76,7 +76,6 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("aáåäeéêëoôö", hash) == true
     assert Pbkdf2.checkpw("áåäeéêëoôö", hash) == false
     assert Pbkdf2.checkpw("aáåäeéêoôö", hash) == false
-    assert Pbkdf2.checkpw("aáäeéêëoôö", hash) == false
   end
 
   test "hashing and checking passwords with spaces" do
@@ -84,7 +83,17 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw("i am here", hash) == true
     assert Pbkdf2.checkpw("i am  here", hash) == false
     assert Pbkdf2.checkpw("iam here", hash) == false
-    assert Pbkdf2.checkpw("i amhere", hash) == false
+  end
+
+  test "hashing and checking passwords with non-ascii characters" do
+    hash = Pbkdf2.hashpwsalt("Сколько лет, сколько зим")
+    assert Pbkdf2.checkpw("Сколько лет, сколько зим", hash) == true
+    assert Pbkdf2.checkpw("Сколько, сколько зим", hash) == false
+    assert Pbkdf2.checkpw("Сколько лет сколько зим", hash) == false
+    hash = Pbkdf2.hashpwsalt("❤♨♈♀♁♂☸☯☔☕")
+    assert Pbkdf2.checkpw("❤♨♈♀♁♂☸☯☔☕", hash) == true
+    assert Pbkdf2.checkpw("❤♨♀♁♂☸☯☔☕", hash) == false
+    assert Pbkdf2.checkpw("❤♨♈♀♁♂☹☯☕", hash) == false
   end
 
   test "gen_salt length of salt" do
