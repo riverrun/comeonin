@@ -128,8 +128,7 @@ defmodule Comeonin.Bcrypt do
   """
   def checkpw(password, hash) do
     hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
-    |> :binary.bin_to_list
-    |> Tools.secure_check(:binary.bin_to_list(hash))
+    |> Tools.secure_check(hash)
   end
 
   @doc """

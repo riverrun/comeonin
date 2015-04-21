@@ -62,8 +62,7 @@ defmodule Comeonin.Pbkdf2 do
     [_, _, rounds, salt, hash] = String.split(hash, "$")
     pbkdf2(password, Pbkdf2Base64.decode(salt), String.to_integer(rounds), 64)
     |> Pbkdf2Base64.encode
-    |> String.to_char_list
-    |> Tools.secure_check(String.to_char_list(hash))
+    |> Tools.secure_check(hash)
   end
 
   @doc """

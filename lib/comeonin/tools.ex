@@ -26,16 +26,16 @@ defmodule Comeonin.Tools do
   Compares the two binaries in constant time to avoid timing attacks.
   """
   def secure_check(hash, stored) do
-    if length(hash) == length(stored) do
-      secure_check(hash, stored, 0) == 0
+    if byte_size(hash) == byte_size(stored) do
+      arithmetic_compare(hash, stored, 0) == 0
     else
       false
     end
   end
-  defp secure_check([h|hs], [s|ss], acc) do
-    secure_check(hs, ss, acc ||| (h ^^^ s))
+  defp arithmetic_compare(<<x, left :: binary>>, <<y, right :: binary>>, acc) do
+    arithmetic_compare(left, right, acc ||| (x ^^^ y))
   end
-  defp secure_check([], [], acc) do
+  defp arithmetic_compare("", "", acc) do
     acc
   end
 end
