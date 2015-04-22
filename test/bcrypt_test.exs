@@ -84,10 +84,12 @@ defmodule Comeonin.BcryptTest do
 
   test "hashing and checking passwords" do
     hash_check_password("password", "passwor", "passwords", "pasword")
+    hash_check_password("hard2guess", "ha rd2guess", "had2guess", "hardtoguess")
   end
 
   test "hashing and checking passwords with characters from the extended ascii set" do
-    hash_check_password("password", "passwor", "passwords", "pasword")
+    hash_check_password("aáåäeéêëoôö", "aáåäeéêëoö", "aáåeéêëoôö", "aáå äeéêëoôö")
+    hash_check_password("aáåä eéêëoôö", "aáåä eéê ëoö", "a áåeé êëoôö", "aáå äeéêëoôö")
   end
 
   test "hashing and checking passwords with non-ascii characters" do
