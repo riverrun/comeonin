@@ -27,15 +27,15 @@ defmodule Comeonin.Tools do
   """
   def secure_check(hash, stored) do
     if byte_size(hash) == byte_size(stored) do
-      arithmetic_compare(hash, stored, 0) == 0
+      secure_check(hash, stored, 0) == 0
     else
       false
     end
   end
-  defp arithmetic_compare(<<x, left :: binary>>, <<y, right :: binary>>, acc) do
-    arithmetic_compare(left, right, acc ||| (x ^^^ y))
+  defp secure_check(<<h, rest_h :: binary>>, <<s, rest_s :: binary>>, acc) do
+    secure_check(rest_h, rest_s, acc ||| (h ^^^ s))
   end
-  defp arithmetic_compare("", "", acc) do
+  defp secure_check("", "", acc) do
     acc
   end
 end

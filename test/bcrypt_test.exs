@@ -65,6 +65,13 @@ defmodule Comeonin.BcryptTest do
     |> check_vectors
   end
 
+  test "known non-ascii characters tests" do
+   [{"ππππππππ",
+     "$2a$10$.TtQJ4Jr6isd4Hp.mVfZeu",
+     "$2a$10$.TtQJ4Jr6isd4Hp.mVfZeuh6Gws4rOQ/vdBczhDx.19NFK0Y84Dle"}]
+    |> check_vectors
+  end
+
   test "Consistency tests" do
    [{"p@5sw0rd",
      "$2b$12$zQ4CooEXdGqcwi0PHsgc8e",
@@ -96,6 +103,10 @@ defmodule Comeonin.BcryptTest do
     hash_check_password("Сколько лет, сколько зим", "Сколько лет,сколько зим",
     "Сколько лет сколько зим", "Сколько лет, сколько")
     hash_check_password("สวัสดีครับ", "สวัดีครับ", "สวัสสดีครับ", "วัสดีครับ")
+  end
+
+  test "hashing and checking passwords with mixed characters" do
+    hash_check_password("Я❤três☕ où☔", "Я❤tres☕ où☔", "Я❤três☕où☔", "Я❤três où☔")
   end
 
   test "gen_salt number of rounds" do

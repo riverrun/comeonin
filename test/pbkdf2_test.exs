@@ -90,6 +90,10 @@ defmodule Comeonin.Pbkdf2Test do
     hash_check_password("สวัสดีครับ", "สวัดีครับ", "สวัสสดีครับ", "วัสดีครับ")
   end
 
+  test "hashing and checking passwords with mixed characters" do
+    hash_check_password("Я❤três☕ où☔", "Я❤tres☕ où☔", "Я❤três☕où☔", "Я❤três où☔")
+  end
+
   test "gen_salt length of salt" do
     assert byte_size(Pbkdf2.gen_salt) == 16
     assert byte_size(Pbkdf2.gen_salt(32)) == 32
