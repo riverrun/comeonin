@@ -36,7 +36,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include "erl_nif.h"
 #include "erl_blf.h"
