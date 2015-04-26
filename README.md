@@ -18,6 +18,16 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
     * Clear instructions are given on how to use Comeonin.
     * Several recommendations are also given to help developers keep their apps secure.
 
+## Requirements
+
+Elixir version 1.0 or later and Erlang/OTP version 17.0 or later.
+
+You will also need a C compiler.
+
+For users of Ubuntu, or any other Debian-based distro, we recommend downloading
+erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
+as the version of erlang in the repositories is usually quite old.
+
 ## Installation
 
 1. Add comeonin to your `mix.exs` dependencies
@@ -68,14 +78,6 @@ difficult.
 ## Documentation
 
 http://hexdocs.pm/comeonin
-
-## Requirements
-
-OTP version 17.0 or later
-
-For users of Ubuntu, or any other Debian-based distro, we recommend downloading
-erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
-as the version of erlang in the repositories is usually quite old.
 
 ## License
 
