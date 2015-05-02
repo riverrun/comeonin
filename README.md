@@ -22,7 +22,7 @@ Comeonin now supports `bcrypt` and `pbkdf2_sha512`.
 
 Elixir version 1.0 or later and Erlang/OTP version 17.0 or later.
 
-You will also need a C compiler.
+You also need to have a C compiler, such as `gcc`, installed.
 
 For users of Ubuntu, or any other Debian-based distro, we recommend downloading
 erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),

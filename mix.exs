@@ -12,8 +12,35 @@ defmodule Mix.Tasks.Compile.Comeonin do
         {"make", ["priv/bcrypt_nif.so"]}
     end
 
-    {result, _error_code} = System.cmd(exec, args, stderr_to_stdout: true)
-    Mix.shell.info result
+    {result, error_code} = System.cmd(exec, args, stderr_to_stdout: true)
+    if error_code != 0 do
+      handle_error
+    else
+      Mix.shell.info result
+    end
+  end
+
+  defp handle_error do
+    raise Mix.Error, message: """
+    Could not compile Comeonin.
+    Please make sure that you are using Erlang / OTP version 17.0 or later
+    and that you have a C compiler installed.
+    Please follow the directions below for the operating system you are
+    using:
+
+    Windows: One option is to install a recent version of Visual Studio (the
+    free Community edition will be enough for this task). Then try running
+    `mix deps.compile comeonin` from the `Developer Command Prompt`.
+
+    Mac OS X: You need to have gcc and make installed. Try running the
+    commands `gcc --version` and / or `make --version`. If these programs
+    are not installed, you will be prompted to install them.
+
+    Linux: You need to have gcc and make installed. If you are using
+    Ubuntu or any other Debian-based system, install the package
+    `build essential`.
+
+    """
   end
 end
 
@@ -27,7 +54,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "0.8.1",
+      version: "0.8.2",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
