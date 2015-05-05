@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.2 (2015-05-02)
+
+* Bug fixes
+  * Updated Windows build and improved error information at compile time.
+
 ## 0.8.0 (2015-04-20)
 
 * Bug fixes

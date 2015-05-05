@@ -1,6 +1,6 @@
 defmodule Comeonin.Pbkdf2Base64 do
   @moduledoc """
-  Module that provides various tools for the hashing algorithms.
+  Module that provides base64 encoding for pbkdf2.
   """
 
   import Bitwise

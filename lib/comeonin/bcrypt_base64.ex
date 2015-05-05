@@ -1,4 +1,7 @@
 defmodule Comeonin.BcryptBase64 do
+  @moduledoc """
+  Module that provides base64 encoding for bcrypt.
+  """
 
   use Bitwise
 
