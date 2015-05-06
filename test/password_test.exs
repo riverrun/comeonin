@@ -1,10 +1,10 @@
-defmodule Comeonin.ToolsTest do
+defmodule Comeonin.PasswordTest do
   use ExUnit.Case, async: true
 
   alias Comeonin.Password
 
   test "valid password has a digit and a symbol" do
-    for id <- ["hfjkshf6hj#", "8auyk$kjkjh", "ty3uhi@ksd"] do
+    for id <- ["hfjkshf6hj#", "8auyk>kjkjh", "ty3uhi@ksd"] do
       assert Password.valid_password?(id)
     end
   end

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0-dev
+
+* Enhancements
+  * Added random password generator.
+  * Added optional check to test if passwords have digits and punctuation characters.
+* Bug fixes
+  * Added information about password strength and password policies to the documentation.
+
 ## 0.8.2 (2015-05-02)
 
 * Bug fixes

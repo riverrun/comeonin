@@ -4,9 +4,9 @@ defmodule Comeonin.Password do
   for extra characters.
   """
 
-  @alphabet './!@#$%^*();:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  @alphabet ',./!@#$%^&*();:?<>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   @digits ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-  @punc [".", "/", "!", "@", "#", "$", "%", "^", "*", "(", ")", ";", ":"]
+  @punc [",", ".", "/", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ";", ":", "?", "<", ">"]
 
   @char_map Enum.map_reduce(@alphabet, 0, fn x, acc -> {{acc, x}, acc + 1} end)
   |> elem(0) |> Enum.into(%{})
@@ -20,10 +20,10 @@ defmodule Comeonin.Password do
     end
   end
   defp rand_numbers(len) do
-    for _ <- 1..len, do: :crypto.rand_uniform(0, 75)
+    for _ <- 1..len, do: :crypto.rand_uniform(0, 80)
   end
   defp pass_check(code) do
-    Enum.any?(code, &(&1 < 13)) and Enum.any?(code, &(&1 > 64)) and code
+    Enum.any?(code, &(&1 < 18)) and Enum.any?(code, &(&1 > 69)) and code
   end
 
   @doc """
