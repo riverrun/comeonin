@@ -71,6 +71,8 @@ defmodule Comeonin do
 
   """
 
+  alias Comeonin.Password
+
   @doc """
   A function to help the developer decide how many log_rounds to use
   when using bcrypt.
@@ -98,5 +100,17 @@ defmodule Comeonin do
   def time_pbkdf2(rounds \\ 60_000) do
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", rounds])
     IO.puts "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
+  end
+
+  @doc """
+  """
+  def gen_password(len \\ 8) do
+    Password.gen_password(len) |> to_string
+  end
+
+  @doc """
+  """
+  def valid_password?(password) do
+    Password.valid_password?(password)
   end
 end
