@@ -14,10 +14,10 @@ defmodule Comeonin.Config do
   which explains why the default values for `bcrypt_log_rounds` and
   `pbkdf2_rounds` are not always the best values to use.
 
-  The value `pass_length` is for use with the `gen_password` function
-  in the `Comeonin` module and is the default length of the generated
+  `pass_length` is for use with the `gen_password` function in the
+  `Comeonin.Password` module and is the default length of the generated
   password. `pass_min_length` is for use with the `valid_password?`
-  function and is the minimum allowed length.
+  function in the same module and is the minimum allowed length.
 
   ## Examples
 
