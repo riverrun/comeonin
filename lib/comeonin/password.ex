@@ -12,8 +12,12 @@ defmodule Comeonin.Password do
   |> elem(0) |> Enum.into(%{})
 
   @doc """
+  Generate a random password.
+
+  The password is guaranteed to contain at least one digit
+  and one punctuation character.
   """
-  def gen_password(len \\ 8) do
+  def gen_password(len) do
     case rand_numbers(len) |> pass_check do
       false -> gen_password(len)
       code -> for val <- code, do: Map.get(@char_map, val)
@@ -27,9 +31,11 @@ defmodule Comeonin.Password do
   end
 
   @doc """
+  Check the password contains at least one digit and one
+  punctuation character.
   """
   def valid_password?(password) do
-    has_punc_digit?(password, @digits, @punc) and password
+    has_punc_digit?(password, @digits, @punc)
   end
   defp has_punc_digit?(word, digits, punc) do
     :binary.match(word, digits) != :nomatch and :binary.match(word, punc) != :nomatch

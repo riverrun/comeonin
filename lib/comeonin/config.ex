@@ -7,10 +7,17 @@ defmodule Comeonin.Config do
   | :----------------- | :------ | ------: |
   | bcrypt_log_rounds  | integer | 12      |
   | pbkdf2_rounds      | integer | 60000   |
+  | pass_length        | integer | 12      |
+  | pass_min_length    | integer | 8       |
 
   Please read the documentation for the main `Comeonin` module,
-  which explains why the default values are not always the best
-  values to use.
+  which explains why the default values for `bcrypt_log_rounds` and
+  `pbkdf2_rounds` are not always the best values to use.
+
+  The value `pass_length` is for use with the `gen_password` function
+  in the `Comeonin` module and is the default length of the generated
+  password. `pass_min_length` is for use with the `valid_password?`
+  function and is the minimum allowed length.
 
   ## Examples
 
@@ -19,7 +26,9 @@ defmodule Comeonin.Config do
 
       config :comeonin,
         bcrypt_log_rounds: 14,
-        pbkdf2_rounds: 100_000
+        pbkdf2_rounds: 100_000,
+        pass_length: 16,
+        pass_min_length: 12
 
   If you want to have different values when developing and testing,
   you can create separate files for each environment: `dev.exs`,
@@ -53,5 +62,13 @@ defmodule Comeonin.Config do
 
   def pbkdf2_rounds do
     Application.get_env(:comeonin, :pbkdf2_rounds, 60_000)
+  end
+
+  def pass_length do
+    Application.get_env(:comeonin, :pass_length, 12)
+  end
+
+  def pass_min_length do
+    Application.get_env(:comeonin, :pass_min_length, 8)
   end
 end

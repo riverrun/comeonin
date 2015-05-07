@@ -71,6 +71,7 @@ defmodule Comeonin do
 
   """
 
+  alias Comeonin.Config
   alias Comeonin.Password
 
   @doc """
@@ -103,14 +104,29 @@ defmodule Comeonin do
   end
 
   @doc """
+  Randomly generate a password.
+
+  The default length of the password is 12 characters, and it is guaranteed
+  to contain at least one digit and one punctuation character.
   """
-  def gen_password(len \\ 8) do
+  def gen_password(len \\ Config.pass_length) do
     Password.gen_password(len) |> to_string
   end
 
   @doc """
+  Check the password is at least 8 characters long, and then check that
+  it contains at least one digit and one punctuation character.
+
+  If the password is valid, this function will return true. Otherwise,
+  it will return a message telling you what is wrong with the password.
   """
   def valid_password?(password) do
-    Password.valid_password?(password)
+    len = Config.pass_min_length
+    if String.length(password) < len do
+      "The password is too short. It should be at least #{len} characters long."
+    else
+      Password.valid_password?(password) or
+      "The password should contain at least one digit and one punctuation character."
+    end
   end
 end

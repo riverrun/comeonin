@@ -154,7 +154,7 @@ defmodule Comeonin.BcryptTest do
 
   test "bcrypt_log_rounds configuration" do
     prefix = "$2b$08$"
-    Application.put_env(:comeonin, :bcrypt_log_rounds, 08)
+    Application.put_env(:comeonin, :bcrypt_log_rounds, 8)
     assert String.starts_with?(Bcrypt.gen_salt, prefix)
     assert String.starts_with?(Bcrypt.hashpwsalt("password"), prefix)
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
