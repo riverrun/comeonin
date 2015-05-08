@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0-dev
+## 0.9.0 (2015-05-08)
 
 * Enhancements
   * Added random password generator.
