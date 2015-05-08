@@ -1,8 +1,9 @@
 defmodule Comeonin.Password do
   @moduledoc """
-  Module to generate random passwords and check that passwords
-  are long enough and contain at least one digit and one punctuation
-  character.
+  Module to generate random passwords and validate passwords.
+
+  The function to validate passwords checks that they are long enough
+  and contain at least one digit and one punctuation character.
 
   # Password policy
   
@@ -19,7 +20,8 @@ defmodule Comeonin.Password do
   as a result.
 
   If users are allowed to write down passwords, they should keep the
-  password in a safe place and treat its loss seriously.
+  password in a safe place and treat its loss seriously, that is, as
+  seriously as the loss of an id card or a bank card.
 
   ## Password strength
 
@@ -29,7 +31,7 @@ defmodule Comeonin.Password do
     * contain as large a character set as possible (digits, punctuation characters, etc.)
     * not contain dictionary words (this applies to multiple languages, not just English)
     * not contain common acronyms
-    * be kept secret (not shared)
+    * be kept secret (not shared between multiple users)
 
   If a password fails to meet any of the above criteria, then that makes it
   easier for programs to guess the password. It is important, therefore,
@@ -39,13 +41,19 @@ defmodule Comeonin.Password do
 
   Ideally, the password should be as long as possible. However, many users
   would not be happy if they had to type in passwords 20 or 30 characters
-  long every time they had to access a service, and so there needs to be
-  a balance struck between usability and the ideal password length.
+  long every time they had to access a service (although this might be
+  justifiable in certain cases), and so there needs to be a balance struck
+  between usability and the ideal password length. Please read the section
+  `User compliance` below for information about why usability is such
+  an important consideration.
 
   In this module, the default length of the randomly generated passwords
   is 12 characters, and with the `valid_password?` function, the minimum
   length of passwords is 8 characters. Both of these values can be changed
   in the config file.
+  
+  With bcrypt, the maximum password length is 72 characters. Longer passwords
+  can be used, but the extra characters (after the 72nd character) are ignored.
 
   ## Creating strong passwords
 
@@ -54,7 +62,9 @@ defmodule Comeonin.Password do
   a way of creating a strong password which is also easy to remember.
 
   For passwords that do not need to be remembered, that can be written
-  down, generating passwords programmatically seems to be the best option.
+  down, generating passwords programmatically seems to be the best option,
+  as computer programs are generally better than humans at creating
+  random passwords.
 
   ## User compliance
 
@@ -65,9 +75,9 @@ defmodule Comeonin.Password do
   make it easier to get their work done.
 
   This question of user compliance is an issue that needs to be taken
-  into consideration when formulating any password policy, especially if
-  a user not following the rules can seriously affect the rest of the
-  organization.
+  into serious consideration when formulating any password policy,
+  especially as a user not following the rules can have a serious
+  impact on the security of the rest of the organization.
 
   """
 
@@ -78,8 +88,9 @@ defmodule Comeonin.Password do
   @digits String.codepoints("0123456789")
   @punc String.codepoints(",./!@#$%^&*();:?<>")
 
-  @char_map Enum.map_reduce(@alphabet, 0, fn x, acc -> {{acc, x}, acc + 1} end)
-  |> elem(0) |> Enum.into(%{})
+  @char_map Enum.map_reduce(@alphabet, 0, fn x, acc ->
+    {{acc, x}, acc + 1} end)
+    |> elem(0) |> Enum.into(%{})
 
   @doc """
   Randomly generate a password.
