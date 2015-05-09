@@ -6,7 +6,7 @@ defmodule Comeonin.Password do
   and contain at least one digit and one punctuation character.
 
   # Password policy
-  
+
   The guidelines below are mainly intended for any business, or organization,
   that needs to create and implement a password policy. However, much of the
   advice is also applicable to other users.
@@ -51,7 +51,7 @@ defmodule Comeonin.Password do
   is 12 characters, and with the `valid_password?` function, the minimum
   length of passwords is 8 characters. Both of these values can be changed
   in the config file.
-  
+
   With bcrypt, the maximum password length is 72 characters. Longer passwords
   can be used, but the extra characters (after the 72nd character) are ignored.
 
@@ -120,18 +120,33 @@ defmodule Comeonin.Password do
   it contains at least one digit and one punctuation character.
 
   If the password is valid, this function will return true. Otherwise,
-  it will return a message telling you what is wrong with the password.
+  it will raise an error telling you what is wrong with the password.
+
+  ## Example
+
+  To validate a password before hashing it:
+
+      alias Comeonin.Password
+      alias Comeonin.Bcrypt
+
+      Password.valid_password?(password) and Bcrypt.hashpwsalt(password)
+
   """
   def valid_password?(password) do
-    len = Config.pass_min_length
-    if String.length(password) < len do
-      "The password is too short. It should be at least #{len} characters long."
+    pass_length?(String.length(password), Config.pass_min_length) and
+    has_punc_digit?(password, @digits, @punc)
+  end
+  defp pass_length?(word_len, min_len) when word_len < min_len do
+    raise ArgumentError, message:
+    "The password is too short. It should be at least #{min_len} characters long."
+  end
+  defp pass_length?(_, _), do: true
+  defp has_punc_digit?(word, digits, punc) do
+    if :binary.match(word, digits) != :nomatch and :binary.match(word, punc) != :nomatch do
+      true
     else
-      has_punc_digit?(password, @digits, @punc) or
+      raise ArgumentError, message:
       "The password should contain at least one digit and one punctuation character."
     end
-  end
-  defp has_punc_digit?(word, digits, punc) do
-    :binary.match(word, digits) != :nomatch and :binary.match(word, punc) != :nomatch
   end
 end
