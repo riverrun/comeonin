@@ -50,6 +50,14 @@ defmodule Comeonin.PasswordTest do
     end
   end
 
+  test "on strict setting invalid password" do
+    for id <- ["8hfjk#shfhj", "auykk$jkjh2", "0tyuhi67ksd&"] do
+      assert_raise ArgumentError,
+      "The password should contain at least one digit and one punctuation character.",
+      fn -> Password.valid_password?(id, true) end
+    end
+  end
+
   test "generate valid password" do
     assert Password.gen_password |> Password.valid_password?
   end

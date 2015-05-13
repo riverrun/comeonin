@@ -132,17 +132,21 @@ defmodule Comeonin.Password do
       Password.valid_password?(password) and Bcrypt.hashpwsalt(password)
 
   """
-  def valid_password?(password) do
+  def valid_password?(password, strict \\ false) do
     pass_length?(String.length(password), Config.pass_min_length) and
-    has_punc_digit?(password, @digits, @punc)
+    has_punc_digit?(password, strict)
   end
   defp pass_length?(word_len, min_len) when word_len < min_len do
     raise ArgumentError, message:
     "The password is too short. It should be at least #{min_len} characters long."
   end
   defp pass_length?(_, _), do: true
-  defp has_punc_digit?(word, digits, punc) do
-    if :binary.match(word, digits) != :nomatch and :binary.match(word, punc) != :nomatch do
+  defp has_punc_digit?(word, true) do
+    :binary.part(word, 1, byte_size(word) - 2) |> has_punc_digit?
+  end
+  defp has_punc_digit?(word, _), do: has_punc_digit?(word)
+  defp has_punc_digit?(word) do
+    if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else
       raise ArgumentError, message:
