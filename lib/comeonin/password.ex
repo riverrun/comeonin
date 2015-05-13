@@ -117,10 +117,12 @@ defmodule Comeonin.Password do
 
   @doc """
   Check the password is at least 8 characters long, and then check that
-  it contains at least one digit and one punctuation character.
+  it contains at least one digit and one punctuation character. If `strict`
+  is set to `true`, then the first and last characters of the password
+  are ignored.
 
   If the password is valid, this function will return true. Otherwise,
-  it will raise an error telling you what is wrong with the password.
+  it will return false with a message telling you what is wrong with the password.
 
   ## Example
 
@@ -136,11 +138,13 @@ defmodule Comeonin.Password do
     pass_length?(String.length(password), Config.pass_min_length) and
     has_punc_digit?(password, strict)
   end
+
   defp pass_length?(word_len, min_len) when word_len < min_len do
-    raise ArgumentError, message:
-    "The password is too short. It should be at least #{min_len} characters long."
+    IO.puts "The password is too short. It should be at least #{min_len} characters long."
+    false
   end
   defp pass_length?(_, _), do: true
+
   defp has_punc_digit?(word, true) do
     :binary.part(word, 1, byte_size(word) - 2) |> has_punc_digit?
   end
@@ -149,8 +153,12 @@ defmodule Comeonin.Password do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else
-      raise ArgumentError, message:
-      "The password should contain at least one digit and one punctuation character."
+      IO.puts """
+      The password is too simple. Try adding an extra digit or punctuation character to it.
+      You might need to add these extra characters after the first character and / or
+      before the last character of the password.
+      """
+      false
     end
   end
 end

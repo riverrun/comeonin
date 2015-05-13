@@ -15,8 +15,7 @@ defmodule Comeonin.PasswordTest do
     Application.put_env(:comeonin, :pass_min_length, 6)
     assert Password.valid_password?("4ghY&j2") == true
     Application.put_env(:comeonin, :pass_min_length, 8)
-    assert_raise ArgumentError, "The password is too short. It should be at least 8 characters long.",
-    fn -> Password.valid_password?("4ghY&j2") end
+    Password.valid_password?("4ghY&j2")
     Application.delete_env(:comeonin, :pass_min_length)
   end
 
@@ -28,33 +27,25 @@ defmodule Comeonin.PasswordTest do
 
   test "invalid password has no digit or symbol" do
     for id <- ["hfjkshfhj", "auykkjkjh", "tyuhiksd"] do
-      assert_raise ArgumentError,
-      "The password should contain at least one digit and one punctuation character.",
-      fn -> Password.valid_password?(id) end
+      assert Password.valid_password?(id) == false
     end
   end
 
   test "invalid password has no digit" do
     for id <- ["hf:jksh#fhj", "au$ykkjkjh", "(tyu)hiksd"] do
-      assert_raise ArgumentError,
-      "The password should contain at least one digit and one punctuation character.",
-      fn -> Password.valid_password?(id) end
+      assert Password.valid_password?(id) == false
     end
   end
 
   test "invalid password has no symbol" do
     for id <- ["h8fjkshfhj", "auykk2jkj1h", "0tyuhi67ksd"] do
-      assert_raise ArgumentError,
-      "The password should contain at least one digit and one punctuation character.",
-      fn -> Password.valid_password?(id) end
+      assert Password.valid_password?(id) == false
     end
   end
 
   test "on strict setting invalid password" do
     for id <- ["8hfjk#shfhj", "auykk$jkjh2", "0tyuhi67ksd&"] do
-      assert_raise ArgumentError,
-      "The password should contain at least one digit and one punctuation character.",
-      fn -> Password.valid_password?(id, true) end
+      assert Password.valid_password?(id, true) == false
     end
   end
 
