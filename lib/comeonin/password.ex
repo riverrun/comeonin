@@ -30,7 +30,6 @@ defmodule Comeonin.Password do
     * be long
     * contain as large a character set as possible (digits, punctuation characters, etc.)
     * not contain dictionary words (this applies to multiple languages, not just English)
-    * not contain common acronyms
     * be kept secret (not shared between multiple users)
 
   If a password fails to meet any of the above criteria, then that makes it
@@ -79,6 +78,11 @@ defmodule Comeonin.Password do
   especially as a user not following the rules can have a serious
   impact on the security of the rest of the organization.
 
+  ## Further information
+
+  Visit our wiki (https://github.com/elixircnx/comeonin/wiki)
+  for links to further information about these and related issues.
+
   """
 
   alias Comeonin.Config
@@ -86,7 +90,7 @@ defmodule Comeonin.Password do
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet ',./!@#$%^&*();:?<>' ++ @alpha ++ '0123456789'
   @digits String.codepoints("0123456789")
-  @punc String.codepoints(",./!@#$%^&*();:?<>")
+  @punc String.codepoints(" ,./!@#$%^&*();:?<>")
 
   @char_map Enum.map_reduce(@alphabet, 0, fn x, acc ->
     {{acc, x}, acc + 1} end)
@@ -117,9 +121,8 @@ defmodule Comeonin.Password do
 
   @doc """
   Check the password is at least 8 characters long, and then check that
-  it contains at least one digit and one punctuation character. If `strict`
-  is set to `true`, then the first and last characters of the password
-  are ignored.
+  it contains at least one digit and one punctuation character (spaces
+  are counted as punctuation characters).
 
   If the password is valid, this function will return true. Otherwise,
   it will return false with a message telling you what is wrong with the password.
@@ -134,29 +137,23 @@ defmodule Comeonin.Password do
       Password.valid_password?(password) and Bcrypt.hashpwsalt(password)
 
   """
-  def valid_password?(password, strict \\ false) do
-    pass_length?(String.length(password), Config.pass_min_length) and
-    has_punc_digit?(password, strict)
+  def valid_password?(password) do
+    case pass_length?(String.length(password), Config.pass_min_length) do
+      false -> Mix.shell.info "The password should be at least #{Config.pass_min_length} characters long."
+      true -> has_punc_digit?(password)
+    end
   end
 
-  defp pass_length?(word_len, min_len) when word_len < min_len do
-    IO.puts "The password is too short. It should be at least #{min_len} characters long."
-    false
-  end
+  defp pass_length?(word_len, min_len) when word_len < min_len, do: false
   defp pass_length?(_, _), do: true
 
-  defp has_punc_digit?(word, true) do
-    :binary.part(word, 1, byte_size(word) - 2) |> has_punc_digit?
-  end
-  defp has_punc_digit?(word, _), do: has_punc_digit?(word)
   defp has_punc_digit?(word) do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else
-      IO.puts """
-      The password is too simple. Try adding an extra digit or punctuation character to it.
-      You might need to add these extra characters after the first character and / or
-      before the last character of the password.
+      Mix.shell.info """
+      The password is too simple. It should contain at least one number and one
+      punctuation character.
       """
       false
     end

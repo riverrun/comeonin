@@ -69,34 +69,47 @@ defmodule Comeonin do
   To help you decide how slow to make the function, this module provides
   convenience timing functions for bcrypt and pbkdf2.
 
+  ## Further information
+
+  Visit our wiki (https://github.com/elixircnx/comeonin/wiki)
+  for links to further information about these and related issues.
+
   """
 
   @doc """
   A function to help the developer decide how many log_rounds to use
   when using bcrypt.
 
-  The number of log_rounds can be increased to make this function more
-  complex, and slower. The minimum number is 4 and the maximum is 31.
+  The number of log_rounds can be increased to make the bcrypt hashing
+  function more complex, and slower. The minimum number is 4 and the maximum is 31.
   The default is 12, but this is not necessarily the recommended number.
   The ideal number of log_rounds will depend on the nature of your application
   and the hardware being used.
+  
+  The `bcrypt_log_rounds` value can be set in the config file. See the
+  documentation for `Comeonin.Config` for more details.
   """
   def time_bcrypt(log_rounds \\ 12) do
-    {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpwsalt, ["password", log_rounds])
-    IO.puts "Log rounds: #{log_rounds}, Time: #{div(time, 1000)} ms"
+    salt = Comeonin.Bcrypt.gen_salt(log_rounds)
+    {time, _} = :timer.tc(Comeonin.Bcrypt, :hashpass, ["password", salt])
+    Mix.shell.info "Log rounds: #{log_rounds}, Time: #{div(time, 1000)} ms"
   end
 
   @doc """
   A function to help the developer decide how many rounds to use
   when using pbkdf2.
 
-  The number of rounds can be increased to make it slower. The maximum number
-  of rounds is 4294967295. The default is 60_000, but this is not necessarily
-  the recommended number. The ideal number of log_rounds will depend on the
-  nature of your application and the hardware being used.
+  The number of rounds can be increased to make the pbkdf2 hashing function slower.
+  The maximum number of rounds is 4294967295. The default is 60_000, but this
+  is not necessarily the recommended number. The ideal number of log_rounds
+  will depend on the nature of your application and the hardware being used.
+  
+  The `pbkdf2_rounds` value can be set in the config file. See the
+  documentation for `Comeonin.Config` for more details.
   """
   def time_pbkdf2(rounds \\ 60_000) do
-    {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpwsalt, ["password", rounds])
-    IO.puts "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
+    salt = Comeonin.Pbkdf2.gen_salt
+    {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpass, ["password", salt, rounds])
+    Mix.shell.info "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
   end
 end

@@ -25,26 +25,6 @@ defmodule Comeonin.Bcrypt do
   end
 
   @doc """
-  Initialize the P-box and S-box tables with the digits of Pi,
-  and then start the key expansion process.
-  """
-  def bf_init(key, key_len, salt)
-  def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
-
-  @doc """
-  The main key expansion function. This function is called
-  2^log_rounds times.
-  """
-  def bf_expand(state, key, key_len, salt)
-  def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
-
-  @doc """
-  Encrypt and return the hash.
-  """
-  def bf_encrypt(state)
-  def bf_encrypt(_), do: exit(:nif_library_not_loaded)
-
-  @doc """
   Generate a salt for use with the `hashpass` function.
 
   The log_rounds parameter determines the computational complexity
@@ -70,6 +50,58 @@ defmodule Comeonin.Bcrypt do
   def hashpass(_password, _salt) do
     raise ArgumentError, message: "Wrong type. The password and salt need to be strings."
   end
+
+  @doc """
+  Hash the password with a salt which is randomly generated.
+
+  To change the complexity (and the time taken) of the  password hash
+  calculation, you need to change the value for `bcrypt_log_rounds`
+  in the config file. For more details, read the docs for the
+  `Comeonin` and the `Comeonin.Config` modules.
+  """
+  def hashpwsalt(password) do
+    hashpass(password, gen_salt(Config.bcrypt_log_rounds))
+  end
+
+  @doc """
+  Check the password.
+
+  The check is performed in constant time to avoid timing attacks.
+  """
+  def checkpw(password, hash) do
+    hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
+    |> Tools.secure_check(hash)
+  end
+
+  @doc """
+  Perform a dummy check for a user that does not exist.
+  This always returns false. The reason for implementing this check is
+  in order to make user enumeration by timing responses more difficult.
+  """
+  def dummy_checkpw do
+    hashpwsalt("password")
+    false
+  end
+
+  @doc """
+  Initialize the P-box and S-box tables with the digits of Pi,
+  and then start the key expansion process.
+  """
+  def bf_init(key, key_len, salt)
+  def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  The main key expansion function. This function is called
+  2^log_rounds times.
+  """
+  def bf_expand(state, key, key_len, salt)
+  def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
+
+  @doc """
+  Encrypt and return the hash.
+  """
+  def bf_encrypt(state)
+  def bf_encrypt(_), do: exit(:nif_library_not_loaded)
 
   defp hashpw(password, salt) do
     [prefix, log_rounds, salt] = Enum.take(salt, 29) |> :string.tokens('$')
@@ -107,37 +139,5 @@ defmodule Comeonin.Bcrypt do
   end
   defp fmt_hash(hash, salt, prefix, log_rounds) do
     "$#{prefix}$#{log_rounds}$#{salt}#{BcryptBase64.encode(hash)}"
-  end
-
-  @doc """
-  Hash the password with a salt which is randomly generated.
-
-  There is an option to change the log_rounds parameter, which
-  affects the complexity (and the time taken) of the generation
-  of the password hash. For more details, read the docs for the
-  main `Comeonin` module.
-  """
-  def hashpwsalt(password, log_rounds \\ Config.bcrypt_log_rounds) do
-    hashpass(password, gen_salt(log_rounds))
-  end
-
-  @doc """
-  Check the password.
-
-  The check is performed in constant time to avoid timing attacks.
-  """
-  def checkpw(password, hash) do
-    hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
-    |> Tools.secure_check(hash)
-  end
-
-  @doc """
-  Perform a dummy check for a user that does not exist.
-  This always returns false. The reason for implementing this check is
-  in order to make user enumeration by timing responses more difficult.
-  """
-  def dummy_checkpw do
-    hashpwsalt("password")
-    false
   end
 end

@@ -20,7 +20,7 @@ defmodule Comeonin.PasswordTest do
   end
 
   test "valid password has a digit and a symbol" do
-    for id <- ["hfjkshf6hj#", "8auyk>kjkjh", "ty3uhi@ksd"] do
+    for id <- ["hfjkshf6hj#", "8auyk kjkjh", "ty3uhi@ksd"] do
       assert Password.valid_password?(id) == true
     end
   end
@@ -40,12 +40,6 @@ defmodule Comeonin.PasswordTest do
   test "invalid password has no symbol" do
     for id <- ["h8fjkshfhj", "auykk2jkj1h", "0tyuhi67ksd"] do
       assert Password.valid_password?(id) == false
-    end
-  end
-
-  test "on strict setting invalid password" do
-    for id <- ["8hfjk#shfhj", "auykk$jkjh2", "0tyuhi67ksd&"] do
-      assert Password.valid_password?(id, true) == false
     end
   end
 

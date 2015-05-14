@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0 (2015-05-14)
+
+* Enhancements
+  * Updated password validator.
+
 ## 0.9.0 (2015-05-08)
 
 * Enhancements

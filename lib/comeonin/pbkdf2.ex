@@ -45,8 +45,8 @@ defmodule Comeonin.Pbkdf2 do
   @doc """
   Hash the password with a salt which is randomly generated.
   """
-  def hashpwsalt(password, rounds \\ Config.pbkdf2_rounds) do
-    hashpass(password, gen_salt, rounds)
+  def hashpwsalt(password) do
+    hashpass(password, gen_salt)
   end
 
   defp format(hash, salt, rounds) do
