@@ -45,17 +45,21 @@ defmodule Comeonin.Pbkdf2 do
 
   @doc """
   Hash the password with a salt which is randomly generated.
-
-  There is an optional argument to first check that the password is
-  long enough and contains at least one number and one punctuation
-  character. The password is then hashed only if the password is
-  considered strong enough. Read the docs for the Comeonin.Password
-  module for more information.
   """
-  def hashpwsalt(password, validate \\ false) do
-    if validate, do: valid = Password.valid_password?(password), else: valid = true
-    valid and hashpass(password, gen_salt)
+  def hashpwsalt(password) do
+    hashpass(password, gen_salt)
   end
+
+  @doc """
+  This function first checks that the password is long enough and
+  contains at least one number and one punctuation character. The
+  password is then hashed only if the password is considered strong
+  enough. Read the docs for the Comeonin.Password module for more information.
+  """
+  def hashpwsalt(password, true) do
+    Password.valid_password?(password) and hashpass(password, gen_salt)
+  end
+  def hashpwsalt(password, _), do: hashpass(password, gen_salt)
 
   defp format(hash, salt, rounds) do
     "$pbkdf2-sha512$#{rounds}$#{Pbkdf2Base64.encode(salt)}$#{Pbkdf2Base64.encode(hash)}"

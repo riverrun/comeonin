@@ -2,8 +2,9 @@
 
 ## 0.10.0 (2015-05-14)
 
-* Enhancements
-  * Updated password validator.
+* Changes
+  * Removed log_rounds, or rounds, parameter for the function hashpwsalt.
+  * Added option to check password (for strength) in the function hashpwsalt (hashpwsalt/2).
 
 ## 0.9.0 (2015-05-08)
 
