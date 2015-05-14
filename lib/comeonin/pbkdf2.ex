@@ -12,6 +12,7 @@ defmodule Comeonin.Pbkdf2 do
   use Bitwise
   alias Comeonin.Pbkdf2Base64
   alias Comeonin.Config
+  alias Comeonin.Password
   alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
@@ -44,9 +45,16 @@ defmodule Comeonin.Pbkdf2 do
 
   @doc """
   Hash the password with a salt which is randomly generated.
+
+  There is an optional argument to first check that the password is
+  long enough and contains at least one number and one punctuation
+  character. The password is then hashed only if the password is
+  considered strong enough. Read the docs for the Comeonin.Password
+  module for more information.
   """
-  def hashpwsalt(password) do
-    hashpass(password, gen_salt)
+  def hashpwsalt(password, validate \\ false) do
+    if validate, do: valid = Password.valid_password?(password), else: valid = true
+    valid and hashpass(password, gen_salt)
   end
 
   defp format(hash, salt, rounds) do

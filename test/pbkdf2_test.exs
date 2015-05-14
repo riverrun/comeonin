@@ -109,6 +109,12 @@ defmodule Comeonin.Pbkdf2Test do
     end
   end
 
+  test "hashpwsalt with password validation" do
+    assert Pbkdf2.hashpwsalt("password")
+    assert Pbkdf2.hashpwsalt("password", true) == false
+    assert Pbkdf2.hashpwsalt("pa$$w0rd", true)
+  end
+
   test "trying to run hashpass without a salt" do
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Pbkdf2.hashpass("password", "")

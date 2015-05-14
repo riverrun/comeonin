@@ -127,6 +127,12 @@ defmodule Comeonin.BcryptTest do
     assert String.starts_with?(Bcrypt.gen_salt(["wrong type"]), "$2b$12$")
   end
 
+  test "hashpwsalt with password validation" do
+    assert Bcrypt.hashpwsalt("password")
+    assert Bcrypt.hashpwsalt("password", true) == false
+    assert Bcrypt.hashpwsalt("pa$$w0rd", true)
+  end
+
   test "trying to run hashpass without a salt" do
     assert_raise ArgumentError, "The salt is the wrong length.", fn ->
       Bcrypt.hashpass("U*U", "")
