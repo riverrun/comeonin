@@ -141,8 +141,11 @@ defmodule Comeonin do
   """
   def create_user(user_params, valid \\ true) do
     {password, user_params} = Map.pop(user_params, "password")
-    {:ok, password_hash} = signup_user(password, valid)
-    Map.put_new(user_params, "password_hash", password_hash)
+    case signup_user(password, valid) do
+      {:ok, password_hash} -> {:ok,
+        Map.put_new(user_params, "password_hash", password_hash)}
+      {:error, message} -> {:error, message}
+    end
   end
 
   defp get_crypto_mod do
