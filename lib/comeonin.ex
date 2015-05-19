@@ -76,6 +76,9 @@ defmodule Comeonin do
 
   """
 
+  alias Comeonin.Config
+  alias Comeonin.Password
+
   @doc """
   A function to help the developer decide how many log_rounds to use
   when using bcrypt.
@@ -111,5 +114,41 @@ defmodule Comeonin do
     salt = Comeonin.Pbkdf2.gen_salt
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpass, ["password", salt, rounds])
     Mix.shell.info "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
+  end
+
+  @doc """
+  This function can be used to check the strength of a password
+  before hashing it. The password is then hashed only if the password is
+  considered strong enough. For more details about password strength,
+  read the documentation for the Comeonin.Password module.
+
+  The default hashing algorithm is bcrypt, but this can be changed by
+  setting the value of `crypto_mod` to `:pbkdf2` in the config file.
+  """
+  def signup_user(password, valid \\ true) do
+    crypto_mod = get_crypto_mod
+    case valid and Password.valid_password?(password) do
+      true -> {:ok, crypto_mod.hashpwsalt(password)}
+      false -> {:ok, crypto_mod.hashpwsalt(password)}
+      message -> {:error, message}
+    end
+  end
+
+  @doc """
+  This function takes a map with a password in it, removes the password
+  and adds an entry for the password hash. This can be used after collecting
+  user data and before adding it to the database.
+  """
+  def create_user(user_params, valid \\ true) do
+    {password, user_params} = Map.pop(user_params, "password")
+    {:ok, password_hash} = signup_user(password, valid)
+    Map.put_new(user_params, "password_hash", password_hash)
+  end
+
+  defp get_crypto_mod do
+    case Config.crypto_mod do
+      :pbkdf2 -> Comeonin.Pbkdf2
+      _ -> Comeonin.Bcrypt
+    end
   end
 end

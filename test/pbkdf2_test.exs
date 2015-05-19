@@ -94,13 +94,6 @@ defmodule Comeonin.Pbkdf2Test do
     hash_check_password("Я❤três☕ où☔", "Я❤tres☕ où☔", "Я❤três☕où☔", "Я❤três où☔")
   end
 
-  test "pbkdf2 signup_user password validation" do
-    assert Pbkdf2.signup_user("password") ==
-    {:error, "The password should contain at least one number and one punctuation character."}
-    {:ok, hash} = Pbkdf2.signup_user("pas$w0rd")
-    assert String.starts_with?(hash, "$pbkdf2-sha512$")
-  end
-
   test "gen_salt length of salt" do
     assert byte_size(Pbkdf2.gen_salt) == 16
     assert byte_size(Pbkdf2.gen_salt(32)) == 32

@@ -12,7 +12,6 @@ defmodule Comeonin.Pbkdf2 do
   use Bitwise
   alias Comeonin.Pbkdf2Base64
   alias Comeonin.Config
-  alias Comeonin.Password
   alias Comeonin.Tools
 
   @max_length bsl(1, 32) - 1
@@ -52,19 +51,6 @@ defmodule Comeonin.Pbkdf2 do
   """
   def hashpwsalt(password) do
     hashpass(password, gen_salt, Config.pbkdf2_rounds)
-  end
-
-  @doc """
-  This is a convenience function that checks the strength of a password
-  before hashing it. The password is then hashed only if the password is
-  considered strong enough. For more details about password strength,
-  read the documentation for the Comeonin.Password module.
-  """
-  def signup_user(password) do
-    case Password.valid_password?(password) do
-      true -> {:ok, hashpwsalt(password)}
-      message -> {:error, message}
-    end
   end
 
   defp format(hash, salt, rounds) do

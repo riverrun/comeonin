@@ -125,7 +125,7 @@ defmodule Comeonin.Password do
   are counted as punctuation characters).
 
   If the password is valid, this function will return true. Otherwise,
-  it will return false with a message telling you what is wrong with the password.
+  it will return with a message telling you what is wrong with the password.
 
   """
   def valid_password?(password) do
