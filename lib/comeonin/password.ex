@@ -127,35 +127,24 @@ defmodule Comeonin.Password do
   If the password is valid, this function will return true. Otherwise,
   it will return false with a message telling you what is wrong with the password.
 
-  ## Example
-
-  To validate a password before hashing it:
-
-      alias Comeonin.Password
-      alias Comeonin.Bcrypt
-
-      Password.valid_password?(password) and Bcrypt.hashpwsalt(password)
-
   """
   def valid_password?(password) do
     case pass_length?(String.length(password), Config.pass_min_length) do
-      false -> Mix.shell.info "The password should be at least #{Config.pass_min_length} characters long."
       true -> has_punc_digit?(password)
+      message -> message
     end
   end
 
-  defp pass_length?(word_len, min_len) when word_len < min_len, do: false
+  defp pass_length?(word_len, min_len) when word_len < min_len do
+    "The password should be at least #{Config.pass_min_length} characters long."
+  end
   defp pass_length?(_, _), do: true
 
   defp has_punc_digit?(word) do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else
-      Mix.shell.info """
-      The password is too simple. It should contain at least one number and one
-      punctuation character.
-      """
-      false
+      "The password should contain at least one number and one punctuation character."
     end
   end
 end

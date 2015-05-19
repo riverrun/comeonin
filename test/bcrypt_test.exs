@@ -109,6 +109,13 @@ defmodule Comeonin.BcryptTest do
     hash_check_password("Я❤três☕ où☔", "Я❤tres☕ où☔", "Я❤três☕où☔", "Я❤três où☔")
   end
 
+  test "bcrypt signup_user password validation" do
+    assert Bcrypt.signup_user("password") ==
+    {:error, "The password should contain at least one number and one punctuation character."}
+    {:ok, hash} = Bcrypt.signup_user("pas$w0rd")
+    assert String.starts_with?(hash, "$2b$")
+  end
+
   test "gen_salt number of rounds" do
     assert String.starts_with?(Bcrypt.gen_salt(8), "$2b$08$")
     assert String.starts_with?(Bcrypt.gen_salt(20), "$2b$20$")
@@ -125,12 +132,6 @@ defmodule Comeonin.BcryptTest do
     assert String.starts_with?(Bcrypt.gen_salt(3), "$2b$12$")
     assert String.starts_with?(Bcrypt.gen_salt(32), "$2b$12$")
     assert String.starts_with?(Bcrypt.gen_salt(["wrong type"]), "$2b$12$")
-  end
-
-  test "hashpwsalt with password validation" do
-    assert Bcrypt.hashpwsalt("password")
-    assert Bcrypt.hashpwsalt("password", true) == false
-    assert Bcrypt.hashpwsalt("pa$$w0rd", true)
   end
 
   test "trying to run hashpass without a salt" do

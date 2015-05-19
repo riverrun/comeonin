@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.0 (2015-05-19)
+
+* Changes
+  * Renamed hashpwsalt/2 to signup_user/1.
+
 ## 0.10.0 (2015-05-14)
 
 * Changes

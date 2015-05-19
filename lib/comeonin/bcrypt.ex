@@ -57,23 +57,24 @@ defmodule Comeonin.Bcrypt do
 
   To change the complexity (and the time taken) of the  password hash
   calculation, you need to change the value for `bcrypt_log_rounds`
-  in the config file. For more details, read the docs for the
-  Comeonin and the Comeonin.Config modules.
+  in the config file.
   """
   def hashpwsalt(password) do
     hashpass(password, gen_salt(Config.bcrypt_log_rounds))
   end
 
   @doc """
-  This function first checks that the password is long enough and
-  contains at least one number and one punctuation character. The
-  password is then hashed only if the password is considered strong
-  enough. Read the docs for the Comeonin.Password module for more information.
+  This is a convenience function that checks the strength of a password
+  before hashing it. The password is then hashed only if the password is
+  considered strong enough. For more details about password strength,
+  read the documentation for the Comeonin.Password module.
   """
-  def hashpwsalt(password, true) do
-    Password.valid_password?(password) and hashpass(password, gen_salt(Config.bcrypt_log_rounds))
+  def signup_user(password) do
+    case Password.valid_password?(password) do
+      true -> {:ok, hashpwsalt(password)}
+      message -> {:error, message}
+    end
   end
-  def hashpwsalt(password, _), do: hashpass(password, gen_salt(Config.bcrypt_log_rounds))
 
   @doc """
   Check the password.

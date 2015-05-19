@@ -15,7 +15,7 @@ defmodule Comeonin.PasswordTest do
     Application.put_env(:comeonin, :pass_min_length, 6)
     assert Password.valid_password?("4ghY&j2") == true
     Application.put_env(:comeonin, :pass_min_length, 8)
-    Password.valid_password?("4ghY&j2")
+    assert Password.valid_password?("4ghY&j2") == "The password should be at least 8 characters long."
     Application.delete_env(:comeonin, :pass_min_length)
   end
 
@@ -27,19 +27,22 @@ defmodule Comeonin.PasswordTest do
 
   test "invalid password has no digit or symbol" do
     for id <- ["hfjkshfhj", "auykkjkjh", "tyuhiksd"] do
-      assert Password.valid_password?(id) == false
+      assert Password.valid_password?(id) ==
+      "The password should contain at least one number and one punctuation character."
     end
   end
 
   test "invalid password has no digit" do
     for id <- ["hf:jksh#fhj", "au$ykkjkjh", "(tyu)hiksd"] do
-      assert Password.valid_password?(id) == false
+      assert Password.valid_password?(id) ==
+      "The password should contain at least one number and one punctuation character."
     end
   end
 
   test "invalid password has no symbol" do
     for id <- ["h8fjkshfhj", "auykk2jkj1h", "0tyuhi67ksd"] do
-      assert Password.valid_password?(id) == false
+      assert Password.valid_password?(id) ==
+      "The password should contain at least one number and one punctuation character."
     end
   end
 
