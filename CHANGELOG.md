@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2015-05-20)
+
+* Changes
+  * Renamed signup_user, function to check password strength before hashing the password, to create_user.
+* Enhancements
+  * Added create_user function which takes a map, removes the "password" entry and adds a "password_hash" entry.
+
 ## 0.11.0 (2015-05-19)
 
 * Changes
