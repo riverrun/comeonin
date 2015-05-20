@@ -34,7 +34,7 @@ as the version of erlang in the repositories is usually quite old.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 0.11"} ]
+    [ {:comeonin, "~> 1.0"} ]
   end
   ```
 

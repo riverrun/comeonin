@@ -10,8 +10,16 @@ defmodule Comeonin do
 
   ## Use
 
-  Import, or alias, the algorithm you want to use -- either `Comeonin.Bcrypt`
-  or `Comeonin.Pbkdf2`.
+  This module offers the following convenience functions:
+
+    * create_hash -- check password strength before hashing it
+    * create_user -- update a map with the password hash
+
+  See the documentation for each function for more details.
+
+  If you do not need this extra functionality, you can hash a password
+  by using the `hashpwsalt` function -- using either Comeonin.Bcrypt or
+  Comeonin.Pbkdf2.
 
   To hash a password with the default options:
 
@@ -138,6 +146,9 @@ defmodule Comeonin do
   This function takes a map with a password in it, removes the password
   and adds an entry for the password hash. This can be used after collecting
   user data and before adding it to the database.
+
+  This uses the `create_hash` function, which can be used to check password
+  strength before hashing it.
   """
   def create_user(user_params, valid \\ true) do
     {password, user_params} = Map.pop(user_params, "password")
