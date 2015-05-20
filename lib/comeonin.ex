@@ -125,7 +125,7 @@ defmodule Comeonin do
   The default hashing algorithm is bcrypt, but this can be changed by
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
   """
-  def signup_user(password, valid \\ true) do
+  def create_hash(password, valid \\ true) do
     crypto_mod = get_crypto_mod
     case valid and Password.valid_password?(password) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
@@ -141,7 +141,7 @@ defmodule Comeonin do
   """
   def create_user(user_params, valid \\ true) do
     {password, user_params} = Map.pop(user_params, "password")
-    case signup_user(password, valid) do
+    case create_hash(password, valid) do
       {:ok, password_hash} -> {:ok,
         Map.put_new(user_params, "password_hash", password_hash)}
       {:error, message} -> {:error, message}

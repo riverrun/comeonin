@@ -15,9 +15,11 @@ defmodule Comeonin.Config do
   the main Comeonin module. With this setting, you can decide which
   algorithm you want to use, :bcrypt or :pbkdf2, to hash the password.
 
+  `bcrypt_log_rounds` and `pbkdf2_rounds` can be used to adjust the
+  complexity, and time taken, of the password hashing calculation.
   Please read the documentation for the main Comeonin module,
-  which explains why the default values for `bcrypt_log_rounds` and
-  `pbkdf2_rounds` are not always the best values to use.
+  which explains why the default values are not always the best
+  values to use.
 
   `pass_length` is for use with the `gen_password` function in the
   Comeonin.Password module and is the default length of the generated

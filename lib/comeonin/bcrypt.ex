@@ -3,13 +3,17 @@ defmodule Comeonin.Bcrypt do
   Module to handle bcrypt authentication.
 
   Bcrypt is a key derivation function for passwords designed by Niels Provos
-  and David Mazières. Bcrypt uses a salt to protect against offline attacks.
-  It is also an adaptive function, which means that it can be configured
-  to remain slow and resistant to brute-force attacks even as computational
-  power increases.
+  and David Mazières. Bcrypt is an adaptive function, which means that it can
+  be configured to remain slow and resistant to brute-force attacks even as
+  computational power increases.
 
   This bcrypt implementation is based on the latest OpenBSD version, which
   fixed a small issue that affected some passwords longer than 72 characters.
+
+  The computationally intensive code is run in C, using Erlang NIFs. One concern
+  about NIFs is that they block the Erlang VM, and so it is better to make
+  sure these functions do not run for too long. This bcrypt implementation
+  has been adapted so that each NIF runs for as short a time as possible.
   """
 
   use Bitwise
