@@ -75,6 +75,23 @@ and is to be used when the username cannot be found. It performs a hash,
 but then returns false. This can be used to make user enumeration more
 difficult.
 
+### Generating and validating passwords
+
+In the Comeonin.Password module, there are functions to generate random
+passwords and to check passwords for password strength.
+
+There is also a `create_hash` function in the main Comeonin module which
+can be used to check a password for password strength before hashing it.
+
+### Interacting with a database
+
+The `create_user` function in the Comeonin module takes a map, removes the
+"password" entry, checks the password for password strength, and then
+hashes the password and adds a "password_hash" entry to the map. If there
+are no errors it returns the new map.
+
+The check for password strength is optional, but it is set to true by default.
+
 ## Documentation
 
 http://hexdocs.pm/comeonin
