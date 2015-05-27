@@ -134,7 +134,7 @@ defmodule Comeonin do
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
   """
   def create_hash(password, valid \\ true) do
-    crypto_mod = get_crypto_mod
+    crypto_mod = Config.get_crypto_mod
     case valid and Password.valid_password?(password) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       false -> {:ok, crypto_mod.hashpwsalt(password)}
@@ -156,13 +156,6 @@ defmodule Comeonin do
       {:ok, password_hash} -> {:ok,
         Map.put_new(user_params, "password_hash", password_hash)}
       {:error, message} -> {:error, message}
-    end
-  end
-
-  defp get_crypto_mod do
-    case Config.crypto_mod do
-      :pbkdf2 -> Comeonin.Pbkdf2
-      _ -> Comeonin.Bcrypt
     end
   end
 end

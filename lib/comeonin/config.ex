@@ -83,4 +83,11 @@ defmodule Comeonin.Config do
   def pass_min_length do
     Application.get_env(:comeonin, :pass_min_length, 8)
   end
+
+  def get_crypto_mod do
+    case crypto_mod do
+      :pbkdf2 -> Comeonin.Pbkdf2
+      _ -> Comeonin.Bcrypt
+    end
+  end
 end
