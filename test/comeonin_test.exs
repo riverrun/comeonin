@@ -40,7 +40,7 @@ defmodule ComeoninTest do
 
   test "create user map where map key is neither string nor atom" do
     assert Comeonin.create_user(%{ ["name"] => "fred", ["password", "password_admin"] => "&m@ng0es" }) ===
-    {:error, "user_params has neither atom nor string as password key"}
+    {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
   test "create user map with no password validation" do

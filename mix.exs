@@ -30,7 +30,11 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
     Windows: One option is to install a recent version of Visual Studio (the
     free Community edition will be enough for this task). Then try running
-    `mix deps.compile comeonin` from the `Developer Command Prompt`.
+    `mix deps.compile comeonin` from the `Developer Command Prompt`. If
+    you are using 64-bit erlang, you might need to run the command
+    `vcvarsall.bat amd64` before running `mix deps.compile`. Further
+    information can be found at 
+    (https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx).
 
     Mac OS X: You need to have gcc and make installed. Try running the
     commands `gcc --version` and / or `make --version`. If these programs

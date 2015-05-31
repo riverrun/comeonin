@@ -150,66 +150,51 @@ defmodule Comeonin do
   This uses the `create_hash` function, which can be used to check password
   strength before hashing it.
 
-  ## Example for when user_params map has "password" as password key
+  When looking for the password, this function looks for a key which is either
+  named "password" (a string) or :password (an atom). If it does not find
+  either key, it will raise an error.
 
-      # %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Map.has_key?("password_hash")
-      iex> %{"name" => "fred", "password" => "&m@ng0es"}
-      ...> |> Comeonin.create_user
-      ...> |> Tuple.to_list
-      ...> |> List.last
-      ...> |> Map.has_key?("password_hash")
-      true
+  As with the `create_hash` function, you can decide not to check password
+  strength by setting the second argument to false.
 
-      # %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Access.get("password_hash") |> Comeonin.Password.valid_password?
-      iex> %{"name" => "fred", "password" => "&m@ng0es"}
-      ...> |> Comeonin.create_user
-      ...> |> Tuple.to_list
-      ...> |> List.last
-      ...> |> Access.get("password_hash")
-      ...> |> Comeonin.Password.valid_password?
-      true
+  ## Examples
 
-  ## Example for when user_params map has :password as password key
+  All of the following will work ok:
 
-      # %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Map.has_key?(:password_hash)
-      iex> %{name: "fred", password: "&m@ng0es"}
-      ...> |> Comeonin.create_user
-      ...> |> Tuple.to_list
-      ...> |> List.last
-      ...> |> Map.has_key?(:password_hash)
-      true
+      %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user
 
-      # %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Access.get(:password_hash) |> Comeonin.Password.valid_password?
-      iex> %{name: "fred", password: "&m@ng0es"}
-      ...> |> Comeonin.create_user
-      ...> |> Tuple.to_list
-      ...> |> List.last
-      ...> |> Access.get(:password_hash)
-      ...> |> Comeonin.Password.valid_password?
-      true
+      %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user
 
-  ## Example for where error occurs when user_params map has anything else as password key
+      %{name: "fred", password: "123456"} |> Comeonin.create_user(false)
 
-      iex> %{ ["name"] => "fred", ["password", "password_admin"] => "&m@ng0es" } |> Comeonin.create_user
-      {:error, "user_params has neither atom nor string as password key"}
+  The next example will raise an error because the key "password" or :password
+  could not be found:
+
+      iex> %{["name"] => "fred", ["password", "password_admin"] => "&m@ng0es"} |> Comeonin.create_user
+      {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
+
+  This example will raise an error because the password is not long enough:
+
+      iex> %{name: "fred", password: "123456"} |> Comeonin.create_user
+      {:error, "The password should be at least 8 characters long."}
 
   """
-  def create_user(user_params, valid \\ true) do
-    case get_password_type(user_params[:password], user_params["password"]) do
-      {:error, message} ->
-        {:error, message}
-      {password_key, password_hash_key} ->
-        {password, user_params} = Map.pop(user_params, password_key)
-        case create_hash(password, valid) do
-          {:ok, password_hash} -> {:ok,
-            Map.put_new(user_params, password_hash_key, password_hash)}
-          {:error, message} -> {:error, message}
-        end
+  def create_user(user_params, valid \\ true)
+  def create_user(%{password: password} = user_params, valid) do
+    create_map(user_params, password, :password, :password_hash, valid)
+  end
+  def create_user(%{"password" => password} = user_params, valid) do
+    create_map(user_params, password, "password", "password_hash", valid)
+  end
+  def create_user(_, _) do
+    {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
+  end
+
+  defp create_map(user_params, password, pass_key, hash_key, valid) do
+    user_params = Map.delete(user_params, pass_key)
+    case create_hash(password, valid) do
+      {:ok, password_hash} -> {:ok, Map.put_new(user_params, hash_key, password_hash)}
+      {:error, message} -> {:error, message}
     end
   end
-  defp get_password_type(pwd_atom?, pwd_bin?) when pwd_atom? === :nil and pwd_bin? !== nil, do: {"password", "password_hash"}
-  defp get_password_type(pwd_atom?, pwd_bin?) when pwd_atom? !== :nil and pwd_bin? === nil, do: {:password, :password_hash}
-  defp get_password_type(_, _), do: {:error, "user_params has neither atom nor string as password key"}
-
-
 end
