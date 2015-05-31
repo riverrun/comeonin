@@ -24,11 +24,23 @@ defmodule ComeoninTest do
     Application.delete_env(:comeonin, :crypto_mod)
   end
 
-  test "create user map" do
+  test "create user map key is string" do
     {:ok, params} = %{"name" => "fred", "password" => "&m@ng0es"}
               |> Comeonin.create_user
     assert Map.has_key?(params, "password_hash")
     refute Map.has_key?(params, "password")
+  end
+
+  test "create user map where map key is atom" do
+    {:ok, params} = %{name: "fred", password: "&m@ng0es"}
+              |> Comeonin.create_user
+    assert Map.has_key?(params, :password_hash)
+    refute Map.has_key?(params, :password)
+  end
+
+  test "create user map where map key is neither string nor atom" do
+    assert Comeonin.create_user(%{ ["name"] => "fred", ["password", "password_admin"] => "&m@ng0es" }) ===
+    {:error, "user_params has neither atom nor string as password key"}
   end
 
   test "create user map with no password validation" do

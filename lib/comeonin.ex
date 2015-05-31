@@ -53,7 +53,7 @@ defmodule Comeonin do
   and widely reviewed for at least 10 years. They are also designed
   to be `future-adaptable` (see the section below about speed / complexity
   for more details), and so we do not recommend one over the other.
-  
+
   However, if your application needs to use a hashing function that has been
   recommended by a recognized standards body, then you will need to
   use pbkdf2_sha512, which has been recommended by NIST.
@@ -96,7 +96,7 @@ defmodule Comeonin do
   The default is 12, but this is not necessarily the recommended number.
   The ideal number of log_rounds will depend on the nature of your application
   and the hardware being used.
-  
+
   The `bcrypt_log_rounds` value can be set in the config file. See the
   documentation for `Comeonin.Config` for more details.
   """
@@ -114,7 +114,7 @@ defmodule Comeonin do
   The maximum number of rounds is 4294967295. The default is 60_000, but this
   is not necessarily the recommended number. The ideal number of log_rounds
   will depend on the nature of your application and the hardware being used.
-  
+
   The `pbkdf2_rounds` value can be set in the config file. See the
   documentation for `Comeonin.Config` for more details.
   """
@@ -149,13 +149,67 @@ defmodule Comeonin do
 
   This uses the `create_hash` function, which can be used to check password
   strength before hashing it.
+
+  ## Example for when user_params map has "password" as password key
+
+      # %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Map.has_key?("password_hash")
+      iex> %{"name" => "fred", "password" => "&m@ng0es"}
+      ...> |> Comeonin.create_user
+      ...> |> Tuple.to_list
+      ...> |> List.last
+      ...> |> Map.has_key?("password_hash")
+      true
+
+      # %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Access.get("password_hash") |> Comeonin.Password.valid_password?
+      iex> %{"name" => "fred", "password" => "&m@ng0es"}
+      ...> |> Comeonin.create_user
+      ...> |> Tuple.to_list
+      ...> |> List.last
+      ...> |> Access.get("password_hash")
+      ...> |> Comeonin.Password.valid_password?
+      true
+
+  ## Example for when user_params map has :password as password key
+
+      # %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Map.has_key?(:password_hash)
+      iex> %{name: "fred", password: "&m@ng0es"}
+      ...> |> Comeonin.create_user
+      ...> |> Tuple.to_list
+      ...> |> List.last
+      ...> |> Map.has_key?(:password_hash)
+      true
+
+      # %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user |> Tuple.to_list |> List.last |> Access.get(:password_hash) |> Comeonin.Password.valid_password?
+      iex> %{name: "fred", password: "&m@ng0es"}
+      ...> |> Comeonin.create_user
+      ...> |> Tuple.to_list
+      ...> |> List.last
+      ...> |> Access.get(:password_hash)
+      ...> |> Comeonin.Password.valid_password?
+      true
+
+  ## Example for where error occurs when user_params map has anything else as password key
+
+      iex> %{ ["name"] => "fred", ["password", "password_admin"] => "&m@ng0es" } |> Comeonin.create_user
+      {:error, "user_params has neither atom nor string as password key"}
+
   """
   def create_user(user_params, valid \\ true) do
-    {password, user_params} = Map.pop(user_params, "password")
-    case create_hash(password, valid) do
-      {:ok, password_hash} -> {:ok,
-        Map.put_new(user_params, "password_hash", password_hash)}
-      {:error, message} -> {:error, message}
+    case get_password_type(user_params[:password], user_params["password"]) do
+      {:error, message} ->
+        {:error, message}
+      {password_key, password_hash_key} ->
+        {password, user_params} = Map.pop(user_params, password_key)
+        case create_hash(password, valid) do
+          {:ok, password_hash} -> {:ok,
+            Map.put_new(user_params, password_hash_key, password_hash)}
+          {:error, message} -> {:error, message}
+        end
     end
   end
+  defp get_password_type(pwd_atom?, pwd_bin?) when pwd_atom? === :nil and pwd_bin? !== nil, do: {"password", "password_hash"}
+  defp get_password_type(pwd_atom?, pwd_bin?) when pwd_atom? !== :nil and pwd_bin? === nil, do: {:password, :password_hash}
+  defp get_password_type(_, _), do: {:error, "user_params has neither atom nor string as password key"}
+
+
 end
