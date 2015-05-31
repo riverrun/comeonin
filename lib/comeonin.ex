@@ -166,7 +166,7 @@ defmodule Comeonin do
       ...> |> Tuple.to_list
       ...> |> List.last
       ...> |> Access.get("password_hash")
-      ...> |> String.length >= 60
+      ...> |> Comeonin.Password.valid_password?
       true
 
   ## Example for when user_params map has :password as password key
