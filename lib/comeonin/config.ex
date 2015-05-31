@@ -97,7 +97,7 @@ defmodule Comeonin.Config do
   end
 
   @doc """
-  For use with the `valid_password?` function, the minimum length of
+  For use with the `strong_password?` function, the minimum length of
   a password.
   """
   def pass_min_length do

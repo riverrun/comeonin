@@ -1,7 +1,7 @@
 defmodule ComeoninTest do
   use ExUnit.Case, async: true
 
-  test "bcrypt create_hash password validation" do
+  test "bcrypt create_hash password strength check" do
     assert Comeonin.create_hash("password") ==
     {:error, "The password should contain at least one number and one punctuation character."}
 
@@ -9,12 +9,12 @@ defmodule ComeoninTest do
     assert String.starts_with?(hash, "$2b$")
   end
 
-  test "create_hash with no password validation" do
+  test "create_hash with no password strength check" do
     {:ok, hash} = Comeonin.create_hash("pass", false)
     assert String.starts_with?(hash, "$2b$")
   end
 
-  test "pbkdf2 create_hash password validation" do
+  test "pbkdf2 create_hash password strength check" do
     Application.put_env(:comeonin, :crypto_mod, :pbkdf2)
     assert Comeonin.create_hash("password") ==
     {:error, "The password should contain at least one number and one punctuation character."}
@@ -43,7 +43,7 @@ defmodule ComeoninTest do
     {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
-  test "create user map with no password validation" do
+  test "create user map with no password strength check" do
     {:ok, params} = %{"name" => "joe", "password" => "gooseberries"}
               |> Comeonin.create_user(false)
     assert Map.has_key?(params, "password_hash")

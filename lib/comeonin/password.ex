@@ -1,9 +1,9 @@
 defmodule Comeonin.Password do
   @moduledoc """
-  Module to generate random passwords and validate passwords.
+  Module to generate random passwords and check password strength.
 
-  The function to validate passwords checks that they are long enough
-  and contain at least one digit and one punctuation character.
+  The function to check password strength checks that it is long enough
+  and contains at least one digit and one punctuation character.
 
   # Password policy
 
@@ -47,7 +47,7 @@ defmodule Comeonin.Password do
   an important consideration.
 
   In this module, the default length of the randomly generated passwords
-  is 12 characters, and with the `valid_password?` function, the minimum
+  is 12 characters, and with the `strong_password?` function, the minimum
   length of passwords is 8 characters. Both of these values can be changed
   in the config file.
 
@@ -124,11 +124,11 @@ defmodule Comeonin.Password do
   it contains at least one digit and one punctuation character (spaces
   are counted as punctuation characters).
 
-  If the password is valid, this function will return true. Otherwise,
+  If the password passes these tests, this function will return true. Otherwise,
   it will return with a message telling you what is wrong with the password.
 
   """
-  def valid_password?(password) do
+  def strong_password?(password) do
     case pass_length?(String.length(password), Config.pass_min_length) do
       true -> has_punc_digit?(password)
       message -> message

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2015-05-31)
+* Enhancements
+  * Enabled the create_user function to be used with atoms as keys as well as strings.
+
 ## 1.0.0 (2015-05-20)
 
 * Changes

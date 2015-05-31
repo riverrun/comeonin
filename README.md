@@ -75,7 +75,7 @@ and is to be used when the username cannot be found. It performs a hash,
 but then returns false. This can be used to make user enumeration more
 difficult.
 
-### Generating and validating passwords
+### Generating passwords and checking password strength
 
 In the Comeonin.Password module, there are functions to generate random
 passwords and to check passwords for password strength.

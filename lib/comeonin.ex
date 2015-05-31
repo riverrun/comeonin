@@ -133,9 +133,9 @@ defmodule Comeonin do
   The default hashing algorithm is bcrypt, but this can be changed by
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
   """
-  def create_hash(password, valid \\ true) do
+  def create_hash(password, strength \\ true) do
     crypto_mod = Config.get_crypto_mod
-    case valid and Password.valid_password?(password) do
+    case strength and Password.strong_password?(password) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
@@ -179,20 +179,19 @@ defmodule Comeonin do
       {:error, "The password should be at least 8 characters long."}
 
   """
-  def create_user(user_params, valid \\ true)
-  def create_user(%{password: password} = user_params, valid) do
-    create_map(user_params, password, :password, :password_hash, valid)
+  def create_user(user_params, strength \\ true)
+  def create_user(%{password: password} = user_params, strength) do
+    Map.delete(user_params, :password) |> create_map(password, :password_hash, strength)
   end
-  def create_user(%{"password" => password} = user_params, valid) do
-    create_map(user_params, password, "password", "password_hash", valid)
+  def create_user(%{"password" => password} = user_params, strength) do
+    Map.delete(user_params, "password") |> create_map(password, "password_hash", strength)
   end
   def create_user(_, _) do
     {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
-  defp create_map(user_params, password, pass_key, hash_key, valid) do
-    user_params = Map.delete(user_params, pass_key)
-    case create_hash(password, valid) do
+  defp create_map(user_params, password, hash_key, strength) do
+    case create_hash(password, strength) do
       {:ok, password_hash} -> {:ok, Map.put_new(user_params, hash_key, password_hash)}
       {:error, message} -> {:error, message}
     end
