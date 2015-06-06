@@ -24,6 +24,8 @@ Elixir version 1.0 or later and Erlang/OTP version 17.0 or later.
 
 You also need to have a C compiler, such as `gcc`, installed.
 
+Ubuntu and Debian-based systems can get `gcc` and `make` by installing `build-essential` package. Also `erlang-dev` may be needed if not included in your Erlang/OTP version.
+
 For users of Ubuntu, or any other Debian-based distro, we recommend downloading
 erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
 as the version of erlang in the repositories is usually quite old.
