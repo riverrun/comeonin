@@ -33,7 +33,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     `mix deps.compile comeonin` from the `Developer Command Prompt`. If
     you are using 64-bit erlang, you might need to run the command
     `vcvarsall.bat amd64` before running `mix deps.compile`. Further
-    information can be found at 
+    information can be found at
     (https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx).
 
     Mac OS X: You need to have gcc and make installed. Try running the
@@ -41,8 +41,9 @@ defmodule Mix.Tasks.Compile.Comeonin do
     are not installed, you will be prompted to install them.
 
     Linux: You need to have gcc and make installed. If you are using
-    Ubuntu or any other Debian-based system, install the package
-    `build essential`.
+    Ubuntu or any other Debian-based system, install the packages
+    `build-essential`. Also install `erlang-dev` package if not
+    included in your Erlang/OTP version.
 
     """
   end
