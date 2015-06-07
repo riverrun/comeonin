@@ -71,6 +71,9 @@ defmodule Comeonin.Bcrypt do
 
   The check is performed in constant time to avoid timing attacks.
   """
+  def checkpw(password, hash) when is_nil(password) or is_nil(hash) do
+    false
+  end
   def checkpw(password, hash) do
     hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
     |> Tools.secure_check(hash)
