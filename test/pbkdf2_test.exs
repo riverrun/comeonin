@@ -128,4 +128,8 @@ defmodule Comeonin.Pbkdf2Test do
     assert String.starts_with?(Pbkdf2.hashpwsalt("password"), prefix)
     Application.delete_env(:comeonin, :pbkdf2_rounds)
   end
+
+  test "nil input for password to checkpw" do
+    assert Pbkdf2.checkpw(nil, "somestoredhash") == false
+  end
 end

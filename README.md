@@ -28,7 +28,7 @@ Ubuntu and Debian-based systems can get `gcc` and `make` by installing `build-es
 
 For users of Ubuntu, or any other Debian-based distro, we recommend downloading
 erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
-as the version of erlang in the repositories is usually quite old.
+as the version of erlang in the Ubuntu repositories is usually quite old.
 
 ## Installation
 

@@ -160,9 +160,7 @@ defmodule Comeonin.BcryptTest do
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
   end
 
-  test "nil inputs to checkpw" do
-    assert Bcrypt.checkpw(nil, nil) == false
-    assert Bcrypt.checkpw("password", nil) == false
-    assert Bcrypt.checkpw(nil, "somehashstored") == false
+  test "nil input for password to checkpw" do
+    assert Bcrypt.checkpw(nil, "somestoredhash") == false
   end
 end
