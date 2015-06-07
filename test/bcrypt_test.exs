@@ -16,7 +16,7 @@ defmodule Comeonin.BcryptTest do
     assert Bcrypt.checkpw(wrong2, hash) == false
     assert Bcrypt.checkpw(wrong3, hash) == false
   end
- 
+
   test "Openwall Bcrypt tests" do
    [{"U*U",
      "$2a$05$CCCCCCCCCCCCCCCCCCCCC.",
@@ -158,5 +158,11 @@ defmodule Comeonin.BcryptTest do
     assert String.starts_with?(Bcrypt.gen_salt, prefix)
     assert String.starts_with?(Bcrypt.hashpwsalt("password"), prefix)
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
+  end
+
+  test "nil inputs to checkpw" do
+    assert Bcrypt.checkpw(nil, nil) == false
+    assert Bcrypt.checkpw("password", nil) == false
+    assert Bcrypt.checkpw(nil, "somehashstored") == false
   end
 end
