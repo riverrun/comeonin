@@ -160,7 +160,12 @@ defmodule Comeonin.BcryptTest do
     Application.delete_env(:comeonin, :bcrypt_log_rounds)
   end
 
-  test "nil input for password to checkpw" do
-    assert Bcrypt.checkpw(nil, "somestoredhash") == false
+  test "wrong input to checkpw" do
+    assert_raise ArgumentError, "Wrong type. The password and hash need to be strings.", fn ->
+      Bcrypt.checkpw("U*U", '$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW')
+    end
+    assert_raise ArgumentError, "Wrong type. The password and hash need to be strings.", fn ->
+      Bcrypt.checkpw(nil, "$2a$05$CCCCCCCCCCCCCCCCCCCCC.E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW")
+    end
   end
 end

@@ -129,7 +129,13 @@ defmodule Comeonin.Pbkdf2Test do
     Application.delete_env(:comeonin, :pbkdf2_rounds)
   end
 
-  test "nil input for password to checkpw" do
-    assert Pbkdf2.checkpw(nil, "somestoredhash") == false
+  test "wrong input to checkpw" do
+    assert_raise ArgumentError, "Wrong type. The password and hash need to be strings.", fn ->
+      Pbkdf2.checkpw("password", '$pbkdf2-sha512$19000$JMT4nzOmVKrV.p/TmlMKwQ$jKbZHoPwUWBT08pjb/CnUZmFcB9JW4dsOzVkfi9X6Pdn5NXWeY.mhL1Bm4V9rjYL5ZfA32uh7Gl2gt5YQa/JCA')
+    end
+    assert_raise ArgumentError, "Wrong type. The password and hash need to be strings.", fn ->
+      Pbkdf2.checkpw(nil, "$pbkdf2-sha512$19000$JMT4nzOmVKrV.p/TmlMKwQ$jKbZHoPwUWBT08pjb/CnUZmFcB9JW4dsOzVkfi9X6Pdn5NXWeY.mhL1Bm4V9rjYL5ZfA32uh7Gl2gt5YQa/JCA")
+    end
   end
+
 end

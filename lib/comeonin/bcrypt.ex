@@ -71,10 +71,12 @@ defmodule Comeonin.Bcrypt do
 
   The check is performed in constant time to avoid timing attacks.
   """
-  def checkpw(nil, _), do: false
-  def checkpw(password, hash) do
+  def checkpw(password, hash) when is_binary(password) and is_binary(hash) do
     hashpw(:binary.bin_to_list(password), :binary.bin_to_list(hash))
     |> Tools.secure_check(hash)
+  end
+  def checkpw(_password, _hash) do
+    raise ArgumentError, message: "Wrong type. The password and hash need to be strings."
   end
 
   @doc """

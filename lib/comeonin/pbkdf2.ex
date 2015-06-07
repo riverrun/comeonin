@@ -62,12 +62,14 @@ defmodule Comeonin.Pbkdf2 do
 
   The check is performed in constant time to avoid timing attacks.
   """
-  def checkpw(nil, _), do: false
-  def checkpw(password, hash) do
+  def checkpw(password, hash) when is_binary(password) and is_binary(hash) do
     [_, _, rounds, salt, hash] = String.split(hash, "$")
     pbkdf2(password, Pbkdf2Base64.decode(salt), String.to_integer(rounds), 64)
     |> Pbkdf2Base64.encode
     |> Tools.secure_check(hash)
+  end
+  def checkpw(_password, _hash) do
+    raise ArgumentError, message: "Wrong type. The password and hash need to be strings."
   end
 
   @doc """
