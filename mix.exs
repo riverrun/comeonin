@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
         {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
       {:unix, :freebsd} ->
         {"gmake", ["priv/bcrypt_nif.so"]}
-      {:unix, :openbsd5} ->
+      {:unix, :openbsd} ->
         {"gmake", ["priv/bcrypt_nif.so"]}
       _ ->
         {"make", ["priv/bcrypt_nif.so"]}
