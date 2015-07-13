@@ -59,7 +59,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.0.3",
+      version: "1.0.4",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
@@ -87,7 +87,7 @@ defmodule Comeonin.Mixfile do
       contributors: ["David Whitlock", "Ben Sharman", "Jason M Barnes"],
       licenses: ["BSD"],
       links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
-        "Docs"   => "http://hexdocs.pm/comeonin"}
+        "Docs" => "http://hexdocs.pm/comeonin"}
     ]
   end
 end
