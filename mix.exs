@@ -18,7 +18,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     if error_code != 0 do
       handle_error
     else
-      Mix.shell.info result
+      IO.binwrite result
     end
   end
 
@@ -61,7 +61,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.0.4",
+      version: "1.0.5",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
