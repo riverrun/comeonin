@@ -102,7 +102,7 @@ defmodule Comeonin.Password do
   The default length of the password is 12 characters, and it is guaranteed
   to contain at least one digit and one punctuation character.
   """
-  def gen_password(len \\ Config.pass_length) do
+  def gen_password(len \\ 12) do
     rand_password(len) |> to_string
   end
 
@@ -120,27 +120,19 @@ defmodule Comeonin.Password do
   end
 
   @doc """
-  Check the password is at least 8 characters long, and then check that
-  it contains at least one digit and one punctuation character (spaces
-  are counted as punctuation characters).
-
-  If the password passes these tests, this function will return true. Otherwise,
-  it will return with a message telling you what is wrong with the password.
-
+  Check the password is not shorter than the minimum length, which is
+  8 characters by default.
   """
-  def strong_password?(password) do
-    case pass_length?(String.length(password), Config.pass_min_length) do
-      true -> has_punc_digit?(password)
-      message -> message
-    end
+  def pass_length?(word_len, min_len) when word_len < min_len do
+    "The password should be at least #{min_len} characters long."
   end
+  def pass_length?(_, _), do: true
 
-  defp pass_length?(word_len, min_len) when word_len < min_len do
-    "The password should be at least #{Config.pass_min_length} characters long."
-  end
-  defp pass_length?(_, _), do: true
-
-  defp has_punc_digit?(word) do
+  @doc """
+  Check the password contains at least one digit and one punctuation character
+  (spaces are counted as punctuation characters).
+  """
+  def has_punc_digit?(word) do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else

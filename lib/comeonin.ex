@@ -133,12 +133,23 @@ defmodule Comeonin do
   The default hashing algorithm is bcrypt, but this can be changed by
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
   """
-  def create_hash(password, strength \\ true) do
+  def create_hash(password, opts \\ []) do
     crypto_mod = Config.get_crypto_mod
-    case strength and Password.strong_password?(password) do
+    case strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
+    end
+  end
+
+  defp strong_password?(password, opts) do
+    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
+      true -> {Keyword.get(opts, :min_length, 8), true}
+      _ -> {Keyword.get(opts, :min_length, 12), false}
+    end
+    case Password.pass_length?(String.length(password), min_len) do
+      true -> extra_chars and Password.has_punc_digit?(password)
+      message -> message
     end
   end
 
@@ -165,7 +176,7 @@ defmodule Comeonin do
 
       %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user
 
-      %{name: "fred", password: "123456"} |> Comeonin.create_user(false)
+      %{name: "fred", password: "longpassword"} |> Comeonin.create_user([extra_chars: false])
 
   The next example will raise an error because the key "password" or :password
   could not be found:
@@ -179,19 +190,19 @@ defmodule Comeonin do
       {:error, "The password should be at least 8 characters long."}
 
   """
-  def create_user(user_params, strength \\ true)
-  def create_user(%{password: password} = user_params, strength) do
-    Map.delete(user_params, :password) |> create_map(password, :password_hash, strength)
+  def create_user(user_params, opts \\ [])
+  def create_user(%{password: password} = user_params, opts) do
+    Map.delete(user_params, :password) |> create_map(password, :password_hash, opts)
   end
-  def create_user(%{"password" => password} = user_params, strength) do
-    Map.delete(user_params, "password") |> create_map(password, "password_hash", strength)
+  def create_user(%{"password" => password} = user_params, opts) do
+    Map.delete(user_params, "password") |> create_map(password, "password_hash", opts)
   end
   def create_user(_, _) do
     {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
-  defp create_map(user_params, password, hash_key, strength) do
-    case create_hash(password, strength) do
+  defp create_map(user_params, password, hash_key, opts) do
+    case create_hash(password, opts) do
       {:ok, password_hash} -> {:ok, Map.put_new(user_params, hash_key, password_hash)}
       {:error, message} -> {:error, message}
     end
