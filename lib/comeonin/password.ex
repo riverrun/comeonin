@@ -85,8 +85,6 @@ defmodule Comeonin.Password do
 
   """
 
-  alias Comeonin.Config
-
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet ',./!@#$%^&*();:?<>' ++ @alpha ++ '0123456789'
   @digits String.codepoints("0123456789")
