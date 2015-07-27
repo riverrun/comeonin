@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.6 (2015-07-27)
+## 1.1.0 (2015-07-28)
 
 * Changes
   * Divided the `strong password` check into two parts: minimum length and check for punctuation

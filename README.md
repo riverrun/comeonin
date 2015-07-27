@@ -36,7 +36,7 @@ as the version of erlang in the Ubuntu repositories is usually quite old.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 1.0"} ]
+    [ {:comeonin, "~> 1.1"} ]
   end
   ```
 
@@ -84,6 +84,9 @@ passwords and to check passwords for password strength.
 
 There is also a `create_hash` function in the main Comeonin module which
 can be used to check a password for password strength before hashing it.
+
+The password strength check consists of two options: a minimum length and
+a check for punctuation characters and digits.
 
 ### Interacting with a database
 
