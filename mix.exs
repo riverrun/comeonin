@@ -13,7 +13,24 @@ defmodule Mix.Tasks.Compile.Comeonin do
       _ ->
         {"make", ["priv/bcrypt_nif.so"]}
     end
+    check_compiler(exec) and build(exec, args)
+  end
 
+  def check_compiler(exec) do
+    if System.find_executable(exec) do
+      true
+    else
+      raise Mix.Error, message: """
+      Could not find the program `#{exec}`.
+
+      You will need to install the C compiler `#{exec}` to be able to build
+      Comeonin.
+
+      """
+    end
+  end
+
+  def build(exec, args) do
     {result, error_code} = System.cmd(exec, args, stderr_to_stdout: true)
     if error_code != 0 do
       handle_error
