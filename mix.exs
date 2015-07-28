@@ -13,33 +13,30 @@ defmodule Mix.Tasks.Compile.Comeonin do
       _ ->
         {"make", ["priv/bcrypt_nif.so"]}
     end
-    check_compiler(exec) and build(exec, args)
-  end
 
-  def check_compiler(exec) do
     if System.find_executable(exec) do
-      true
+      build(exec, args)
     else
-      raise Mix.Error, message: """
-      Could not find the program `#{exec}`.
-
-      You will need to install the C compiler `#{exec}` to be able to build
-      Comeonin.
-
-      """
+      nocompiler_error(exec)
     end
   end
 
   def build(exec, args) do
     {result, error_code} = System.cmd(exec, args, stderr_to_stdout: true)
-    if error_code != 0 do
-      handle_error
-    else
-      IO.binwrite result
-    end
+    if error_code != 0, do: build_error, else: IO.binwrite result
   end
 
-  defp handle_error do
+  defp nocompiler_error(exec) do
+    raise Mix.Error, message: """
+    Could not find the program `#{exec}`.
+
+    You will need to install the C compiler `#{exec}` to be able to build
+    Comeonin.
+
+    """
+  end
+
+  defp build_error do
     raise Mix.Error, message: """
     Could not compile Comeonin.
     Please make sure that you are using Erlang / OTP version 17.0 or later
@@ -78,7 +75,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.1.0",
+      version: "1.1.1",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
