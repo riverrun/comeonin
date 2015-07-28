@@ -91,11 +91,9 @@ a check for punctuation characters and digits.
 ### Interacting with a database
 
 The `create_user` function in the Comeonin module takes a map, removes the
-"password" entry, checks the password for password strength, and then
-hashes the password and adds a "password_hash" entry to the map. If there
-are no errors it returns the new map.
-
-The check for password strength is optional, but it is set to true by default.
+"password" entry, checks the password for password strength (see the section
+above for details), and then hashes the password and adds a "password_hash"
+entry to the map. If there are no errors, it returns the new map.
 
 ## Documentation
 

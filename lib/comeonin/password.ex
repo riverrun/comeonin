@@ -118,19 +118,46 @@ defmodule Comeonin.Password do
   end
 
   @doc """
-  Check the password is not shorter than the minimum length, which is
-  8 characters by default.
+  Check the strength of the password.
+
+  There are two options: min_length and extra_chars.
+  min_length checks that the password is not shorter than the minimum length.
+  extra_chars checks that the password contains at least one digit and one
+  punctuation character (spaces are counted as punctuation characters).
+
+  extra_chars is true by default, and min_length's default is 8 characters
+  if extra_chars is set to true, but 12 characters if extra_chars is set to false.
+
+  ## Examples
+
+  This example will check that the password is at least 8 characters long and
+  will check that it contains at least one punctuation character and one digit.
+
+      Comeonin.Password.strong_password?("pa$$w0rd")
+
+  The following example will check that the password is at least 16 characters
+  long and will not check for punctuation characters or digits.
+
+      Comeonin.Password.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
+
   """
-  def pass_length?(word_len, min_len) when word_len < min_len do
+  def strong_password?(password, opts \\ []) do
+    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
+      true -> {Keyword.get(opts, :min_length, 8), true}
+      _ -> {Keyword.get(opts, :min_length, 12), false}
+    end
+    case pass_length?(String.length(password), min_len) do
+      true -> extra_chars and has_punc_digit?(password)
+      message -> message
+    end
+  end
+
+  defp pass_length?(word_len, min_len) when word_len < min_len do
     "The password should be at least #{min_len} characters long."
   end
-  def pass_length?(_, _), do: true
+  defp pass_length?(_, _), do: true
 
-  @doc """
-  Check the password contains at least one digit and one punctuation character
-  (spaces are counted as punctuation characters).
-  """
-  def has_punc_digit?(word) do
+  defp has_punc_digit?(word) do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else

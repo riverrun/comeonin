@@ -160,21 +160,10 @@ defmodule Comeonin do
   """
   def create_hash(password, opts \\ []) do
     crypto_mod = Config.get_crypto_mod
-    case strong_password?(password, opts) do
+    case Password.strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
-    end
-  end
-
-  defp strong_password?(password, opts) do
-    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
-      true -> {Keyword.get(opts, :min_length, 8), true}
-      _ -> {Keyword.get(opts, :min_length, 12), false}
-    end
-    case Password.pass_length?(String.length(password), min_len) do
-      true -> extra_chars and Password.has_punc_digit?(password)
-      message -> message
     end
   end
 
