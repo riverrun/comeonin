@@ -1,23 +1,34 @@
 defmodule ComeoninTest do
   use ExUnit.Case, async: true
 
-  test "bcrypt create_hash password strength check" do
+  test "bcrypt create_hash with default check" do
     assert Comeonin.create_hash("password") ==
     {:error, "The password should contain at least one number and one punctuation character."}
+
+    assert Comeonin.create_hash("pa$w0rd") ==
+    {:error, "The password should be at least 8 characters long."}
 
     {:ok, hash} = Comeonin.create_hash("pas$w0rd")
     assert String.starts_with?(hash, "$2b$")
   end
 
-  test "create_hash with no password strength check" do
-    {:ok, hash} = Comeonin.create_hash("pass", false)
+  test "create_hash with no check for punctuation characters or digits" do
+    {:ok, hash} = Comeonin.create_hash("longboringpassword", [extra_chars: false])
     assert String.starts_with?(hash, "$2b$")
   end
 
-  test "pbkdf2 create_hash password strength check" do
+  test "password too short when no check for punctuation characters or digits" do
+    assert Comeonin.create_hash("password", [extra_chars: false]) ==
+    {:error, "The password should be at least 12 characters long."}
+  end
+
+  test "pbkdf2 create_hash with default check" do
     Application.put_env(:comeonin, :crypto_mod, :pbkdf2)
     assert Comeonin.create_hash("password") ==
     {:error, "The password should contain at least one number and one punctuation character."}
+
+    assert Comeonin.create_hash("pa$w0rd") ==
+    {:error, "The password should be at least 8 characters long."}
 
     {:ok, hash} = Comeonin.create_hash("pas$w0rd")
     assert String.starts_with?(hash, "$pbkdf2-sha512$")
@@ -43,9 +54,9 @@ defmodule ComeoninTest do
     {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
-  test "create user map with no password strength check" do
+  test "create user map with no check for punctuation characters or digits" do
     {:ok, params} = %{"name" => "joe", "password" => "gooseberries"}
-              |> Comeonin.create_user(false)
+              |> Comeonin.create_user([extra_chars: false])
     assert Map.has_key?(params, "password_hash")
     refute Map.has_key?(params, "password")
   end

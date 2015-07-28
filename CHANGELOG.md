@@ -1,6 +1,20 @@
 # Changelog
 
+## 1.1.0 (2015-07-28)
+
+* Changes
+  * Divided the `strong password` check into two parts: minimum length and check for punctuation
+  characters and digits.
+  * Removed configutation values for password length for generated passwords and minimum length of passwords
+  for the password check.
+
+## 1.0.5 (2015-07-14)
+
+* Bug fix
+  * Replaced `Mix.Shell.info` with `IO.binwrite` to prevent compile errors with certain character encodings.
+
 ## 1.0.1 (2015-05-31)
+
 * Enhancements
   * Enabled the create_user function to be used with atoms as keys as well as strings.
 

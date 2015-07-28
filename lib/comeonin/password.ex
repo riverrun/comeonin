@@ -85,8 +85,6 @@ defmodule Comeonin.Password do
 
   """
 
-  alias Comeonin.Config
-
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet ',./!@#$%^&*();:?<>' ++ @alpha ++ '0123456789'
   @digits String.codepoints("0123456789")
@@ -102,7 +100,7 @@ defmodule Comeonin.Password do
   The default length of the password is 12 characters, and it is guaranteed
   to contain at least one digit and one punctuation character.
   """
-  def gen_password(len \\ Config.pass_length) do
+  def gen_password(len \\ 12) do
     rand_password(len) |> to_string
   end
 
@@ -120,23 +118,42 @@ defmodule Comeonin.Password do
   end
 
   @doc """
-  Check the password is at least 8 characters long, and then check that
-  it contains at least one digit and one punctuation character (spaces
-  are counted as punctuation characters).
+  Check the strength of the password.
 
-  If the password passes these tests, this function will return true. Otherwise,
-  it will return with a message telling you what is wrong with the password.
+  There are two options: min_length and extra_chars.
+  min_length checks that the password is not shorter than the minimum length.
+  extra_chars checks that the password contains at least one digit and one
+  punctuation character (spaces are counted as punctuation characters).
+
+  extra_chars is true by default, and min_length's default is 8 characters
+  if extra_chars is set to true, but 12 characters if extra_chars is set to false.
+
+  ## Examples
+
+  This example will check that the password is at least 8 characters long and
+  will check that it contains at least one punctuation character and one digit.
+
+      Comeonin.Password.strong_password?("pa$$w0rd")
+
+  The following example will check that the password is at least 16 characters
+  long and will not check for punctuation characters or digits.
+
+      Comeonin.Password.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
 
   """
-  def strong_password?(password) do
-    case pass_length?(String.length(password), Config.pass_min_length) do
-      true -> has_punc_digit?(password)
+  def strong_password?(password, opts \\ []) do
+    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
+      true -> {Keyword.get(opts, :min_length, 8), true}
+      _ -> {Keyword.get(opts, :min_length, 12), false}
+    end
+    case pass_length?(String.length(password), min_len) do
+      true -> extra_chars and has_punc_digit?(password)
       message -> message
     end
   end
 
   defp pass_length?(word_len, min_len) when word_len < min_len do
-    "The password should be at least #{Config.pass_min_length} characters long."
+    "The password should be at least #{min_len} characters long."
   end
   defp pass_length?(_, _), do: true
 

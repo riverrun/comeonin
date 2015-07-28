@@ -8,8 +8,6 @@ defmodule Comeonin.Config do
   | crypto_mod         | atom    | :bcrypt |
   | bcrypt_log_rounds  | integer | 12      |
   | pbkdf2_rounds      | integer | 60000   |
-  | pass_length        | integer | 12      |
-  | pass_min_length    | integer | 8       |
 
   `crypto_mod` is only needed for some convenience functions in
   the main Comeonin module. In many cases, you will not need this.
@@ -29,8 +27,6 @@ defmodule Comeonin.Config do
         crypto_mod: :pbkdf2,
         bcrypt_log_rounds: 14,
         pbkdf2_rounds: 100_000,
-        pass_length: 16,
-        pass_min_length: 12
 
   If you want to have different values when developing and testing,
   you can create separate files for each environment: `dev.exs`,
@@ -86,22 +82,6 @@ defmodule Comeonin.Config do
   """
   def pbkdf2_rounds do
     Application.get_env(:comeonin, :pbkdf2_rounds, 60_000)
-  end
-
-  @doc """
-  For use with the `gen_password` function, the default length of
-  a password.
-  """
-  def pass_length do
-    Application.get_env(:comeonin, :pass_length, 12)
-  end
-
-  @doc """
-  For use with the `strong_password?` function, the minimum length of
-  a password.
-  """
-  def pass_min_length do
-    Application.get_env(:comeonin, :pass_min_length, 8)
   end
 
 end

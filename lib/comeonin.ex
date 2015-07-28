@@ -21,10 +21,6 @@ defmodule Comeonin do
   by using the `hashpwsalt` function -- using either Comeonin.Bcrypt or
   Comeonin.Pbkdf2.
 
-  To hash a password with the default options:
-
-      hash = hashpwsalt("difficult2guess")
-
   See each module's documentation for more information about
   all the available options.
 
@@ -34,9 +30,7 @@ defmodule Comeonin do
 
   To check a password against the stored hash, use the `checkpw`
   function. This takes two arguments: the plaintext password and
-  the stored hash:
-
-      checkpw(password, stored_hash)
+  the stored hash.
 
   There is also a `dummy_checkpw` function, which takes no arguments
   and is to be used when the username cannot be found. It performs a hash,
@@ -125,17 +119,48 @@ defmodule Comeonin do
   end
 
   @doc """
-  This function can be used to check the strength of a password
+  A function that provides options to check the strength of a password
   before hashing it. The password is then hashed only if the password is
   considered strong enough. For more details about password strength,
   read the documentation for the Comeonin.Password module.
 
   The default hashing algorithm is bcrypt, but this can be changed by
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
+
+  ## Options
+
+  There are two options:
+
+    * min_length -- minimum allowable length of the password
+    * extra_chars -- check for punctuation characters and digits
+
+  The default value for min_length is 8 characters if extra_chars is true,
+  but 12 characters is extra_chars is false. extra_chars is true by default.
+
+  ## Examples
+
+  The following examples will produce password hashes:
+
+      Comeonin.create_hash("longpassword", [extra_chars: false])
+
+      Comeonin.create_hash("passwordwithjustletters", [min_length: 16, extra_chars: false])
+
+  This example will raise an error because the password is not long enough for a password
+  with no punctuation characters or digits:
+
+      iex> Comeonin.create_hash("password", [extra_chars: false])
+      {:error, "The password should be at least 12 characters long."}
+
+  This last example will raise an error because there are no punctuation characters or
+  digits in it:
+
+      iex> Comeonin.create_hash("password")
+      {:error, "The password should contain at least one number and one punctuation character."}
+
   """
-  def create_hash(password, strength \\ true) do
+  def create_hash(password, opts \\ []) do
     crypto_mod = Config.get_crypto_mod
-    case strength and Password.strong_password?(password) do
+    case Password.strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
@@ -165,7 +190,7 @@ defmodule Comeonin do
 
       %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user
 
-      %{name: "fred", password: "123456"} |> Comeonin.create_user(false)
+      %{name: "fred", password: "longpassword"} |> Comeonin.create_user([extra_chars: false])
 
   The next example will raise an error because the key "password" or :password
   could not be found:
@@ -179,19 +204,19 @@ defmodule Comeonin do
       {:error, "The password should be at least 8 characters long."}
 
   """
-  def create_user(user_params, strength \\ true)
-  def create_user(%{password: password} = user_params, strength) do
-    Map.delete(user_params, :password) |> create_map(password, :password_hash, strength)
+  def create_user(user_params, opts \\ [])
+  def create_user(%{password: password} = user_params, opts) do
+    Map.delete(user_params, :password) |> create_map(password, :password_hash, opts)
   end
-  def create_user(%{"password" => password} = user_params, strength) do
-    Map.delete(user_params, "password") |> create_map(password, "password_hash", strength)
+  def create_user(%{"password" => password} = user_params, opts) do
+    Map.delete(user_params, "password") |> create_map(password, "password_hash", opts)
   end
   def create_user(_, _) do
     {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
   end
 
-  defp create_map(user_params, password, hash_key, strength) do
-    case create_hash(password, strength) do
+  defp create_map(user_params, password, hash_key, opts) do
+    case create_hash(password, opts) do
       {:ok, password_hash} -> {:ok, Map.put_new(user_params, hash_key, password_hash)}
       {:error, message} -> {:error, message}
     end
