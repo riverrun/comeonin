@@ -23,11 +23,25 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   def build(exec, args) do
     {result, error_code} = System.cmd(exec, args, stderr_to_stdout: true)
-    if error_code != 0, do: build_error, else: IO.binwrite result
+    if error_code != 0, do: build_error(exec), else: IO.binwrite result
   end
 
+  defp nocompiler_error("nmake") do
+    raise Mix.Error, message: nocompiler_message("nmake") <> windows_message
+  end
   defp nocompiler_error(exec) do
-    raise Mix.Error, message: """
+    raise Mix.Error, message: nocompiler_message(exec) <> nix_message
+  end
+
+  defp build_error("nmake") do
+    raise Mix.Error, message: build_message <> windows_message
+  end
+  defp build_error(_) do
+    raise Mix.Error, message: build_message <> nix_message
+  end
+
+  defp nocompiler_message(exec) do
+    """
     Could not find the program `#{exec}`.
 
     You will need to install the C compiler `#{exec}` to be able to build
@@ -36,21 +50,33 @@ defmodule Mix.Tasks.Compile.Comeonin do
     """
   end
 
-  defp build_error do
-    raise Mix.Error, message: """
+  defp build_message do
+    """
     Could not compile Comeonin.
+
     Please make sure that you are using Erlang / OTP version 17.0 or later
     and that you have a C compiler installed.
-    Please follow the directions below for the operating system you are
-    using:
 
-    Windows: One option is to install a recent version of Visual Studio (the
+    """
+  end
+
+  defp windows_message do
+    """
+    One option is to install a recent version of Visual Studio (the
     free Community edition will be enough for this task). Then try running
     `mix deps.compile comeonin` from the `Developer Command Prompt`. If
     you are using 64-bit erlang, you might need to run the command
     `vcvarsall.bat amd64` before running `mix deps.compile`. Further
     information can be found at
     (https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx).
+
+    """
+  end
+
+  defp nix_message do
+    """
+    Please follow the directions below for the operating system you are
+    using:
 
     Mac OS X: You need to have gcc and make installed. Try running the
     commands `gcc --version` and / or `make --version`. If these programs
@@ -75,7 +101,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.1.1",
+      version: "1.1.2",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
