@@ -16,6 +16,8 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
     if System.find_executable(exec) do
       build(exec, args)
+      Mix.Project.build_structure
+      :ok
     else
       nocompiler_error(exec)
     end
