@@ -103,7 +103,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.1.2",
+      version: "1.1.3",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,
@@ -121,7 +121,7 @@ defmodule Comeonin.Mixfile do
   defp deps do
     [
       {:earmark, "~> 0.1", only: :dev},
-      {:ex_doc,  "~> 0.7", only: :dev}
+      {:ex_doc,  "~> 0.9", only: :dev}
     ]
   end
 
