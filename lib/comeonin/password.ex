@@ -94,6 +94,9 @@ defmodule Comeonin.Password do
     {{acc, x}, acc + 1} end)
     |> elem(0) |> Enum.into(%{})
 
+  @common Path.join(__DIR__, "common_passwords.txt")
+  |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
+
   @doc """
   Randomly generate a password.
 
@@ -142,12 +145,22 @@ defmodule Comeonin.Password do
 
   """
   def strong_password?(password, opts \\ []) do
-    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
-      true -> {Keyword.get(opts, :min_length, 8), true}
-      _ -> {Keyword.get(opts, :min_length, 12), false}
+    {min_len, extra_chars, common} = case Keyword.get(opts, :extra_chars, true) do
+      true -> {Keyword.get(opts, :min_length, 8), true, Keyword.get(opts, :common, true)}
+      _ -> {Keyword.get(opts, :min_length, 12), false, Keyword.get(opts, :common, true)}
     end
     case pass_length?(String.length(password), min_len) do
-      true -> extra_chars and has_punc_digit?(password)
+      true -> further_checks(extra_chars, common, password)
+      message -> message
+    end
+  end
+
+  defp further_checks(false, false, _password), do: true
+  defp further_checks(false, true, password), do: common_pword?(password)
+  defp further_checks(true, false, password), do: has_punc_digit?(password)
+  defp further_checks(true, true, password) do
+    case has_punc_digit?(password) do
+      true -> common_pword?(password)
       message -> message
     end
   end
@@ -162,6 +175,14 @@ defmodule Comeonin.Password do
       true
     else
       "The password should contain at least one number and one punctuation character."
+    end
+  end
+
+  defp common_pword?(password) do
+    if Set.member?(@common, password) do
+      "The password you have chosen is very common. Please choose another one."
+    else
+      true
     end
   end
 end

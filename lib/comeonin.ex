@@ -162,7 +162,6 @@ defmodule Comeonin do
     crypto_mod = Config.get_crypto_mod
     case Password.strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
-      false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
     end
   end
