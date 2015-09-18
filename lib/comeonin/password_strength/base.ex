@@ -1,4 +1,4 @@
-defmodule Comeonin.Password do
+defmodule Comeonin.PasswordStrength.Base do
   @moduledoc """
   Module to generate random passwords and check password strength.
 
@@ -11,7 +11,7 @@ defmodule Comeonin.Password do
   that needs to create and implement a password policy. However, much of the
   advice is also applicable to other users.
 
-  ## Writing down passwords
+  ## Writing down passwords -- ADD SOMETHING ABOUT PASSWORD MANAGERS HERE
 
   Opinion seems to be divided on this matter, with several authors
   arguing that remembering multiple strong passwords can be very difficult
@@ -23,7 +23,7 @@ defmodule Comeonin.Password do
   password in a safe place and treat its loss seriously, that is, as
   seriously as the loss of an id card or a bank card.
 
-  ## Password strength
+  ## Password strength -- MENTION XKCD METHOD
 
   Strong passwords should:
 
@@ -36,7 +36,7 @@ defmodule Comeonin.Password do
   easier for programs to guess the password. It is important, therefore,
   that you try to ensure that all of the above criteria are met.
 
-  ## Password length
+  ## Password length -- COMMON OPTION (MAYBE THIS WILL BE DEFAULT, NOT AN OPTION)
 
   Ideally, the password should be as long as possible. However, many users
   would not be happy if they had to type in passwords 20 or 30 characters
@@ -54,7 +54,7 @@ defmodule Comeonin.Password do
   With bcrypt, the maximum password length is 72 characters. Longer passwords
   can be used, but the extra characters (after the 72nd character) are ignored.
 
-  ## Creating strong passwords
+  ## Creating strong passwords -- DO WE WANT THIS FIRST PARAGRAPH
 
   For passwords that need to be remembered, creating a password by using
   the first or second letter of each word in an uncommon phrase can be
@@ -65,7 +65,7 @@ defmodule Comeonin.Password do
   as computer programs are generally better than humans at creating
   random passwords.
 
-  ## User compliance
+  ## User compliance -- GET MORE INFO ABOUT THIS!!!
 
   One major theme in the research on password policies is the difficulty
   of getting users to comply with the guidelines. It seems that if users
@@ -85,40 +85,12 @@ defmodule Comeonin.Password do
 
   """
 
-  @alpha Enum.concat ?A..?Z, ?a..?z
-  @alphabet ',./!@#$%^&*();:?<>' ++ @alpha ++ '0123456789'
+  alias Comeonin.PasswordStrength.Substitutions
+
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" ,./!@#$%^&*();:?<>")
-
-  @char_map Enum.map_reduce(@alphabet, 0, fn x, acc ->
-    {{acc, x}, acc + 1} end)
-    |> elem(0) |> Enum.into(%{})
-
-  @common Path.join(__DIR__, "common_passwords.txt")
+  @common Path.join(__DIR__, "10k_6chars.txt")
   |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
-
-  @doc """
-  Randomly generate a password.
-
-  The default length of the password is 12 characters, and it is guaranteed
-  to contain at least one digit and one punctuation character.
-  """
-  def gen_password(len \\ 12) do
-    rand_password(len) |> to_string
-  end
-
-  defp rand_password(len) do
-    case rand_numbers(len) |> pass_check do
-      false -> rand_password(len)
-      code -> for val <- code, do: Map.get(@char_map, val)
-    end
-  end
-  defp rand_numbers(len) do
-    for _ <- 1..len, do: :crypto.rand_uniform(0, 80)
-  end
-  defp pass_check(code) do
-    Enum.any?(code, &(&1 < 18)) and Enum.any?(code, &(&1 > 69)) and code
-  end
 
   @doc """
   Check the strength of the password.
@@ -136,29 +108,27 @@ defmodule Comeonin.Password do
   This example will check that the password is at least 8 characters long and
   will check that it contains at least one punctuation character and one digit.
 
-      Comeonin.Password.strong_password?("pa$$w0rd")
+      Comeonin.PasswordStrength.Base.strong_password?("pa$$w0rd")
 
   The following example will check that the password is at least 16 characters
   long and will not check for punctuation characters or digits.
 
-      Comeonin.Password.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
+      Comeonin.PasswordStrength.Base.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
 
   """
   def strong_password?(password, opts \\ []) do
-    {min_len, extra_chars, common} = case Keyword.get(opts, :extra_chars, true) do
-      true -> {Keyword.get(opts, :min_length, 8), true, Keyword.get(opts, :common, true)}
-      _ -> {Keyword.get(opts, :min_length, 12), false, Keyword.get(opts, :common, true)}
+    {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
+      true -> {Keyword.get(opts, :min_length, 8), true}
+      _ -> {Keyword.get(opts, :min_length, 12), false}
     end
     case pass_length?(String.length(password), min_len) do
-      true -> further_checks(extra_chars, common, password)
+      true -> further_checks(extra_chars, password)
       message -> message
     end
   end
 
-  defp further_checks(false, false, _password), do: true
-  defp further_checks(false, true, password), do: common_pword?(password)
-  defp further_checks(true, false, password), do: has_punc_digit?(password)
-  defp further_checks(true, true, password) do
+  defp further_checks(false, password), do: common_pword?(password)
+  defp further_checks(true, password) do
     case has_punc_digit?(password) do
       true -> common_pword?(password)
       message -> message
@@ -179,8 +149,8 @@ defmodule Comeonin.Password do
   end
 
   defp common_pword?(password) do
-    if Set.member?(@common, password) do
-      "The password you have chosen is very common. Please choose another one."
+    if Substitutions.get_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
+      "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true
     end

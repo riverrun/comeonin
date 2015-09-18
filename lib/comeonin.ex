@@ -78,8 +78,8 @@ defmodule Comeonin do
 
   """
 
+  import Comeonin.PasswordStrength.Base
   alias Comeonin.Config
-  alias Comeonin.Password
 
   @doc """
   A function to help the developer decide how many log_rounds to use
@@ -122,7 +122,7 @@ defmodule Comeonin do
   A function that provides options to check the strength of a password
   before hashing it. The password is then hashed only if the password is
   considered strong enough. For more details about password strength,
-  read the documentation for the Comeonin.Password module.
+  read the documentation for the Comeonin.PasswordStrength.Base module.
 
   The default hashing algorithm is bcrypt, but this can be changed by
   setting the value of `crypto_mod` to `:pbkdf2` in the config file.
@@ -160,7 +160,7 @@ defmodule Comeonin do
   """
   def create_hash(password, opts \\ []) do
     crypto_mod = Config.get_crypto_mod
-    case Password.strong_password?(password, opts) do
+    case strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
     end
