@@ -149,7 +149,8 @@ defmodule Comeonin.PasswordStrength.Base do
   end
 
   defp common_pword?(password) do
-    if Substitutions.get_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
+    password = password |> String.downcase
+    if Substitutions.all_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true

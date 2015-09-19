@@ -8,7 +8,7 @@ defmodule ComeoninTest do
     assert Comeonin.create_hash("pa$w0rd") ==
     {:error, "The password should be at least 8 characters long."}
 
-    {:ok, hash} = Comeonin.create_hash("pas$w0rd")
+    {:ok, hash} = Comeonin.create_hash("r&s$v0%d")
     assert String.starts_with?(hash, "$2b$")
   end
 
@@ -30,7 +30,7 @@ defmodule ComeoninTest do
     assert Comeonin.create_hash("pa$w0rd") ==
     {:error, "The password should be at least 8 characters long."}
 
-    {:ok, hash} = Comeonin.create_hash("pas$w0rd")
+    {:ok, hash} = Comeonin.create_hash("&M#ng03zz")
     assert String.starts_with?(hash, "$pbkdf2-sha512$")
     Application.delete_env(:comeonin, :crypto_mod)
   end

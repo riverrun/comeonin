@@ -18,4 +18,9 @@ defmodule Comeonin.ToolsTest do
     end
   end
 
+  test "password default length config" do
+    assert Tools.gen_password(8) |> String.length == 8
+    assert Tools.gen_password(16) |> String.length == 16
+  end
+
 end

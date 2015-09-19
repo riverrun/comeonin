@@ -1,46 +1,51 @@
 defmodule Comeonin.PasswordStrength.Substitutions do
   @moduledoc """
+  A submodule of the `Comeonin.PasswordStrength` module.
+
+  This module has functions to make standard substitutions when checking
+  if the password, or a similar password, is in the common passwords list.
+
+  There are also checks on the password with the first letter removed,
+  the last letter removed, and both the first and last letters removed.
+
+  ## Substitutions
+
   """
 
-  toletter = [{"@", "a"}, {"4", "a"}, {"8", "b"}, {"[", "c"}, {"(", "c"}, {"3", "e"},
-      {"6", "g"}, {"9", "g"}, {"#", "h"}, {"!", "i"}, {"1", "i"}, {"|", "l"},
-      {"0", "o"}, {"$", "s"}, {"5", "s"}, {"+", "t"}, {"7", "t"}, {"2", "z"}]
+  @sub_dict %{"a" => ["a", "@", "4"], "b" => ["b", "8"], "c" => ["c", "[", "("],
+    "d" => ["d"], "e" => ["e", "3"], "f" => ["f"], "g" => ["g", "6", "9"],
+    "h" => ["h","#"], "i" => ["i", "1", "|", "!"], "j" => ["j"], "k" => ["k"],
+    "l" => ["l", "|", "!", "1"], "m" => ["m"], "n" => ["n"], "o" => ["o", "0"],
+    "p" => ["p"], "q" => ["q"], "r" => ["r"], "s" => ["s", "$", "5"],
+    "t" => ["t", "+", "7"], "u" => ["u", "v"], "v" => ["v", "u"], "w" => ["w"],
+    "x" => ["x", "+"], "y" => ["y"], "z" => ["z", "2"],
+    "0" => ["0", "o"], "1" => ["1", "i", "l"], "2" => ["2", "z"],
+    "3" => ["3", "e"], "4" => ["4", "a"], "5" => ["5", "s"], "6" => ["6", "g"],
+    "7" => ["7", "t"], "8" => ["8", "b"], "9" => ["9", "g"],
+    "@" => ["@", "a"], "$" => ["$", "s"], "#" => ["#", "h"], "[" => ["[", "c"],
+    "(" => ["(", "c"], "!" => ["!", "i", "l"], "|" => ["|", "i", "l"],
+    "+" => ["+", "x", "t"]}
 
-  todigit = [{"o", "0"}, {"i", "1"}, {"l", "1"}, {"z", "2"}, {"e", "3"}, {"a", "4"},
-      {"s", "5"}, {"g", "6"}, {"t", "7"}, {"b", "8"}]
-
-  for {value, substitution} <- toletter do
-    defp get_letter(unquote(value)), do: unquote(substitution)
+  @doc """
+  """
+  def all_candidates(password) do
+    len = String.length(password)
+    cands = [password, :binary.part(password, {1, len - 1}),
+      :binary.part(password, {0, len - 1}), :binary.part(password, {1, len - 2})]
+    cands ++ Enum.map(cands, &word_candidates/1) |> List.flatten
   end
 
-  for {value, substitution} <- todigit do
-    defp get_digit(unquote(value)), do: unquote(substitution)
+  defp word_candidates(password) do
+    for i <- password |> word_subs |> product, do: Enum.join(i)
   end
 
-  @letters ["a", "b", "c", "e", "g", "h", "i", "l", "o", "s", "t", "z"]
-  @digits ["@", "4", "8", "[", "(", "3", "6", "9", "#", "!", "1", "0",
-      "$", "5", "+", "7", "2"]
-
-  def get_candidates(password) do
-    len = String.length(password) - 1
-    cands = [password, :binary.part(password, {1, len}), :binary.part(password, {0, len})]
-    cands ++ Enum.map(cands, &letter_word/1) ++ Enum.map(cands, &digit_word/1)
+  defp word_subs(word) do
+    for <<letter <- word>>, do: Map.get(@sub_dict, <<letter>>, [<<letter>>])
   end
 
-  defp letter_word(password) do
-    for <<c <- password>>, into: "", do: digit_to_letter(<<c>>)
-  end
-
-  defp digit_word(password) do
-    for <<c <- password>>, into: "", do: letter_to_digit(<<c>>)
-  end
-
-  defp digit_to_letter(digit) do
-    if digit in @digits, do: get_letter(digit), else: digit
-  end
-
-  defp letter_to_digit(letter) do
-    if letter in @letters, do: get_digit(letter), else: letter
+  defp product([h]), do: (for i <- h, do: [i])
+  defp product([h|t]) do
+    for i <- h, j <- product(t), do: [i|j]
   end
 
 end
