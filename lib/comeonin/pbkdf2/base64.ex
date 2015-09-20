@@ -1,4 +1,4 @@
-defmodule Comeonin.Pbkdf2Base64 do
+defmodule Comeonin.Pbkdf2.Base64 do
   @moduledoc """
   Module that provides base64 encoding for pbkdf2.
   """
@@ -18,7 +18,7 @@ defmodule Comeonin.Pbkdf2Base64 do
 
   ## Examples
 
-      iex> Comeonin.Pbkdf2Base64.encode "spamandeggs"
+      iex> Comeonin.Pbkdf2.Base64.encode "spamandeggs"
       "c3BhbWFuZGVnZ3M"
   """
   def encode(<<>>), do: <<>>
@@ -42,7 +42,7 @@ defmodule Comeonin.Pbkdf2Base64 do
 
   ## Examples
 
-      iex> Comeonin.Pbkdf2Base64.decode("c3BhbWFuZGVnZ3M")
+      iex> Comeonin.Pbkdf2.Base64.decode("c3BhbWFuZGVnZ3M")
       "spamandeggs"
   """
   def decode(<<>>), do: <<>>

@@ -17,7 +17,7 @@ defmodule Comeonin.Bcrypt do
   """
 
   use Bitwise
-  alias Comeonin.BcryptBase64
+  alias Comeonin.Bcrypt.Base64
   alias Comeonin.Config
   alias Comeonin.Tools
 
@@ -125,7 +125,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp prepare_keys(salt, log_rounds) when log_rounds in 4..31 do
-    {BcryptBase64.decode(salt), bsl(1, log_rounds)}
+    {Base64.decode(salt), bsl(1, log_rounds)}
   end
   defp prepare_keys(_, _) do
     raise ArgumentError, message: "Wrong number of rounds."
@@ -141,9 +141,9 @@ defmodule Comeonin.Bcrypt do
     if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
   end
   defp fmt_salt(salt, log_rounds) do
-    "$2b$#{log_rounds}$#{BcryptBase64.encode(salt)}"
+    "$2b$#{log_rounds}$#{Base64.encode(salt)}"
   end
   defp fmt_hash(hash, salt, prefix, log_rounds) do
-    "$#{prefix}$#{log_rounds}$#{salt}#{BcryptBase64.encode(hash)}"
+    "$#{prefix}$#{log_rounds}$#{salt}#{Base64.encode(hash)}"
   end
 end

@@ -1,7 +1,7 @@
 defmodule Comeonin.PasswordStrengthTest do
   use ExUnit.Case, async: true
 
-  import Comeonin.PasswordStrength.Base
+  import Comeonin.PasswordStrength
 
   test "password minimum length config" do
     assert strong_password?("4ghY&j2", [min_length: 6]) == true

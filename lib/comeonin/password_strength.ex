@@ -1,4 +1,4 @@
-defmodule Comeonin.PasswordStrength.Base do
+defmodule Comeonin.PasswordStrength do
   @moduledoc """
   Module to generate random passwords and check password strength.
 
@@ -89,7 +89,7 @@ defmodule Comeonin.PasswordStrength.Base do
 
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" ,./!@#$%^&*();:?<>")
-  @common Path.join(__DIR__, "10k_6chars.txt")
+  @common Path.join([__DIR__, "password_strength", "10k_6chars.txt"])
   |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
 
   @doc """
@@ -108,12 +108,12 @@ defmodule Comeonin.PasswordStrength.Base do
   This example will check that the password is at least 8 characters long and
   will check that it contains at least one punctuation character and one digit.
 
-      Comeonin.PasswordStrength.Base.strong_password?("pa$$w0rd")
+      Comeonin.PasswordStrength.strong_password?("pa$$w0rd")
 
   The following example will check that the password is at least 16 characters
   long and will not check for punctuation characters or digits.
 
-      Comeonin.PasswordStrength.Base.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
+      Comeonin.PasswordStrength.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
 
   """
   def strong_password?(password, opts \\ []) do

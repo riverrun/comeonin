@@ -1,4 +1,4 @@
-defmodule Comeonin.BcryptBase64 do
+defmodule Comeonin.Bcrypt.Base64 do
   @moduledoc """
   Module that provides base64 encoding for bcrypt.
   """
@@ -27,7 +27,7 @@ defmodule Comeonin.BcryptBase64 do
 
   ## Examples
 
-      iex> Comeonin.BcryptBase64.encode 'spamandeggs'
+      iex> Comeonin.Bcrypt.Base64.encode 'spamandeggs'
       'a1/fZUDsXETlX1K'
   """
   def encode(words), do: encode_l(words)
@@ -37,7 +37,7 @@ defmodule Comeonin.BcryptBase64 do
 
   ## Examples
 
-      iex> Comeonin.BcryptBase64.decode 'a1/fZUDsXETlX1K'
+      iex> Comeonin.Bcrypt.Base64.decode 'a1/fZUDsXETlX1K'
       'spamandeggs'
   """
   def decode(words), do: decode_l(words, [])
