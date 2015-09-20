@@ -88,7 +88,7 @@ defmodule Comeonin.PasswordStrength do
   alias Comeonin.PasswordStrength.Substitutions
 
   @digits String.codepoints("0123456789")
-  @punc String.codepoints(" ,./!@#$%^&*();:?<>")
+  @punc String.codepoints(" !#$%&'()*+,-./:;<=>?@[\\]^_{|}~\"")
   @common Path.join([__DIR__, "password_strength", "10k_6chars.txt"])
   |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
 
@@ -117,18 +117,21 @@ defmodule Comeonin.PasswordStrength do
 
   """
   def strong_password?(password, opts \\ []) do
+    common = Keyword.get(opts, :common, true)
     {min_len, extra_chars} = case Keyword.get(opts, :extra_chars, true) do
       true -> {Keyword.get(opts, :min_length, 8), true}
       _ -> {Keyword.get(opts, :min_length, 12), false}
     end
     case pass_length?(String.length(password), min_len) do
-      true -> further_checks(extra_chars, password)
+      true -> further_checks(extra_chars, common, password)
       message -> message
     end
   end
 
-  defp further_checks(false, password), do: common_pword?(password)
-  defp further_checks(true, password) do
+  defp further_checks(false, false, _password), do: true
+  defp further_checks(false, true, password), do: common_pword?(password)
+  defp further_checks(true, false, password), do: has_punc_digit?(password)
+  defp further_checks(true, true, password) do
     case has_punc_digit?(password) do
       true -> common_pword?(password)
       message -> message
@@ -149,7 +152,6 @@ defmodule Comeonin.PasswordStrength do
   end
 
   defp common_pword?(password) do
-    password = password |> String.downcase
     if Substitutions.all_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else

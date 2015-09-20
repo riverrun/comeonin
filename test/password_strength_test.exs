@@ -36,4 +36,32 @@ defmodule Comeonin.PasswordStrengthTest do
     end
   end
 
+  test "common password" do
+    for id <- ["password", "qwertyuiop", "excalibur"] do
+      assert strong_password?(id, [min_length: 8, extra_chars: false]) ==
+      "The password you have chosen is weak because it is easy to guess. Please choose another one."
+    end
+  end
+
+  test "common password with uppercase letters" do
+    for id <- ["aSSaSsin", "DolPHIns", "sTaRwArS"] do
+      assert strong_password?(id, [min_length: 8, extra_chars: false]) ==
+      "The password you have chosen is weak because it is easy to guess. Please choose another one."
+    end
+  end
+
+  test "common password with substitutions" do
+    for id <- ["5(o0byd0o", "qw3r+y12e", "@lp#4!ze"] do
+      assert strong_password?(id) ==
+      "The password you have chosen is weak because it is easy to guess. Please choose another one."
+    end
+  end
+
+  test "common password with substitutions and an appended letter" do
+    for id <- ["d09#ov$31", "p4vem3n+1", "*m4rip0s@"] do
+      assert strong_password?(id) ==
+      "The password you have chosen is weak because it is easy to guess. Please choose another one."
+    end
+  end
+
 end

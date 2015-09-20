@@ -6,7 +6,7 @@ defmodule Comeonin.Tools do
   use Bitwise
 
   @alpha Enum.concat ?A..?Z, ?a..?z
-  @alphabet ',./!@#$%^&*();:?<>' ++ @alpha ++ '0123456789'
+  @alphabet '!#$%&\'()*+,-./:;<=>?@[\\]^_{|}~"' ++ @alpha ++ '0123456789'
   @char_map Enum.map_reduce(@alphabet, 0, fn x, acc ->
     {{acc, x}, acc + 1} end)
     |> elem(0) |> Enum.into(%{})
