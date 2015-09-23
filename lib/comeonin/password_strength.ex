@@ -1,91 +1,79 @@
 defmodule Comeonin.PasswordStrength do
   @moduledoc """
-  Module to generate random passwords and check password strength.
+  Module to check password strength.
 
-  The function to check password strength checks that it is long enough
-  and contains at least one digit and one punctuation character.
+  # Password security and usability
 
-  # Password policy
+  The following two sections will provide information about password strength
+  and user attitudes to password guidelines.
 
-  The guidelines below are mainly intended for any business, or organization,
-  that needs to create and implement a password policy. However, much of the
-  advice is also applicable to other users.
+  If you are checking password strength and not allowing passwords because
+  they are too weak, then you need to take the users' attitudes into account.
+  If the users find the process of creating passwords too difficult, they
+  are likely to find ways of bending the rules you set, and this might have
+  a negative impact on password security.
 
-  ## Writing down passwords -- ADD SOMETHING ABOUT PASSWORD MANAGERS HERE
+  ## Creating strong passwords
 
-  Opinion seems to be divided on this matter, with several authors
-  arguing that remembering multiple strong passwords can be very difficult
-  for many users, and if users are forced to remember passwords,
-  they are likely to create weaker passwords that are easier to remember
-  as a result.
+  Strong passwords are passwords that are difficult for a potential attacker to
+  guess or work out. The strength of a password depends on a combination
+  of the following:
 
-  If users are allowed to write down passwords, they should keep the
-  password in a safe place and treat its loss seriously, that is, as
-  seriously as the loss of an id card or a bank card.
+    * how random it is
+    * its length
+    * the size of its character set
 
-  ## Password strength -- MENTION XKCD METHOD
+  An attacker is likely to start an attempt to break a password by using
+  common words and common patterns, like sequences and repetitions. With
+  a truly random password, this kind of attack would not be possible,
+  which means that the attacker would have to resort to a more costly
+  brute force attack. However, this raises a usability issue as random
+  passwords are very difficult for people to create and remember. One
+  way of dealing with this issue is to use computer-generated random
+  passwords and for the user to write them down or use a password
+  manager.
 
-  Strong passwords should:
+  The term entropy is often used to refer to the number of combinations
+  that a password with a certain character set, and a certain length,
+  would have. The larger the character set and the longer the password
+  is, the greater the entropy. This is why users are often encouraged
+  to write long passwords that contain digits or punctuation characters.
+  Entropy is related to password strength, and a password with a higher
+  entropy is usually stronger than one with a lower entropy. However,
+  as mentioned in the previous paragraph, if the password contains
+  predictable patterns, the lack of randomness will make it weaker.
 
-    * be long
-    * contain as large a character set as possible (digits, punctuation characters, etc.)
-    * not contain dictionary words (this applies to multiple languages, not just English)
-    * be kept secret (not shared between multiple users)
+  Finally, passwords should not be shared as this makes them weaker,
+  just as in the case when any secret is shared between multiple people.
 
-  If a password fails to meet any of the above criteria, then that makes it
-  easier for programs to guess the password. It is important, therefore,
-  that you try to ensure that all of the above criteria are met.
+  ## User attitudes and password security
 
-  ## Password length -- COMMON OPTION (MAYBE THIS WILL BE DEFAULT, NOT AN OPTION)
+  It is becoming more and more impractical for users to remember the
+  many passwords they need, especially as it is recommended that they
+  use a different, strong (difficult to remember) password for each
+  service. As a result, it is likely that many users will choose to
+  either use the same password for many services, or use weaker,
+  easy to remember passwords.
 
-  Ideally, the password should be as long as possible. However, many users
-  would not be happy if they had to type in passwords 20 or 30 characters
-  long every time they had to access a service (although this might be
-  justifiable in certain cases), and so there needs to be a balance struck
-  between usability and the ideal password length. Please read the section
-  `User compliance` below for information about why usability is such
-  an important consideration.
+  One solution to this problem is to have users write down their
+  passwords. The obvious problem with this solution is that the
+  password can be stolen. It is therefore important that the user
+  keeps the password in a safe place and treats its loss seriously.
 
-  In this module, the default length of the randomly generated passwords
-  is 12 characters, and with the `strong_password?` function, the minimum
-  length of passwords is 8 characters. Both of these values can be changed
-  in the config file.
-
-  With bcrypt, the maximum password length is 72 characters. Longer passwords
-  can be used, but the extra characters (after the 72nd character) are ignored.
-
-  ## Creating strong passwords -- DO WE WANT THIS FIRST PARAGRAPH
-
-  For passwords that need to be remembered, creating a password by using
-  the first or second letter of each word in an uncommon phrase can be
-  a way of creating a strong password which is also easy to remember.
-
-  For passwords that do not need to be remembered, that can be written
-  down, generating passwords programmatically seems to be the best option,
-  as computer programs are generally better than humans at creating
-  random passwords.
-
-  ## User compliance -- GET MORE INFO ABOUT THIS!!!
-
-  One major theme in the research on password policies is the difficulty
-  of getting users to comply with the guidelines. It seems that if users
-  find it difficult to follow the rules for creating, remembering and using
-  passwords, then they will find creative ways of breaking the rules to
-  make it easier to get their work done.
-
-  This question of user compliance is an issue that needs to be taken
-  into serious consideration when formulating any password policy,
-  especially as a user not following the rules can have a serious
-  impact on the security of the rest of the organization.
+  Another solution is for the users to use password managers.
+  This is a valid solution as long as the password managers themselves
+  are secure. See [Security of password managers]
+  (https://www.schneier.com/blog/archives/2014/09/security_of_pas.html)
+  for more information.
 
   ## Further information
 
-  Visit our wiki (https://github.com/elixircnx/comeonin/wiki)
+  Visit our [wiki](https://github.com/elixircnx/comeonin/wiki)
   for links to further information about these and related issues.
 
   """
 
-  alias Comeonin.PasswordStrength.Substitutions
+  import Comeonin.PasswordStrength.Substitutions
 
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" !#$%&'()*+,-./:;<=>?@[\\]^_{|}~\"")
@@ -95,20 +83,37 @@ defmodule Comeonin.PasswordStrength do
   @doc """
   Check the strength of the password.
 
-  There are two options: min_length and extra_chars.
-  min_length checks that the password is not shorter than the minimum length.
-  extra_chars checks that the password contains at least one digit and one
-  punctuation character (spaces are counted as punctuation characters).
+  ## Options
 
-  extra_chars is true by default, and min_length's default is 8 characters
-  if extra_chars is set to true, but 12 characters if extra_chars is set to false.
+  There are three options:
+
+    * min_length -- minimum allowable length of the password
+    * extra_chars -- check for punctuation characters (including spaces) and digits
+    * common -- check to see if the password is too common (easy to guess)
+
+  The default value for `min_length` is 8 characters if `extra_chars` is true,
+  but 12 characters is `extra_chars` is false. `extra_chars` and `common` are
+  true by default.
+
+  ## Common passwords
+
+  If the password is found in the list of common passwords, then this function
+  will return a message saying that it is too easy to guess because it is
+  common. This check will also check variations of the password with some
+  of the characters substituted. For example, for the common password `password`,
+  the words `P@$5w0Rd`, `p455w0rd`, `pA$sw0rD` (and many others) will also be checked.
+
+  The user's password will also be checked with the first and / or last letter
+  removed. For example, the words `(p@$swoRd`, `p4ssw0rD3` and `^P455woRd9`
+  would also not be allowed as they are too similar to `password`.
 
   ## Examples
 
-  This example will check that the password is at least 8 characters long and
-  will check that it contains at least one punctuation character and one digit.
+  This example will check that the password is at least 8 characters long,
+  it contains at least one punctuation character and one digit, and it is
+  not similar to any word in the list of common passwords.
 
-      Comeonin.PasswordStrength.strong_password?("pa$$w0rd")
+      Comeonin.PasswordStrength.strong_password?("7Gr$cHs9")
 
   The following example will check that the password is at least 16 characters
   long and will not check for punctuation characters or digits.
@@ -152,7 +157,7 @@ defmodule Comeonin.PasswordStrength do
   end
 
   defp common_pword?(password) do
-    if Substitutions.all_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
+    if all_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true
