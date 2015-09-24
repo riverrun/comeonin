@@ -103,7 +103,7 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.2.0-dev",
+      version: "1.2.0",
       elixir: "~> 1.0",
       name: "Comeonin",
       description: @description,

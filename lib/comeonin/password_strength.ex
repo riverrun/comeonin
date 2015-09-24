@@ -13,46 +13,41 @@ defmodule Comeonin.PasswordStrength do
   are likely to find ways of bending the rules you set, and this might have
   a negative impact on password security.
 
-  ## Creating strong passwords
+  ## Password strength
 
-  Strong passwords are passwords that are difficult for a potential attacker to
-  guess or work out. The strength of a password depends on a combination
-  of the following:
+  This section will discuss password strength by looking at `entropy` and
+  `guessability`.
 
-    * how random it is
-    * its length
-    * the size of its character set
+  Entropy refers to the number of combinations that a password
+  with a certain character set and a certain length would have. The
+  larger the character set and the longer the password is, the greater
+  the entropy. This is why users are often encouraged to write long
+  passwords that contain digits or punctuation characters. Entropy
+  is related to password strength, and a password with a higher
+  entropy is usually stronger than one with a lower entropy.
 
-  An attacker is likely to start an attempt to break a password by using
-  common words and common patterns, like sequences and repetitions. With
-  a truly random password, this kind of attack would not be possible,
-  which means that the attacker would have to resort to a more costly
-  brute force attack. However, this raises a usability issue as random
-  passwords are very difficult for people to create and remember. One
-  way of dealing with this issue is to use computer-generated random
-  passwords and for the user to write them down or use a password
-  manager.
+  Guessability is how easy it is for a potential attacker to guess or
+  work out what the password is. An attacker is likely to start an
+  attempt to break a password by using common words and common patterns,
+  like sequences and repetitions. When looking at guessability, a
+  password is strong if it does not contain such predictable patterns.
+  This is why random passwords are often recommended, and as people
+  are generally quite poor at creating truly random passwords, users
+  are advised to use computer-generated random passwords.
 
-  The term entropy is often used to refer to the number of combinations
-  that a password with a certain character set, and a certain length,
-  would have. The larger the character set and the longer the password
-  is, the greater the entropy. This is why users are often encouraged
-  to write long passwords that contain digits or punctuation characters.
-  Entropy is related to password strength, and a password with a higher
-  entropy is usually stronger than one with a lower entropy. However,
-  as mentioned in the previous paragraph, if the password contains
-  predictable patterns, the lack of randomness will make it weaker.
+  ## Password strength check
 
-  Finally, passwords should not be shared as this makes them weaker,
-  just as in the case when any secret is shared between multiple people.
+  In this module's `strong_password?` function, the options min_length
+  and extra_chars seek to keep the entropy high, and the option common
+  is meant to keep the guessability low.
 
   ## User attitudes and password security
 
   It is becoming more and more impractical for users to remember the
   many passwords they need, especially as it is recommended that they
-  use a different, strong (difficult to remember) password for each
-  service. As a result, it is likely that many users will choose to
-  either use the same password for many services, or use weaker,
+  use a different, strong (often difficult to remember) password for
+  each service. As a result, it is likely that many users will choose
+  to either use the same password for many services, or use weaker,
   easy to remember passwords.
 
   One solution to this problem is to have users write down their
@@ -65,6 +60,9 @@ defmodule Comeonin.PasswordStrength do
   are secure. See [Security of password managers]
   (https://www.schneier.com/blog/archives/2014/09/security_of_pas.html)
   for more information.
+
+  Finally, passwords should not be shared as this makes them weaker,
+  just as in the case when any secret is shared between multiple people.
 
   ## Further information
 
@@ -92,16 +90,20 @@ defmodule Comeonin.PasswordStrength do
     * common -- check to see if the password is too common (easy to guess)
 
   The default value for `min_length` is 8 characters if `extra_chars` is true,
-  but 12 characters is `extra_chars` is false. `extra_chars` and `common` are
-  true by default.
+  but 12 characters is `extra_chars` is false. This is because the password
+  should be longer if the character set is restricted to upper and lower case
+  letters.
+  
+  `extra_chars` and `common` are true by default.
 
   ## Common passwords
 
   If the password is found in the list of common passwords, then this function
-  will return a message saying that it is too easy to guess because it is
-  common. This check will also check variations of the password with some
-  of the characters substituted. For example, for the common password `password`,
-  the words `P@$5w0Rd`, `p455w0rd`, `pA$sw0rD` (and many others) will also be checked.
+  will return a message saying that it is too weak because it is easy to guess.
+  This check will also check variations of the password with some of the
+  characters substituted. For example, for the common password `password`,
+  the words `P@$5w0Rd`, `p455w0rd`, `pA$sw0rD` (and many others) will also
+  be checked.
 
   The user's password will also be checked with the first and / or last letter
   removed. For example, the words `(p@$swoRd`, `p4ssw0rD3` and `^P455woRd9`
