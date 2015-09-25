@@ -4,14 +4,22 @@ defmodule Comeonin.ToolsTest do
   alias Comeonin.Tools
   import Comeonin.PasswordStrength
 
-  test "password default length config" do
-    assert Tools.gen_password(8) |> String.length == 8
-    assert Tools.gen_password(16) |> String.length == 16
-    assert Tools.gen_password |> String.length == 12
+  test "random password length" do
+    assert Tools.random_key(8) |> String.length == 8
+    assert Tools.random_key(16) |> String.length == 16
+    assert Tools.random_key |> String.length == 12
+  end
+
+  test "random password too short length" do
+    for len <- 1..7 do
+      assert_raise ArgumentError, "The password should be at least 8 characters long.", fn ->
+        Tools.random_key(len)
+      end
+    end
   end
 
   test "stong password generated" do
-    assert Tools.gen_password |> strong_password? == true
+    assert Tools.random_key |> strong_password? == true
   end
 
 end

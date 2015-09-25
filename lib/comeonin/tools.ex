@@ -19,15 +19,20 @@ defmodule Comeonin.Tools do
   However, creating truly random passwords is difficult for people to
   do well and is something that computers are usually better at.
 
-  The default length of the password is 12 characters, and it is guaranteed
-  to contain at least one digit and one punctuation character.
+  The password has to be at least 8 characters long, and the default
+  length is 12 characters. It is also guaranteed to contain at least
+  one digit and one punctuation character.
   """
-  def gen_password(len \\ 12) do
+  def random_key(len \\ 12)
+  def random_key(len) when len > 7 do
     rand_password(len) |> to_string |> ensure_strong(len)
+  end
+  def random_key(_) do
+    raise ArgumentError, message: "The password should be at least 8 characters long."
   end
 
   defp rand_password(len) do
-    case rand_numbers(len) |> pass_check do
+    case rand_numbers(len) |> has_punc_digit? do
       false -> rand_password(len)
       code -> for val <- code, do: Map.get(@char_map, val)
     end
@@ -35,14 +40,14 @@ defmodule Comeonin.Tools do
   defp rand_numbers(len) do
     for _ <- 1..len, do: :crypto.rand_uniform(0, 93)
   end
-  defp pass_check(code) do
+  defp has_punc_digit?(code) do
     Enum.any?(code, &(&1 < 31)) and Enum.any?(code, &(&1 > 82)) and code
   end
 
   defp ensure_strong(password, len) do
     case strong_password?(password) do
       true -> password
-      _ -> gen_password(len)
+      _ -> random_key(len)
     end
   end
 

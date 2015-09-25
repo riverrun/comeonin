@@ -15,14 +15,14 @@ defmodule Comeonin.PasswordStrength do
 
   ## Password strength
 
-  This section will discuss password strength by looking at `guessability`
-  and `entropy`.
+  This section will look at how `guessability` and `entropy` relate to
+  password strength.
 
   Guessability is how easy it is for a potential attacker to guess or
   work out what the password is. An attacker is likely to start an
-  attempt to break a password by using common words and common patterns,
+  attempt to guess a password by using common words and common patterns,
   like sequences of characters or repeated characters. A password is strong
-  if its guessability is low, and it does not contain such predictable
+  if its guessability is low, that is, if it does not contain such predictable
   patterns.
 
   Entropy refers to the number of combinations that a password
@@ -62,9 +62,6 @@ defmodule Comeonin.PasswordStrength do
   (https://www.schneier.com/blog/archives/2014/09/security_of_pas.html)
   for more information.
 
-  Finally, passwords should not be shared as this makes them weaker,
-  just as in the case when any secret is shared between multiple people.
-
   ## Further information
 
   Visit our [wiki](https://github.com/elixircnx/comeonin/wiki)
@@ -91,7 +88,7 @@ defmodule Comeonin.PasswordStrength do
     * common -- check to see if the password is too common (easy to guess)
 
   The default value for `min_length` is 8 characters if `extra_chars` is true,
-  but 12 characters is `extra_chars` is false. This is because the password
+  but 12 characters if `extra_chars` is false. This is because the password
   should be longer if the character set is restricted to upper and lower case
   letters.
   
