@@ -35,23 +35,6 @@ defmodule Comeonin.Tools do
   end
 
   @doc """
-  Use erlang's crypto.strong_rand_bytes by default. Falls back to
-  crypto.rand_bytes if there is too little entropy for strong_rand_bytes
-  to work.
-  """
-  def random_bytes(number) when is_integer(number) do
-    try do
-      :crypto.strong_rand_bytes(number)
-    rescue
-      _error ->
-        :crypto.rand_bytes(number)
-    end
-  end
-  def random_bytes(_) do
-    raise ArgumentError, message: "Wrong type. You must call this function with an integer."
-  end
-
-  @doc """
   Compares the two binaries in constant time to avoid timing attacks.
   """
   def secure_check(hash, stored) do
