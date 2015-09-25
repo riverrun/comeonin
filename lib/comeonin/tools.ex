@@ -4,6 +4,7 @@ defmodule Comeonin.Tools do
   """
 
   use Bitwise
+  import Comeonin.PasswordStrength
 
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet '!#$%&\'()*+,-./:;<=>?@[\\]^_{|}~"' ++ @alpha ++ '0123456789'
@@ -14,11 +15,15 @@ defmodule Comeonin.Tools do
   @doc """
   Randomly generate a password.
 
+  Users are often advised to use random passwords for authentication.
+  However, creating truly random passwords is difficult for people to
+  do well and is something that computers are usually better at.
+
   The default length of the password is 12 characters, and it is guaranteed
   to contain at least one digit and one punctuation character.
   """
   def gen_password(len \\ 12) do
-    rand_password(len) |> to_string
+    rand_password(len) |> to_string |> ensure_strong(len)
   end
 
   defp rand_password(len) do
@@ -28,10 +33,17 @@ defmodule Comeonin.Tools do
     end
   end
   defp rand_numbers(len) do
-    for _ <- 1..len, do: :crypto.rand_uniform(0, 80)
+    for _ <- 1..len, do: :crypto.rand_uniform(0, 93)
   end
   defp pass_check(code) do
-    Enum.any?(code, &(&1 < 18)) and Enum.any?(code, &(&1 > 69)) and code
+    Enum.any?(code, &(&1 < 31)) and Enum.any?(code, &(&1 > 82)) and code
+  end
+
+  defp ensure_strong(password, len) do
+    case strong_password?(password) do
+      true -> password
+      _ -> gen_password(len)
+    end
   end
 
   @doc """

@@ -15,31 +15,32 @@ defmodule Comeonin.PasswordStrength do
 
   ## Password strength
 
-  This section will discuss password strength by looking at `entropy` and
-  `guessability`.
+  This section will discuss password strength by looking at `guessability`
+  and `entropy`.
+
+  Guessability is how easy it is for a potential attacker to guess or
+  work out what the password is. An attacker is likely to start an
+  attempt to break a password by using common words and common patterns,
+  like sequences of characters or repeated characters. A password is strong
+  if its guessability is low, and it does not contain such predictable
+  patterns.
 
   Entropy refers to the number of combinations that a password
   with a certain character set and a certain length would have. The
   larger the character set and the longer the password is, the greater
   the entropy. This is why users are often encouraged to write long
-  passwords that contain digits or punctuation characters. Entropy
-  is related to password strength, and a password with a higher
-  entropy is usually stronger than one with a lower entropy.
-
-  Guessability is how easy it is for a potential attacker to guess or
-  work out what the password is. An attacker is likely to start an
-  attempt to break a password by using common words and common patterns,
-  like sequences and repetitions. When looking at guessability, a
-  password is strong if it does not contain such predictable patterns.
-  This is why random passwords are often recommended, and as people
-  are generally quite poor at creating truly random passwords, users
-  are advised to use computer-generated random passwords.
+  passwords that contain digits or punctuation characters.
+  
+  Entropy is related to password strength, and a password with a higher
+  entropy is usually stronger than one with a lower entropy. However,
+  even if the entropy is high, a password is weak if its guessability
+  is high.
 
   ## Password strength check
 
-  In this module's `strong_password?` function, the options min_length
-  and extra_chars seek to keep the entropy high, and the option common
-  is meant to keep the guessability low.
+  In this module's `strong_password?` function, the option common
+  is meant to keep the guessability low, and the options min_length
+  and extra_chars seek to keep the entropy high.
 
   ## User attitudes and password security
 
