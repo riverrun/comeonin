@@ -37,7 +37,7 @@ as the version of erlang in the Ubuntu repositories is usually quite old.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 1.1"} ]
+    [ {:comeonin, "~> 1.2"} ]
   end
   ```
 

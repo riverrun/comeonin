@@ -61,8 +61,8 @@ defmodule Comeonin do
 
   It is recommended to make the key derivation function as slow as the
   user can tolerate. The actual recommended time for the function will vary
-  depending on the nature of the application. According to the following NIST
-  recommendations (http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf),
+  depending on the nature of the application. According to the following [NIST
+  recommendations](http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf),
   having the function take several seconds might be acceptable if the user
   only has to login once every session. However, if an application requires
   the user to login several times an hour, it would probably be better to
@@ -73,13 +73,13 @@ defmodule Comeonin do
 
   ## Further information
 
-  Visit our wiki (https://github.com/elixircnx/comeonin/wiki)
+  Visit our [wiki](https://github.com/elixircnx/comeonin/wiki)
   for links to further information about these and related issues.
 
   """
 
+  import Comeonin.PasswordStrength
   alias Comeonin.Config
-  alias Comeonin.Password
 
   @doc """
   A function to help the developer decide how many log_rounds to use
@@ -122,20 +122,23 @@ defmodule Comeonin do
   A function that provides options to check the strength of a password
   before hashing it. The password is then hashed only if the password is
   considered strong enough. For more details about password strength,
-  read the documentation for the Comeonin.Password module.
+  read the documentation for the Comeonin.PasswordStrength module.
 
-  The default hashing algorithm is bcrypt, but this can be changed by
-  setting the value of `crypto_mod` to `:pbkdf2` in the config file.
+  The default hashing algorithm is bcrypt, but this can be changed to
+  pbkdf2_sha512 by setting the value of `crypto_mod` to `:pbkdf2`
+  in the config file.
 
   ## Options
 
-  There are two options:
+  There are three options:
 
     * min_length -- minimum allowable length of the password
     * extra_chars -- check for punctuation characters and digits
+    * common -- check to see if the password is too common (easy to guess)
 
-  The default value for min_length is 8 characters if extra_chars is true,
-  but 12 characters is extra_chars is false. extra_chars is true by default.
+  The default value for `min_length` is 8 characters if `extra_chars` is true,
+  but 12 characters is `extra_chars` is false. `extra_chars` and `common` are
+  true by default.
 
   ## Examples
 
@@ -157,12 +160,17 @@ defmodule Comeonin do
       iex> Comeonin.create_hash("password")
       {:error, "The password should contain at least one number and one punctuation character."}
 
+  This example will raise an error because the password is too similar to the common
+  password `password`:
+
+      iex> Comeonin.create_hash("p4$5w0rd")
+      {:error, "The password you have chosen is weak because it is easy to guess. Please choose another one."}
+
   """
   def create_hash(password, opts \\ []) do
     crypto_mod = Config.get_crypto_mod
-    case Password.strong_password?(password, opts) do
+    case strong_password?(password, opts) do
       true -> {:ok, crypto_mod.hashpwsalt(password)}
-      false -> {:ok, crypto_mod.hashpwsalt(password)}
       message -> {:error, message}
     end
   end
