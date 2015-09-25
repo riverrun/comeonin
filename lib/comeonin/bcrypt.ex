@@ -36,7 +36,7 @@ defmodule Comeonin.Bcrypt do
   and the maximum is 31.
   """
   def gen_salt(log_rounds) when log_rounds in 4..31 do
-    Tools.random_bytes(16) |> :binary.bin_to_list |> fmt_salt(zero_str(log_rounds))
+    :crypto.strong_rand_bytes(16) |> :binary.bin_to_list |> fmt_salt(zero_str(log_rounds))
   end
   def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
