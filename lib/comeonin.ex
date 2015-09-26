@@ -78,7 +78,7 @@ defmodule Comeonin do
 
   """
 
-  import Comeonin.PasswordStrength
+  import Comeonin.Password
   alias Comeonin.Config
 
   @doc """
@@ -122,7 +122,7 @@ defmodule Comeonin do
   A function that provides options to check the strength of a password
   before hashing it. The password is then hashed only if the password is
   considered strong enough. For more details about password strength,
-  read the documentation for the Comeonin.PasswordStrength module.
+  read the documentation for the Comeonin.Password module.
 
   The default hashing algorithm is bcrypt, but this can be changed to
   pbkdf2_sha512 by setting the value of `crypto_mod` to `:pbkdf2`

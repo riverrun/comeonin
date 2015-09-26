@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.0 (2015-09-26)
+
+* Enhancements
+  * Added a common option to the `strong password` check. This checks for passwords that are easy to guess, or common.
+  * Improved random password generator -- added a check to ensure it is strong and set the minimum length to 8 characters.
+
+## 1.1.4 (2015-09-25)
+
+* Bug fix
+  * Removed `random_bytes` function. Now calling :crypto.strong_rand_bytes directly.
+
 ## 1.1.0 (2015-07-28)
 
 * Changes

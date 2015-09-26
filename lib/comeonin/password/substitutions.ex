@@ -1,6 +1,6 @@
-defmodule Comeonin.PasswordStrength.Substitutions do
+defmodule Comeonin.Password.Substitutions do
   @moduledoc """
-  A submodule of the `Comeonin.PasswordStrength` module.
+  A submodule of the `Comeonin.Password` module.
 
   This module has functions to make standard substitutions when checking
   if the password, or a similar password, is in the common passwords list.

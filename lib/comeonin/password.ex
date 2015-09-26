@@ -1,6 +1,13 @@
-defmodule Comeonin.PasswordStrength do
+defmodule Comeonin.Password do
   @moduledoc """
-  Module to check password strength.
+  Module to generate random passwords and check password strength.
+
+  The `gen_password` function generates a random password with letters,
+  digits and punctuation characters.
+
+  The `strong_password?` function checks that the password is long enough,
+  it contains at least one digit and one punctuation character, and it is
+  not similar to any common passwords.
 
   # Password security and usability
 
@@ -69,12 +76,56 @@ defmodule Comeonin.PasswordStrength do
 
   """
 
-  import Comeonin.PasswordStrength.Substitutions
+  import Comeonin.Password.Substitutions
+
+  @alpha Enum.concat ?A..?Z, ?a..?z
+  @alphabet '!#$%&\'()*+,-./:;<=>?@[\\]^_{|}~"' ++ @alpha ++ '0123456789'
+  @char_map Enum.map_reduce(@alphabet, 0, fn x, acc ->
+    {{acc, x}, acc + 1} end) |> elem(0) |> Enum.into(%{})
 
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" !#$%&'()*+,-./:;<=>?@[\\]^_{|}~\"")
-  @common Path.join([__DIR__, "password_strength", "10k_6chars.txt"])
+  @common Path.join([__DIR__, "password", "10k_6chars.txt"])
   |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
+
+  @doc """
+  Randomly generate a password.
+
+  Users are often advised to use random passwords for authentication.
+  However, creating truly random passwords is difficult for people to
+  do well and is something that computers are usually better at.
+
+  The password has to be at least 8 characters long, and the default
+  length is 12 characters. It is also guaranteed to contain at least
+  one digit and one punctuation character.
+  """
+  def gen_password(len \\ 12)
+  def gen_password(len) when len > 7 do
+    rand_password(len) |> to_string |> ensure_strong(len)
+  end
+  def gen_password(_) do
+    raise ArgumentError, message: "The password should be at least 8 characters long."
+  end
+
+  defp rand_password(len) do
+    case rand_numbers(len) |> punc_digit? do
+      false -> rand_password(len)
+      code -> for val <- code, do: Map.get(@char_map, val)
+    end
+  end
+  defp rand_numbers(len) do
+    for _ <- 1..len, do: :crypto.rand_uniform(0, 93)
+  end
+  defp punc_digit?(code) do
+    Enum.any?(code, &(&1 < 31)) and Enum.any?(code, &(&1 > 82)) and code
+  end
+
+  defp ensure_strong(password, len) do
+    case strong_password?(password) do
+      true -> password
+      _ -> gen_password(len)
+    end
+  end
 
   @doc """
   Check the strength of the password.
@@ -113,12 +164,12 @@ defmodule Comeonin.PasswordStrength do
   it contains at least one punctuation character and one digit, and it is
   not similar to any word in the list of common passwords.
 
-      Comeonin.PasswordStrength.strong_password?("7Gr$cHs9")
+      Comeonin.Password.strong_password?("7Gr$cHs9")
 
   The following example will check that the password is at least 16 characters
   long and will not check for punctuation characters or digits.
 
-      Comeonin.PasswordStrength.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
+      Comeonin.Password.strong_password?("verylongpassword", [min_length: 16, extra_chars: false])
 
   """
   def strong_password?(password, opts \\ []) do
