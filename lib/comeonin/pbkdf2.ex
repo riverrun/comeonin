@@ -1,5 +1,7 @@
 defmodule Comeonin.Pbkdf2 do
   @moduledoc """
+  Module to handle pbkdf2_sha512 authentication.
+
   Pbkdf2 is a password-based key derivation function
   that uses a password, a variable-length salt and an iteration
   count and applies a pseudorandom function to these to

@@ -65,8 +65,8 @@ defmodule Comeonin.Password do
 
   Another solution is for the users to use password managers.
   This is a valid solution as long as the password managers themselves
-  are secure. See [Security of password managers]
-  (https://www.schneier.com/blog/archives/2014/09/security_of_pas.html)
+  are secure. See
+  [Security of password managers](https://www.schneier.com/blog/archives/2014/09/security_of_pas.html)
   for more information.
 
   ## Further information
@@ -95,9 +95,11 @@ defmodule Comeonin.Password do
   However, creating truly random passwords is difficult for people to
   do well and is something that computers are usually better at.
 
-  The password has to be at least 8 characters long, and the default
-  length is 12 characters. It is also guaranteed to contain at least
-  one digit and one punctuation character.
+  This function creates a random password that is guaranteed to contain
+  at least one digit and one punctuation character.
+
+  The default length of the password is 12 characters and the minimum
+  length is 8 characters.
   """
   def gen_password(len \\ 12)
   def gen_password(len) when len > 7 do
