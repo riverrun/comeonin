@@ -128,7 +128,7 @@ defmodule Comeonin.Mixfile do
   defp package do
     [
       files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
-      contributors: ["David Whitlock", "Ben Sharman", "Jason M Barnes"],
+      maintainers: ["David Whitlock"],
       licenses: ["BSD"],
       links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
         "Docs" => "http://hexdocs.pm/comeonin"}
