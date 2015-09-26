@@ -51,6 +51,10 @@ as the version of erlang in the Ubuntu repositories is usually quite old.
 
 3. Run `mix do deps.get, compile`
 
+4. Optional: during tests (and tests only), you may want to reduce the number of bcrypt rounds so it does not slow down your test suite. If you have a `config/test.exs`, you should add:
+
+        config :comeonin, :bcrypt_log_rounds, 1
+
 ## Usage
 
 Either import or alias the algorithm you want to use -- either `Comeonin.Bcrypt`
