@@ -25,7 +25,8 @@ Elixir version 1.0 or later and Erlang/OTP version 17.0 or later.
 
 You also need to have a C compiler, such as `gcc`, installed.
 
-Ubuntu and Debian-based systems can get `gcc` and `make` by installing `build-essential` package. Also `erlang-dev` may be needed if not included in your Erlang/OTP version.
+Ubuntu and Debian-based systems can get `gcc` and `make` by installing `build-essential`
+package. Also `erlang-dev` may be needed if not included in your Erlang/OTP version.
 
 For users of Ubuntu, or any other Debian-based distro, we recommend downloading
 erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
@@ -51,9 +52,14 @@ as the version of erlang in the Ubuntu repositories is usually quite old.
 
 3. Run `mix do deps.get, compile`
 
-4. Optional: during tests (and tests only), you may want to reduce the number of bcrypt rounds so it does not slow down your test suite. If you have a `config/test.exs`, you should add:
+4. Optional: during tests (and tests only), you may want to reduce the number of bcrypt,
+or pbkdf2, rounds so it does not slow down your test suite. If you have a `config/test.exs`,
+you should add (depending on which algorithm you are using):
 
-        config :comeonin, :bcrypt_log_rounds, 1
+        config :comeonin, :bcrypt_log_rounds, 4
+        config :comeonin, :pbkdf2_rounds, 1
+
+NB: do not use the above values in production.
 
 ## Usage
 
