@@ -60,13 +60,10 @@ defmodule Comeonin.Config do
   pbkdf2_sha512 to hash the password.
   """
   def get_crypto_mod do
-    case crypto_mod do
+    case Application.get_env(:comeonin, :crypto_mod) do
       :pbkdf2 -> Comeonin.Pbkdf2
       _ -> Comeonin.Bcrypt
     end
-  end
-  defp crypto_mod do
-    Application.get_env(:comeonin, :crypto_mod, :bcrypt)
   end
 
   @doc """
@@ -74,7 +71,8 @@ defmodule Comeonin.Config do
   value of 12 means that 2^12 rounds are used.
   """
   def bcrypt_log_rounds do
-    Application.get_env(:comeonin, :bcrypt_log_rounds, 12)
+    rounds = Application.get_env(:comeonin, :bcrypt_log_rounds)
+    if rounds in 4..31, do: rounds, else: 12
   end
 
   @doc """
