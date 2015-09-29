@@ -86,7 +86,7 @@ defmodule Comeonin.Password do
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" !#$%&'()*+,-./:;<=>?@[\\]^_{|}~\"")
   @common Path.join([__DIR__, "password", "10k_6chars.txt"])
-  |> File.read! |> String.split("\n") |> Enum.into(HashSet.new)
+  |> File.read! |> String.split("\n") |> :sets.from_list
 
   @doc """
   Randomly generate a password.
@@ -180,18 +180,19 @@ defmodule Comeonin.Password do
       true -> {Keyword.get(opts, :min_length, 8), true}
       _ -> {Keyword.get(opts, :min_length, 12), false}
     end
-    case pass_length?(String.length(password), min_len) do
-      true -> further_checks(extra_chars, common, password)
+    word_len = String.length(password)
+    case pass_length?(word_len, min_len) do
+      true -> further_checks(extra_chars, common, password, word_len)
       message -> message
     end
   end
 
-  defp further_checks(false, false, _password), do: true
-  defp further_checks(false, true, password), do: common_pword?(password)
-  defp further_checks(true, false, password), do: has_punc_digit?(password)
-  defp further_checks(true, true, password) do
+  defp further_checks(false, false, _password, _word_len), do: true
+  defp further_checks(false, true, password, word_len), do: common_pword?(password, word_len)
+  defp further_checks(true, false, password, _word_len), do: has_punc_digit?(password)
+  defp further_checks(true, true, password, word_len) do
     case has_punc_digit?(password) do
-      true -> common_pword?(password)
+      true -> common_pword?(password, word_len)
       message -> message
     end
   end
@@ -209,11 +210,12 @@ defmodule Comeonin.Password do
     end
   end
 
-  defp common_pword?(password) do
-    if all_candidates(password) |> Enum.any?(&Set.member?(@common, &1)) do
+  defp common_pword?(password, word_len) when word_len < 13 do
+    if all_candidates(password) |> Enum.any?(&:sets.is_element(&1, @common)) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true
     end
   end
+  defp common_pword?(_, _), do: true
 end

@@ -119,6 +119,19 @@ defmodule Comeonin do
   end
 
   @doc """
+  This is a development tool to see how quickly, or slowly, the common password
+  function is running.
+
+  Unless you are contributing to Comeonin development, you will not need to use
+  this function.
+  """
+  def time_strong(password \\ "password") do
+    {time, _} = :timer.tc(Comeonin.Password, :strong_password?,
+    [password, [min_length: 8, extra_chars: false]])
+    Mix.shell.info "Time: #{div(time, 1000)} ms"
+  end
+
+  @doc """
   A function that provides options to check the strength of a password
   before hashing it. The password is then hashed only if the password is
   considered strong enough. For more details about password strength,
