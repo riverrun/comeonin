@@ -76,7 +76,7 @@ defmodule Comeonin.Password do
 
   """
 
-  import Comeonin.Password.Substitutions
+  import Comeonin.Password.Common
 
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet '!#$%&\'()*+,-./:;<=>?@[\\]^_{|}~"' ++ @alpha ++ '0123456789'
@@ -85,8 +85,6 @@ defmodule Comeonin.Password do
 
   @digits String.codepoints("0123456789")
   @punc String.codepoints(" !#$%&'()*+,-./:;<=>?@[\\]^_{|}~\"")
-  @common Path.join([__DIR__, "password", "10k_6chars.txt"])
-  |> File.read! |> String.split("\n") |> :sets.from_list
 
   @doc """
   Randomly generate a password.
@@ -188,11 +186,11 @@ defmodule Comeonin.Password do
   end
 
   defp further_checks(false, false, _password, _word_len), do: true
-  defp further_checks(false, true, password, word_len), do: common_pword?(password, word_len)
+  defp further_checks(false, true, password, word_len), do: not_common?(password, word_len)
   defp further_checks(true, false, password, _word_len), do: has_punc_digit?(password)
   defp further_checks(true, true, password, word_len) do
     case has_punc_digit?(password) do
-      true -> common_pword?(password, word_len)
+      true -> not_common?(password, word_len)
       message -> message
     end
   end
@@ -210,12 +208,12 @@ defmodule Comeonin.Password do
     end
   end
 
-  defp common_pword?(password, word_len) when word_len < 13 do
-    if all_candidates(password, word_len) |> Enum.any?(&:sets.is_element(&1, @common)) do
+  defp not_common?(password, word_len) when word_len < 13 do
+    if password |> String.downcase |> common_password?(word_len) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true
     end
   end
-  defp common_pword?(_, _), do: true
+  defp not_common?(_, _), do: true
 end

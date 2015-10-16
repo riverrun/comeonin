@@ -1,14 +1,19 @@
-defmodule Comeonin.Password.Substitutions do
+defmodule Comeonin.Password.Common do
   @moduledoc """
   A submodule of the `Comeonin.Password` module.
 
-  This module has functions to make standard substitutions when checking
-  if the password, or a similar password, is in the common passwords list.
+  This module has functions to check if the password, or a similar password,
+  is in the common passwords list.
 
   There are also checks on the password with the first letter removed,
   the last letter removed, and both the first and last letters removed.
 
   """
+
+  import Comeonin.Password.Tools
+
+  @common get_words
+  @common_keys Map.keys(get_words) |> :sets.from_list
 
   @sub_dict %{"a" => ["a", "@", "4"], "b" => ["b", "8"],
     "c" => ["c", "[", "("], "d" => ["d"],
@@ -36,11 +41,11 @@ defmodule Comeonin.Password.Substitutions do
     "+" => ["+", "x", "t"]}
 
   @doc """
-  Create a list of all the different possible variants of the password.
+  Check to see if the passord is too similar to any of the passwords
+  in the common password list.
 
-  This list contains versions of the password in which certain common
-  substitutions have been made. It also has versions with the first letter
-  and / or the last letter removed.
+  The password is checked after certain common substitutions have been
+  made. It is also checked with the first letter and / or the last letter removed.
 
   ## Examples
 
@@ -53,14 +58,29 @@ defmodule Comeonin.Password.Substitutions do
   As can be seen, `p@$5W0rD9` is similar to the very common password `password`,
   and so it is judged to be too weak.
   """
-  def all_candidates(password, word_len) do
-    word = String.downcase(password)
-    cands = [word, :binary.part(word, {1, word_len - 1}),
-      :binary.part(word, {0, word_len - 1}), :binary.part(word, {1, word_len - 2})]
-    cands ++ Enum.map(cands, &word_candidates/1) |> List.flatten
+  def common_password?(password, word_len) do
+    case password |> first_check do
+      false -> false
+      word -> second_check(password, word, word_len)
+    end
   end
 
-  defp word_candidates(password) do
+  defp first_check(password) do
+    get_candidates(password, {0, 4}, {1, 5}) |> any?(&:sets.is_element(&1, @common_keys))
+  end
+
+  defp second_check(password, word, word_len) do
+    get_candidates(password, {4, word_len - 4}, {4, word_len - 5})
+    |> Enum.any?(&:lists.member(&1, Map.get(word)))
+  end
+
+  defp get_candidates(word, full, shorter) do
+    cands = [:binary.part(word, full), :binary.part(word, shorter)]
+    cands ++ Enum.map(cands, &word_alternatives/1)
+    |> List.flatten
+  end
+
+  defp word_alternatives(password) do
     for i <- password |> word_subs |> product, do: Enum.join(i)
   end
 
