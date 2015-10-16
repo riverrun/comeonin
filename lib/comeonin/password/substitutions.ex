@@ -53,11 +53,10 @@ defmodule Comeonin.Password.Substitutions do
   As can be seen, `p@$5W0rD9` is similar to the very common password `password`,
   and so it is judged to be too weak.
   """
-  def all_candidates(password) do
+  def all_candidates(password, word_len) do
     word = String.downcase(password)
-    len = String.length(word)
-    cands = [word, :binary.part(word, {1, len - 1}),
-      :binary.part(word, {0, len - 1}), :binary.part(word, {1, len - 2})]
+    cands = [word, :binary.part(word, {1, word_len - 1}),
+      :binary.part(word, {0, word_len - 1}), :binary.part(word, {1, word_len - 2})]
     cands ++ Enum.map(cands, &word_candidates/1) |> List.flatten
   end
 

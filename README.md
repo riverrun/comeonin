@@ -21,16 +21,8 @@ Comeonin supports `bcrypt` and `pbkdf2_sha512`.
 
 ## Requirements
 
-Elixir version 1.0 or later and Erlang/OTP version 17.0 or later.
-
-You also need to have a C compiler, such as `gcc`, installed.
-
-Ubuntu and Debian-based systems can get `gcc` and `make` by installing `build-essential`
-package. Also `erlang-dev` may be needed if not included in your Erlang/OTP version.
-
-For users of Ubuntu, or any other Debian-based distro, we recommend downloading
-erlang from [erlang solutions](https://www.erlang-solutions.com/downloads/download-erlang-otp),
-as the version of erlang in the Ubuntu repositories is usually quite old.
+See the [Requirements](https://github.com/elixircnx/comeonin/wiki/Requirements)
+page in the wiki for details.
 
 ## Installation
 
@@ -96,8 +88,9 @@ passwords and to check passwords for password strength.
 There is also a `create_hash` function in the main Comeonin module which
 can be used to check a password for password strength before hashing it.
 
-The password strength check consists of two options: a minimum length and
-a check for punctuation characters and digits.
+The password strength check consists of three options: a minimum length,
+a check for punctuation characters and digits and a common password
+check.
 
 ### Interacting with a database
 

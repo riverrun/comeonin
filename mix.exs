@@ -25,7 +25,8 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   def build(exec, args) do
     {result, error_code} = System.cmd(exec, args, stderr_to_stdout: true)
-    if error_code != 0, do: build_error(exec), else: IO.binwrite result
+    IO.binwrite result
+    if error_code != 0, do: build_error(exec)
   end
 
   defp nocompiler_error("nmake") do

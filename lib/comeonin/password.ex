@@ -37,7 +37,7 @@ defmodule Comeonin.Password do
   larger the character set and the longer the password is, the greater
   the entropy. This is why users are often encouraged to write long
   passwords that contain digits or punctuation characters.
-  
+
   Entropy is related to password strength, and a password with a higher
   entropy is usually stronger than one with a lower entropy. However,
   even if the entropy is high, a password is weak if its guessability
@@ -144,7 +144,7 @@ defmodule Comeonin.Password do
   but 12 characters if `extra_chars` is false. This is because the password
   should be longer if the character set is restricted to upper and lower case
   letters.
-  
+
   `extra_chars` and `common` are true by default.
 
   ## Common passwords
@@ -211,7 +211,7 @@ defmodule Comeonin.Password do
   end
 
   defp common_pword?(password, word_len) when word_len < 13 do
-    if all_candidates(password) |> Enum.any?(&:sets.is_element(&1, @common)) do
+    if all_candidates(password, word_len) |> Enum.any?(&:sets.is_element(&1, @common)) do
       "The password you have chosen is weak because it is easy to guess. Please choose another one."
     else
       true
