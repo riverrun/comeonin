@@ -80,9 +80,8 @@ defmodule Comeonin.Password.Common do
   end
 
   defp get_candidates(word, full, shorter) do
-    cands = [:binary.part(word, full), :binary.part(word, shorter)]
-    cands ++ Enum.map(cands, &word_alternatives/1)
-    |> List.flatten
+    [:binary.part(word, full), :binary.part(word, shorter)]
+    |> Enum.map(&word_alternatives/1) |> List.flatten
   end
 
   defp word_alternatives(password) do
