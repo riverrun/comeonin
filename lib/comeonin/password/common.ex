@@ -59,19 +59,24 @@ defmodule Comeonin.Password.Common do
   and so it is judged to be too weak.
   """
   def common_password?(password, word_len) do
-    case password |> first_check do
-      false -> false
-      word -> second_check(password, word, word_len)
+    case {password |> check_start(0), password |> check_start(1)} do
+      {false, false} -> false
+      {word, false} -> check_rest(password, word, 4, word_len - 4)
+      {_, word} -> check_rest(password, word, 5, word_len - 5)
     end
   end
 
-  defp first_check(password) do
-    get_candidates(password, {0, 4}, {1, 5}) |> any?(&:sets.is_element(&1, @common_keys))
+  defp check_start(password, start) do
+    get_candidates(password, {start, 4}) |> any?(&:sets.is_element(&1, @common_keys))
   end
 
-  defp second_check(password, word, word_len) do
-    get_candidates(password, {4, word_len - 4}, {4, word_len - 5})
-    |> Enum.any?(&:lists.member(&1, Map.get(word)))
+  defp check_rest(password, word, start, rest_len) do
+    get_candidates(password, {start, rest_len}, {start, rest_len - 1})
+    |> Enum.any?(&:lists.member(&1, Map.get(@common, word)))
+  end
+
+  defp get_candidates(word, len) do
+    :binary.part(word, len) |> word_alternatives |> List.flatten
   end
 
   defp get_candidates(word, full, shorter) do
