@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
   @shortdoc "Compiles Comeonin"
 
   def run(_) do
+    if Mix.env != :test, do: File.rm_rf("priv")
     File.mkdir("priv")
     {exec, args} = case :os.type do
       {:win32, _} ->
@@ -67,11 +68,18 @@ defmodule Mix.Tasks.Compile.Comeonin do
     """
     One option is to install a recent version of Visual Studio (the
     free Community edition will be enough for this task). Then try running
-    `mix deps.compile comeonin` from the `Developer Command Prompt`. If
-    you are using 64-bit erlang, you might need to run the command
-    `vcvarsall.bat amd64` before running `mix deps.compile`. Further
-    information can be found at
-    (https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx).
+    `mix deps.compile comeonin` from the `Developer Command Prompt`.
+
+    If you are using 64-bit erlang, you might need to run the command
+    `vcvarsall.bat amd64` in the Visual Studio {version}\VC directory
+    before running `mix deps.compile`.
+    See: https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx
+
+    If you are using Visual Studio 2015, you need to install the C++ build
+    tools before running the `vcvarsall.bat amd64`. Do this by going to
+    "Create New Project" and select "C++" to prompt to install the
+    required dependencies.
+    See: https://msdn.microsoft.com/en-us/library/60k1461a.aspx
 
     """
   end

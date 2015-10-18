@@ -19,7 +19,7 @@ Comeonin supports `bcrypt` and `pbkdf2_sha512`.
     * Clear instructions are given on how to use Comeonin.
     * Several recommendations are also given to help developers keep their apps secure.
 
-## Requirements
+## Requirements and build errors
 
 See the [Requirements](https://github.com/elixircnx/comeonin/wiki/Requirements)
 page in the wiki for details.
