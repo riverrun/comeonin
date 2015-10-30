@@ -2,6 +2,23 @@ defmodule Comeonin.Bcrypt do
   @moduledoc """
   Module to handle bcrypt authentication.
 
+  To generate a password hash, use the `hashpwsalt` function:
+
+    Comeonin.Bcrypt.hashpwsalt("hard to guess")
+
+  To check the password against a password hash, use the `checkpw` function:
+
+    Comeonin.Bcrypt.checkpw("hard to guess", stored_hash)
+
+  There is also a `dummy_checkpw`, which can be used to stop an attacker guessing
+  a username by timing the responses.
+
+  See the documentation for each function for more details.
+
+  Most users will not need to use any of the other functions in this module.
+
+  ## Bcrypt
+
   Bcrypt is a key derivation function for passwords designed by Niels Provos
   and David Mazières. Bcrypt is an adaptive function, which means that it can
   be configured to remain slow and resistant to brute-force attacks even as

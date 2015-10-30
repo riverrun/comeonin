@@ -2,6 +2,23 @@ defmodule Comeonin.Pbkdf2 do
   @moduledoc """
   Module to handle pbkdf2_sha512 authentication.
 
+  To generate a password hash, use the `hashpwsalt` function:
+
+    Comeonin.Pbkdf2.hashpwsalt("hard to guess")
+
+  To check the password against a password hash, use the `checkpw` function:
+
+    Comeonin.Pbkdf2.checkpw("hard to guess", stored_hash)
+
+  There is also a `dummy_checkpw`, which can be used to stop an attacker guessing
+  a username by timing the responses.
+
+  See the documentation for each function for more details.
+
+  Most users will not need to use any of the other functions in this module.
+
+  ## Pbkdf2
+
   Pbkdf2 is a password-based key derivation function
   that uses a password, a variable-length salt and an iteration
   count and applies a pseudorandom function to these to
