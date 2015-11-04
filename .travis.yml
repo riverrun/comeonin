@@ -1,7 +1,13 @@
 language: elixir
+elixir:
+  - 1.0.5
+  - 1.1.0
 otp_release:
   - 17.3
   - 17.4
+  - 17.5
+  - 18.0
+  - 18.1
 sudo: false
 after_script:
   - mix deps.get --only docs
