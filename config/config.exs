@@ -22,3 +22,6 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+# The value of the default locale for Gettext module
+config :comeonin, Comeonin.Gettext, default_locale: "en"

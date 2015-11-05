@@ -4,6 +4,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
   def run(_) do
     if Mix.env != :test, do: File.rm_rf("priv")
     File.mkdir("priv")
+    File.cp_r("po", "priv/gettext")
     {exec, args} = case :os.type do
       {:win32, _} ->
         {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
@@ -118,19 +119,20 @@ defmodule Comeonin.Mixfile do
       description: @description,
       package: package,
       source_url: "https://github.com/elixircnx/comeonin",
-      compilers: [:comeonin, :elixir, :app],
+      compilers: [:comeonin, :gettext, :elixir, :app],
       deps: deps
     ]
   end
 
   def application do
-    [applications: [:crypto, :logger]]
+    [applications: [:crypto, :gettext, :logger]]
   end
 
   defp deps do
     [
       {:earmark, "~> 0.1", only: :dev},
-      {:ex_doc,  "~> 0.10", only: :dev}
+      {:ex_doc,  "~> 0.10", only: :dev},
+      {:gettext, "~> 0.7"}
     ]
   end
 

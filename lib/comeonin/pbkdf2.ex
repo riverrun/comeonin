@@ -32,6 +32,7 @@ defmodule Comeonin.Pbkdf2 do
   alias Comeonin.Pbkdf2.Base64
   alias Comeonin.Config
   alias Comeonin.Tools
+  import Comeonin.Gettext
 
   @max_length bsl(1, 32) - 1
   @salt_length 16
@@ -47,7 +48,7 @@ defmodule Comeonin.Pbkdf2 do
     :crypto.strong_rand_bytes(salt_length)
   end
   def gen_salt(_) do
-    raise ArgumentError, message: "The salt is the wrong length."
+    raise ArgumentError, message: gettext "The salt is the wrong length."
   end
 
   @doc """
@@ -57,7 +58,7 @@ defmodule Comeonin.Pbkdf2 do
     if is_binary(salt) do
       pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
     else
-      raise ArgumentError, message: "Wrong type. The salt needs to be a string."
+      raise ArgumentError, message: gettext "Wrong type. The salt needs to be a string."
     end
   end
 
@@ -88,7 +89,7 @@ defmodule Comeonin.Pbkdf2 do
     |> Tools.secure_check(hash)
   end
   def checkpw(_password, _hash) do
-    raise ArgumentError, message: "Wrong type. The password and hash need to be strings."
+    raise ArgumentError, message: gettext "Wrong type. The password and hash need to be strings."
   end
 
   @doc """
@@ -108,7 +109,7 @@ defmodule Comeonin.Pbkdf2 do
     pbkdf2(password, salt, rounds, length, 1, [], 0)
   end
   defp pbkdf2(_password, _salt, _rounds, _length) do
-    raise ArgumentError, message: "The salt is the wrong length."
+    raise ArgumentError, message: gettext "The salt is the wrong length."
   end
 
   defp pbkdf2(_password, _salt, _rounds, max_length, _block_index, acc, length)

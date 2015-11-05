@@ -4,6 +4,7 @@ defmodule Comeonin.Bcrypt.Base64 do
   """
 
   use Bitwise
+  import Comeonin.Gettext
 
   @decode_map {:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:ws,:ws,:bad,:bad,:ws,:bad,:bad,
     :bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,
@@ -94,6 +95,6 @@ defmodule Comeonin.Bcrypt.Base64 do
 
   defp b64d_ok(val) when is_integer(val), do: val
   defp b64d_ok(val) do
-    raise ArgumentError, message: "invalid character: #{val}"
+    raise ArgumentError, message: gettext "invalid character: %{val}", val: val
   end
 end
