@@ -28,4 +28,14 @@ defmodule GettextTest do
     {:error, "Le mot de passe doit contenir au moins 8 caractères."}
   end
 
+  test "gettext returns German message if locale is de_DE" do
+    Gettext.put_locale(Comeonin.Gettext, "de_DE")
+
+    assert Comeonin.create_hash("password") ==
+    {:error, "Das Kennwort sollte mindestens eine Ziffer und ein Satzzeichen enthalten."}
+
+    assert Comeonin.create_hash("pa$w0rd") ==
+    {:error, "Das Kennwort sollte mindestens 8 Zeichen lang sein."}
+  end
+
 end
