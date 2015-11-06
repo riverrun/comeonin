@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Compile.Comeonin do
-  @shortdoc "Compiles Comeonin"
+  use Mix.Task
 
   def run(_) do
     if Mix.env != :test, do: File.rm_rf("priv")
@@ -106,6 +106,8 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
+  @version "1.4.0"
+
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
   """
@@ -113,8 +115,8 @@ defmodule Comeonin.Mixfile do
   def project do
     [
       app: :comeonin,
-      version: "1.3.2",
-      elixir: "~> 1.0",
+      version: @version,
+      elixir: "~> 1.1",
       name: "Comeonin",
       description: @description,
       package: package,
@@ -130,9 +132,9 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
+      {:gettext, "~> 0.7"},
       {:earmark, "~> 0.1", only: :dev},
-      {:ex_doc,  "~> 0.10", only: :dev},
-      {:gettext, "~> 0.7"}
+      {:ex_doc,  "~> 0.10", only: :dev}
     ]
   end
 
