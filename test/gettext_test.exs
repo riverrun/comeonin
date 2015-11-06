@@ -17,4 +17,15 @@ defmodule GettextTest do
     assert Comeonin.create_hash("pa$w0rd") ==
     {:error, "パスワードは8文字以上である必要があります。"}
   end
+
+  test "gettext returns French message if locale is fr_FR" do
+    Gettext.put_locale(Comeonin.Gettext, "fr_FR")
+
+    assert Comeonin.create_hash("password") ==
+    {:error, "Le mot de passe doit contenir au moins un chiffre et un signe de ponctuation."}
+
+    assert Comeonin.create_hash("pa$w0rd") ==
+    {:error, "Le mot de passe doit contenir au moins 8 caractères."}
+  end
+
 end

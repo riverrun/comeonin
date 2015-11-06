@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0 (2015-11-06)
+
+* Enhancements
+  * Added gettext support.
+  * Added Japanese translations for messages.
+
 ## 1.3.0 (2015-10-18)
 
 * Enhancements

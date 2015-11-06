@@ -1,0 +1,29 @@
+msgid "The password should be at least %{min_len} characters long."
+msgstr "Le mot de passe doit contenir au moins %{min_len} caractères."
+
+msgid "The password should contain at least one number and one punctuation character."
+msgstr "Le mot de passe doit contenir au moins un chiffre et un signe de ponctuation."
+
+msgid "The password you have chosen is weak because it is easy to guess. Please choose another one."
+msgstr "Le mot de passe que vous avez choisi est trop facile de deviner. Veuillez choisir un autre mot de passe."
+
+msgid "The salt is the wrong length."
+msgstr "La longeur du salt est incorrecte."
+
+msgid "We could not find the password. The password key should be either :password or \"password\"."
+msgstr "Nous ne pouvons pas trouver le mot de passe. La clé doit être :password ou \"password\"."
+
+msgid "Wrong number of rounds."
+msgstr "Le nombre du rounds est incorrect."
+
+msgid "Wrong type. The password and hash need to be strings."
+msgstr "Le type est incorrect. Le mot de passe et le hash doit être de type string."
+
+msgid "Wrong type. The password and salt need to be strings."
+msgstr "Le type est incorrect. Le mot de passe et le salt doit être de type string."
+
+msgid "Wrong type. The salt needs to be a string."
+msgstr "Le type est incorrect. Le salt doit être de type string."
+
+msgid "Invalid character: %{val}"
+msgstr "Caractère non valide. %{val}"

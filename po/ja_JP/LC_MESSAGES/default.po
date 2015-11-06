@@ -25,5 +25,5 @@ msgstr "不正な型です。パスワードとソルトは文字列である必
 msgid "Wrong type. The salt needs to be a string."
 msgstr "不正な型です。ソルトは文字列である必要があります。"
 
-msgid "invalid character: %{val}"
+msgid "Invalid character: %{val}"
 msgstr "不正な文字です: %{val}"
