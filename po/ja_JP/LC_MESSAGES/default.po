@@ -6,24 +6,3 @@ msgstr "パスワードは1字以上の数字と記号が含まれている必�
 
 msgid "The password you have chosen is weak because it is easy to guess. Please choose another one."
 msgstr "入力されたパスワードは推測が容易で強度が不十分です。違うものを指定してください。"
-
-msgid "The salt is the wrong length."
-msgstr "ソルトの長さが正しくありません。"
-
-msgid "We could not find the password. The password key should be either :password or \"password\"."
-msgstr "パスワードが見つかりません。キーが:passwordか\"password\"である必要があります。"
-
-msgid "Wrong number of rounds."
-msgstr "不正なラウンド数です。"
-
-msgid "Wrong type. The password and hash need to be strings."
-msgstr "不正な型です。パスワードとハッシュは文字列である必要があります。"
-
-msgid "Wrong type. The password and salt need to be strings."
-msgstr "不正な型です。パスワードとソルトは文字列である必要があります。"
-
-msgid "Wrong type. The salt needs to be a string."
-msgstr "不正な型です。ソルトは文字列である必要があります。"
-
-msgid "Invalid character: %{val}"
-msgstr "不正な文字です: %{val}"

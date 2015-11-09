@@ -79,7 +79,6 @@ defmodule Comeonin do
   """
 
   import Comeonin.Password
-  import Comeonin.Gettext
   alias Comeonin.Config
 
   @doc """
@@ -235,7 +234,7 @@ defmodule Comeonin do
     Map.delete(user_params, "password") |> create_map(password, "password_hash", opts)
   end
   def create_user(_, _) do
-    {:error, gettext "We could not find the password. The password key should be either :password or \"password\"."}
+    {:error, "We could not find the password. The password key should be either :password or \"password\"."}
   end
 
   defp create_map(user_params, password, hash_key, opts) do

@@ -37,7 +37,6 @@ defmodule Comeonin.Bcrypt do
   alias Comeonin.Bcrypt.Base64
   alias Comeonin.Config
   alias Comeonin.Tools
-  import Comeonin.Gettext
 
   @on_load {:init, 0}
 
@@ -66,11 +65,11 @@ defmodule Comeonin.Bcrypt do
     if byte_size(salt) == 29 do
       hashpw(:binary.bin_to_list(password), :binary.bin_to_list(salt))
     else
-      raise ArgumentError, message: gettext "The salt is the wrong length."
+      raise ArgumentError, message: "The salt is the wrong length."
     end
   end
   def hashpass(_password, _salt) do
-    raise ArgumentError, message: gettext "Wrong type. The password and salt need to be strings."
+    raise ArgumentError, message: "Wrong type. The password and salt need to be strings."
   end
 
   @doc """
@@ -94,7 +93,7 @@ defmodule Comeonin.Bcrypt do
     |> Tools.secure_check(hash)
   end
   def checkpw(_password, _hash) do
-    raise ArgumentError, message: gettext "Wrong type. The password and hash need to be strings."
+    raise ArgumentError, message: "Wrong type. The password and hash need to be strings."
   end
 
   @doc """
@@ -146,7 +145,7 @@ defmodule Comeonin.Bcrypt do
     {Base64.decode(salt), bsl(1, log_rounds)}
   end
   defp prepare_keys(_, _) do
-    raise ArgumentError, message: gettext "Wrong number of rounds."
+    raise ArgumentError, message: "Wrong number of rounds."
   end
 
   defp expand_keys(state, _key, _key_len, _salt, 0), do: state
