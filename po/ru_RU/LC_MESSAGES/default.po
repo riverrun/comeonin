@@ -1,0 +1,8 @@
+msgid "The password should be at least %{min_len} characters long."
+msgstr "Минимально допустимая длина пароля составляет %{min_len}."
+
+msgid "The password should contain at least one number and one punctuation character."
+msgstr "Пароль должен содержать минимум одну цифру или спецсимвол."
+
+msgid "The password you have chosen is weak because it is easy to guess. Please choose another one."
+msgstr "Сложность выбранного пароля низка, так как его легко угадать. Пожалуйста, выберите другой пароль."
