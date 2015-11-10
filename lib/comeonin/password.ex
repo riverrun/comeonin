@@ -77,7 +77,7 @@ defmodule Comeonin.Password do
   """
 
   import Comeonin.Password.Common
-  import Comeonin.Gettext
+  import Comeonin.Messages
 
   @alpha Enum.concat ?A..?Z, ?a..?z
   @alphabet '!#$%&\'()*+,-./:;<=>?@[\\]^_{|}~"' ++ @alpha ++ '0123456789'
@@ -105,7 +105,7 @@ defmodule Comeonin.Password do
     rand_password(len) |> to_string |> ensure_strong(len)
   end
   def gen_password(_) do
-    raise ArgumentError, message: gettext "The password should be at least %{min_len} characters long.", min_len: 8
+    raise ArgumentError, message: "The password should be at least 8 characters long."
   end
 
   defp rand_password(len) do
@@ -197,7 +197,7 @@ defmodule Comeonin.Password do
   end
 
   defp pass_length?(word_len, min_len) when word_len < min_len do
-    gettext "The password should be at least %{min_len} characters long.", min_len: min_len
+    pass_too_short(min_len)
   end
   defp pass_length?(_, _), do: true
 
@@ -205,13 +205,13 @@ defmodule Comeonin.Password do
     if :binary.match(word, @digits) != :nomatch and :binary.match(word, @punc) != :nomatch do
       true
     else
-      gettext "The password should contain at least one number and one punctuation character."
+      pass_no_extra_chars
     end
   end
 
   defp not_common?(password, word_len) when word_len < 13 do
     if password |> String.downcase |> common_password?(word_len) do
-      gettext "The password you have chosen is weak because it is easy to guess. Please choose another one."
+      weak_pass
     else
       true
     end

@@ -3,7 +3,6 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   def run(_) do
     File.mkdir("priv")
-    File.cp_r("po", "priv/gettext")
     {exec, args} = case :os.type do
       {:win32, _} ->
         {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
@@ -105,7 +104,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "1.4.1"
+  @version "1.5.0"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
@@ -120,18 +119,18 @@ defmodule Comeonin.Mixfile do
       description: @description,
       package: package,
       source_url: "https://github.com/elixircnx/comeonin",
-      compilers: [:comeonin, :gettext, :elixir, :app],
+      compilers: [:comeonin, :elixir, :app],
       deps: deps
     ]
   end
 
   def application do
-    [applications: [:crypto, :gettext, :logger]]
+    [applications: [:crypto, :logger]]
   end
 
   defp deps do
     [
-      {:gettext, "~> 0.7"},
+      {:comeonin_i18n, "~> 0.1", optional: true},
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc,  "~> 0.10", only: :dev}
     ]

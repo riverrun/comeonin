@@ -1,3 +1,4 @@
-%{"earmark": {:hex, :earmark, "0.1.17"},
+%{"comeonin_i18n": {:hex, :comeonin_i18n, "0.1.0"},
+  "earmark": {:hex, :earmark, "0.1.17"},
   "ex_doc": {:hex, :ex_doc, "0.10.0"},
   "gettext": {:hex, :gettext, "0.7.0"}}

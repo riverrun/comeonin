@@ -1,8 +1,0 @@
-msgid "The password should be at least %{min_len} characters long."
-msgstr "パスワードは%{min_len}文字以上である必要があります。"
-
-msgid "The password should contain at least one number and one punctuation character."
-msgstr "パスワードは1字以上の数字と記号が含まれている必要があります。"
-
-msgid "The password you have chosen is weak because it is easy to guess. Please choose another one."
-msgstr "入力されたパスワードは推測が容易で強度が不十分です。違うものを指定してください。"

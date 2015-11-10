@@ -1,8 +1,0 @@
-msgid "The password should be at least %{min_len} characters long."
-msgstr "Le mot de passe doit contenir au moins %{min_len} caractères."
-
-msgid "The password should contain at least one number and one punctuation character."
-msgstr "Le mot de passe doit contenir au moins un chiffre et un signe de ponctuation."
-
-msgid "The password you have chosen is weak because it is easy to guess. Please choose another one."
-msgstr "Le mot de passe que vous avez choisi est trop facile de deviner. Veuillez choisir un autre mot de passe."
