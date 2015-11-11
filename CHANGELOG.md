@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.0 (2015-11-10)
+
+* Changes
+  * Moved gettext support to `comeonin_i18n` optional dependency.
+
 ## 1.4.0 (2015-11-06)
 
 * Enhancements
