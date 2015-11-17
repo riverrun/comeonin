@@ -8,8 +8,7 @@ ifneq ($(OS),Windows_NT)
 	CFLAGS += -fPIC
 
 	ifeq ($(shell uname),Darwin)
-		CFLAGS  += -arch i386 -arch x86_64
-		LDFLAGS += -arch i386 -arch x86_64 -dynamiclib -undefined dynamic_lookup
+		LDFLAGS += -dynamiclib -undefined dynamic_lookup
 	endif
 endif
 
