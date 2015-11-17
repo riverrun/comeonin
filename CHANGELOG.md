@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.0-dev
+## 1.6.0
 
 * Changes
   * Edited C code and deleted unused functions.

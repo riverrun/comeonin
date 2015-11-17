@@ -30,7 +30,7 @@ page in the wiki for details.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 1.5"} ]
+    [ {:comeonin, "~> 1.6"} ]
   end
   ```
 
