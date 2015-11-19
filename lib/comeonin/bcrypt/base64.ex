@@ -1,6 +1,9 @@
 defmodule Comeonin.Bcrypt.Base64 do
   @moduledoc """
   Module that provides base64 encoding for bcrypt.
+
+  Bcrypt uses an adapted base64 alphabet (using `.` instead of `+`,
+  starting with `./` and with no padding).
   """
 
   use Bitwise
@@ -23,7 +26,7 @@ defmodule Comeonin.Bcrypt.Base64 do
     :bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad,:bad}
 
   @doc """
-  Encode using a base64 alphabet adapted for bcrypt.
+  Encode using the adapted Bcrypt alphabet.
 
   ## Examples
 
@@ -33,7 +36,7 @@ defmodule Comeonin.Bcrypt.Base64 do
   def encode(words), do: encode_l(words)
 
   @doc """
-  Decode using a base64 alphabet adapted for bcrypt.
+  Decode using the adapted Bcrypt alphabet.
 
   ## Examples
 
@@ -94,6 +97,6 @@ defmodule Comeonin.Bcrypt.Base64 do
 
   defp b64d_ok(val) when is_integer(val), do: val
   defp b64d_ok(val) do
-    raise ArgumentError, message: "Invalid character: %{val}", val: val
+    raise ArgumentError, message: "Invalid character: #{val}"
   end
 end

@@ -1,6 +1,9 @@
 defmodule Comeonin.Pbkdf2.Base64 do
   @moduledoc """
   Module that provides base64 encoding for pbkdf2.
+
+  Pbkdf2 uses an adapted base64 alphabet (using `.` instead of `+`
+  and with no padding).
   """
 
   import Bitwise
@@ -13,8 +16,7 @@ defmodule Comeonin.Pbkdf2.Base64 do
   end
 
   @doc """
-  Encode using an adapted base64 alphabet (using `.`
-  instead of `+` and with no padding).
+  Encode using the adapted Pbkdf2 alphabet.
 
   ## Examples
 
@@ -37,8 +39,7 @@ defmodule Comeonin.Pbkdf2.Base64 do
   end
 
   @doc """
-  Decode using an adapted base64 alphabet (using `.`
-  instead of `+` and with no padding).
+  Decode using the adapted Pbkdf2 alphabet.
 
   ## Examples
 
