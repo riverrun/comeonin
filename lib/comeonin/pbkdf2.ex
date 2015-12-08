@@ -55,7 +55,7 @@ defmodule Comeonin.Pbkdf2 do
   """
   def hashpass(password, salt, rounds \\ Config.pbkdf2_rounds) do
     if is_binary(salt) do
-      pbkdf2(password, salt, rounds, 64) |> format(salt, rounds)
+      pbkdf2(:sha512, password, salt, rounds) |> format(salt, rounds)
     else
       raise ArgumentError, message: "Wrong type. The salt needs to be a string."
     end
@@ -83,7 +83,7 @@ defmodule Comeonin.Pbkdf2 do
   """
   def checkpw(password, hash) when is_binary(password) and is_binary(hash) do
     [_, _, rounds, salt, hash] = String.split(hash, "$")
-    pbkdf2(password, Base64.decode(salt), String.to_integer(rounds), 64)
+    pbkdf2(:sha512, password, Base64.decode(salt), String.to_integer(rounds))
     |> Base64.encode
     |> Tools.secure_check(hash)
   end
@@ -101,32 +101,39 @@ defmodule Comeonin.Pbkdf2 do
     false
   end
 
-  defp pbkdf2(_password, _salt, _rounds, length) when length > @max_length do
+  def pbkdf2(:sha256, password, salt, rounds), do: pbkdf2(:sha256, password, salt, rounds, 32)
+  def pbkdf2(:sha512, password, salt, rounds), do: pbkdf2(:sha512, password, salt, rounds, 64)
+
+  defp pbkdf2(_algorithm, _password, _salt, _rounds, length) when length > @max_length do
     raise ArgumentError, "length must be less than or equal to #{@max_length}"
   end
-  defp pbkdf2(password, salt, rounds, length) when byte_size(salt) in 16..1024 do
-    pbkdf2(password, salt, rounds, length, 1, [], 0)
+  defp pbkdf2(:sha256, password, salt, rounds, length) when byte_size(salt) in 12..1024 do
+    pbkdf2(:sha256, password, salt, rounds, length, 1, [], 0)
   end
-  defp pbkdf2(_password, _salt, _rounds, _length) do
+  defp pbkdf2(:sha512, password, salt, rounds, length) when byte_size(salt) in 16..1024 do
+    pbkdf2(:sha512, password, salt, rounds, length, 1, [], 0)
+  end
+  defp pbkdf2(_algorithm, _password, _salt, _rounds, _length) do
     raise ArgumentError, message: "The salt is the wrong length."
   end
 
-  defp pbkdf2(_password, _salt, _rounds, max_length, _block_index, acc, length)
+  defp pbkdf2(_algorithm, _password, _salt, _rounds, max_length, _block_index, acc, length)
   when length >= max_length do
     key = acc |> Enum.reverse |> IO.iodata_to_binary
     <<bin::binary-size(max_length), _::binary>> = key
     bin
   end
-  defp pbkdf2(password, salt, rounds, max_length, block_index, acc, length) do
-    initial = :crypto.hmac(:sha512, password, <<salt::binary, block_index::integer-size(32)>>)
-    block = iterate(password, rounds - 1, initial, initial)
-    pbkdf2(password, salt, rounds, max_length, block_index + 1,
+  defp pbkdf2(algorithm, password, salt, rounds, max_length, block_index, acc, length) do
+    initial = :crypto.hmac(algorithm, password, <<salt::binary, block_index::integer-size(32)>>)
+    block = iterate(algorithm, password, rounds - 1, initial, initial)
+    pbkdf2(algorithm, password, salt, rounds, max_length, block_index + 1,
     [block | acc], byte_size(block) + length)
   end
 
-  defp iterate(_password, 0, _prev, acc), do: acc
-  defp iterate(password, round, prev, acc) do
-    next = :crypto.hmac(:sha512, password, prev)
-    iterate(password, round - 1, next, :crypto.exor(next, acc))
+  defp iterate(_algorithm, _password, 0, _prev, acc), do: acc
+  defp iterate(algorithm, password, round, prev, acc) do
+    next = :crypto.hmac(algorithm, password, prev)
+    iterate(algorithm, password, round - 1, next, :crypto.exor(next, acc))
   end
+
 end
