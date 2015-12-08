@@ -2,6 +2,7 @@ defmodule Comeonin.Pbkdf2Test do
   use ExUnit.Case, async: false
 
   alias Comeonin.Pbkdf2
+  alias Comeonin.Tools
 
   def check_vectors(data) do
     for {password, salt, rounds, stored_hash} <- data do
@@ -16,7 +17,7 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw(wrong2, hash) == false
     assert Pbkdf2.checkpw(wrong3, hash) == false
   end
- 
+
   test "base pbkdf2_sha512 tests" do
     [
       {"passDATAb00AB7YxDTT",
@@ -136,6 +137,23 @@ defmodule Comeonin.Pbkdf2Test do
     assert_raise ArgumentError, "Wrong type. The password and hash need to be strings.", fn ->
       Pbkdf2.checkpw(nil, "$pbkdf2-sha512$19000$JMT4nzOmVKrV.p/TmlMKwQ$jKbZHoPwUWBT08pjb/CnUZmFcB9JW4dsOzVkfi9X6Pdn5NXWeY.mhL1Bm4V9rjYL5ZfA32uh7Gl2gt5YQa/JCA")
     end
+  end
+
+  test "django sha256 password format" do
+    hash = "pbkdf2_sha256$20000$xvJitqXFKLDy$CEzm5tv/2IVR5vT1pgN1B9ebo3n62xktmhClSuMsrM4="
+    [_, rounds, salt, hash] = String.split(hash, "$")
+
+    result = Pbkdf2.pbkdf2(:sha256, "pa$$word", salt, String.to_integer(rounds))
+    |> Base.encode64
+    |> Tools.secure_check(hash)
+
+    assert result == true
+
+    result = Pbkdf2.pbkdf2(:sha256, "Pa$$word", salt, String.to_integer(rounds))
+    |> Base.encode64
+    |> Tools.secure_check(hash)
+
+    assert result == false
   end
 
 end
