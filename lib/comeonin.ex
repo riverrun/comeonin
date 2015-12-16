@@ -10,17 +10,6 @@ defmodule Comeonin do
 
   ## Use
 
-  This module offers the following convenience functions:
-
-    * create_hash -- check password strength before hashing it
-    * create_user -- update a map with the password hash
-
-  See the documentation for each function for more details.
-
-  If you do not need this extra functionality, you can hash a password
-  by using the `hashpwsalt` function -- using either Comeonin.Bcrypt or
-  Comeonin.Pbkdf2.
-
   See each module's documentation for more information about
   all the available options.
 
@@ -78,9 +67,6 @@ defmodule Comeonin do
 
   """
 
-  import Comeonin.Password
-  alias Comeonin.Config
-
   @doc """
   A function to help the developer decide how many log_rounds to use
   when using bcrypt.
@@ -116,131 +102,5 @@ defmodule Comeonin do
     salt = Comeonin.Pbkdf2.gen_salt
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpass, ["password", salt, rounds])
     Mix.shell.info "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
-  end
-
-  @doc """
-  This is a development tool to see how quickly, or slowly, the common password
-  function is running.
-
-  Unless you are contributing to Comeonin development, you will not need to use
-  this function.
-  """
-  def time_strong(password \\ "password") do
-    {time, _} = :timer.tc(Comeonin.Password, :strong_password?,
-    [password, [min_length: 8, extra_chars: false]])
-    Mix.shell.info "Time: #{div(time, 1000)} ms"
-  end
-
-  @doc """
-  A function that provides options to check the strength of a password
-  before hashing it. The password is then hashed only if the password is
-  considered strong enough. For more details about password strength,
-  read the documentation for the Comeonin.Password module.
-
-  The default hashing algorithm is bcrypt, but this can be changed to
-  pbkdf2_sha512 by setting the value of `crypto_mod` to `:pbkdf2`
-  in the config file.
-
-  ## Options
-
-  There are three options:
-
-    * min_length -- minimum allowable length of the password
-    * extra_chars -- check for punctuation characters and digits
-    * common -- check to see if the password is too common (easy to guess)
-
-  The default value for `min_length` is 8 characters if `extra_chars` is true,
-  but 12 characters is `extra_chars` is false. `extra_chars` and `common` are
-  true by default.
-
-  ## Examples
-
-  The following examples will produce password hashes:
-
-      Comeonin.create_hash("longpassword", [extra_chars: false])
-
-      Comeonin.create_hash("passwordwithjustletters", [min_length: 16, extra_chars: false])
-
-  This example will raise an error because the password is not long enough for a password
-  with no punctuation characters or digits:
-
-      iex> Comeonin.create_hash("password", [extra_chars: false])
-      {:error, "The password should be at least 12 characters long."}
-
-  This last example will raise an error because there are no punctuation characters or
-  digits in it:
-
-      iex> Comeonin.create_hash("password")
-      {:error, "The password should contain at least one number and one punctuation character."}
-
-  This example will raise an error because the password is too similar to the common
-  password `password`:
-
-      iex> Comeonin.create_hash("p4$5w0rd")
-      {:error, "The password you have chosen is weak because it is easy to guess. Please choose another one."}
-
-  """
-  def create_hash(password, opts \\ []) do
-    crypto_mod = Config.get_crypto_mod
-    case strong_password?(password, opts) do
-      true -> {:ok, crypto_mod.hashpwsalt(password)}
-      message -> {:error, message}
-    end
-  end
-
-  @doc """
-  This function takes a map with a password in it, removes the password
-  and adds an entry for the password hash. This can be used after collecting
-  user data and before adding it to the database.
-
-  This uses the `create_hash` function, which can be used to check password
-  strength before hashing it.
-
-  When looking for the password, this function looks for a key which is either
-  named "password" (a string) or :password (an atom). If it does not find
-  either key, it will raise an error.
-
-  As with the `create_hash` function, you can decide not to check password
-  strength by setting the second argument to false.
-
-  ## Examples
-
-  All of the following will work ok:
-
-      %{"name" => "fred", "password" => "&m@ng0es"} |> Comeonin.create_user
-
-      %{name: "fred", password: "&m@ng0es"} |> Comeonin.create_user
-
-      %{name: "fred", password: "longpassword"} |> Comeonin.create_user([extra_chars: false])
-
-  The next example will raise an error because the key "password" or :password
-  could not be found:
-
-      iex> %{["name"] => "fred", ["password", "password_admin"] => "&m@ng0es"} |> Comeonin.create_user
-      {:error, ~s(We could not find the password. The password key should be either :password or "password".)}
-
-  This example will raise an error because the password is not long enough:
-
-      iex> %{name: "fred", password: "123456"} |> Comeonin.create_user
-      {:error, "The password should be at least 8 characters long."}
-
-  """
-
-  def create_user(user_params, opts \\ [])
-  def create_user(%{password: password} = user_params, opts) do
-    Map.delete(user_params, :password) |> create_map(password, :password_hash, opts)
-  end
-  def create_user(%{"password" => password} = user_params, opts) do
-    Map.delete(user_params, "password") |> create_map(password, "password_hash", opts)
-  end
-  def create_user(_, _) do
-    {:error, "We could not find the password. The password key should be either :password or \"password\"."}
-  end
-
-  defp create_map(user_params, password, hash_key, opts) do
-    case create_hash(password, opts) do
-      {:ok, password_hash} -> {:ok, Map.put_new(user_params, hash_key, password_hash)}
-      {:error, message} -> {:error, message}
-    end
   end
 end

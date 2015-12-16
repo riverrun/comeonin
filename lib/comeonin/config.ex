@@ -5,12 +5,8 @@ defmodule Comeonin.Config do
 
   | name               | type    | default |
   | :----------------- | :------ | ------: |
-  | crypto_mod         | atom    | :bcrypt |
   | bcrypt_log_rounds  | integer | 12      |
   | pbkdf2_rounds      | integer | 60000   |
-
-  `crypto_mod` is only needed for some convenience functions in
-  the main Comeonin module. In many cases, you will not need this.
 
   `bcrypt_log_rounds` and `pbkdf2_rounds` can be used to adjust the
   complexity, and time taken, of the password hashing calculation.
@@ -24,7 +20,6 @@ defmodule Comeonin.Config do
   the following to the `config.exs` file in your project.
 
       config :comeonin,
-        crypto_mod: :pbkdf2,
         bcrypt_log_rounds: 14,
         pbkdf2_rounds: 100_000,
 
@@ -53,18 +48,6 @@ defmodule Comeonin.Config do
   to add, or uncomment, the line `import_config "#\{Mix.env\}.exs"`
   to the `config.exs` file.
   """
-
-  @doc """
-  This value is only used by the `create_hash` and `create_user` functions
-  in the main Comeonin module. You can choose between using bcrypt or
-  pbkdf2_sha512 to hash the password.
-  """
-  def get_crypto_mod do
-    case Application.get_env(:comeonin, :crypto_mod) do
-      :pbkdf2 -> Comeonin.Pbkdf2
-      _ -> Comeonin.Bcrypt
-    end
-  end
 
   @doc """
   The number of log rounds the bcrypt function uses. The default
