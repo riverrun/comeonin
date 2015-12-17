@@ -3,6 +3,7 @@
 ## 2.0.0 (2015-12-17)
 
 * Changes
+  * Increased the default number of rounds for pbkdf2_sha512 to 100_000.
   * Removed `create_hash` and `create_user` functions.
   * Moved the password strength checker and random password generator to a separate package, called NotQwerty123.
     * This means that i18n support has been moved to NotQwerty123.
