@@ -6,7 +6,7 @@ defmodule Comeonin.Config do
   | name               | type    | default |
   | :----------------- | :------ | ------: |
   | bcrypt_log_rounds  | integer | 12      |
-  | pbkdf2_rounds      | integer | 60000   |
+  | pbkdf2_rounds      | integer | 100_000 |
 
   `bcrypt_log_rounds` and `pbkdf2_rounds` can be used to adjust the
   complexity, and time taken, of the password hashing calculation.
@@ -21,7 +21,7 @@ defmodule Comeonin.Config do
 
       config :comeonin,
         bcrypt_log_rounds: 14,
-        pbkdf2_rounds: 100_000,
+        pbkdf2_rounds: 120_000,
 
   If you want to have different values when developing and testing,
   you can create separate files for each environment: `dev.exs`,
@@ -42,7 +42,7 @@ defmodule Comeonin.Config do
 
       config :comeonin,
         bcrypt_log_rounds: 14,
-        pbkdf2_rounds: 100_000
+        pbkdf2_rounds: 120_000
 
   If you use separate files for the different environments, remember
   to add, or uncomment, the line `import_config "#\{Mix.env\}.exs"`
@@ -62,7 +62,7 @@ defmodule Comeonin.Config do
   The number of rounds the pbkdf2_sha512 function uses.
   """
   def pbkdf2_rounds do
-    Application.get_env(:comeonin, :pbkdf2_rounds, 60_000)
+    Application.get_env(:comeonin, :pbkdf2_rounds, 100_000)
   end
 
 end

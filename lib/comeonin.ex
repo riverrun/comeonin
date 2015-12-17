@@ -98,14 +98,14 @@ defmodule Comeonin do
   when using pbkdf2.
 
   The number of rounds can be increased to make the pbkdf2 hashing function slower.
-  The maximum number of rounds is 4294967295. The default is 60_000, but this
+  The maximum number of rounds is 4294967295. The default is 100_000, but this
   is not necessarily the recommended number. The ideal number of log_rounds
   will depend on the nature of your application and the hardware being used.
 
   The `pbkdf2_rounds` value can be set in the config file. See the
   documentation for `Comeonin.Config` for more details.
   """
-  def time_pbkdf2(rounds \\ 60_000) do
+  def time_pbkdf2(rounds \\ 100_000) do
     salt = Comeonin.Pbkdf2.gen_salt
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpass, ["password", salt, rounds])
     Mix.shell.info "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"
