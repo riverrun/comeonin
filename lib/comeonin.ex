@@ -10,12 +10,16 @@ defmodule Comeonin do
 
   ## Use
 
-  See each module's documentation for more information about
-  all the available options.
+  Most users will just need to use the `hashpwsalt`, `checkpw` and `dummy_checkpw`
+  functions, using either the `Comeonin.Bcrypt` or `Comeonin.Pbkdf2` module.
+  Naming conventions are the same for each algorithm.
 
-  If you want more control over the generation of the salt, and, in
-  the case of pbkdf2, the length of salt, you can use the `gen_salt`
-  function and then pass the output to the `hashpass` function.
+  Import, or alias, the algorithm you want to use -- either `Comeonin.Bcrypt`
+  or `Comeonin.Pbkdf2`.
+
+  To hash a password with the default options:
+
+    hash = hashpwsalt("difficult2guess")
 
   To check a password against the stored hash, use the `checkpw`
   function. This takes two arguments: the plaintext password and
@@ -28,6 +32,9 @@ defmodule Comeonin do
   this function will not be of any use, and so if you are going to use
   this function, it should be used with a policy of creating usernames
   that are not made public and are difficult to guess.
+
+  See each module's documentation for more information about
+  all the available options.
 
   ## Choosing an algorithm
 

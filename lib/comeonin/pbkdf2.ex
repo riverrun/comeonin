@@ -93,6 +93,7 @@ defmodule Comeonin.Pbkdf2 do
 
   @doc """
   Perform a dummy check for a user that does not exist.
+
   This always returns false. The reason for implementing this check is
   in order to make user enumeration by timing responses more difficult.
   """
