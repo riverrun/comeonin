@@ -1,6 +1,13 @@
 # Changelog
 
-## 1.6.0
+## 2.0.0 (2015-12-17)
+
+* Changes
+  * Removed `create_hash` and `create_user` functions.
+  * Moved the password strength checker and random password generator to a separate package, called NotQwerty123.
+    * This means that i18n support has been moved to NotQwerty123.
+
+## 1.6.0 (2015-11-17)
 
 * Changes
   * Edited C code and deleted unused functions.
