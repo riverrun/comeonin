@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0-dev
+
+* Changes
+  * Added basic upgrade function the NIF library to try to solve the load errors after upgrading Erlang / Elixir.
+
 ## 2.0.0 (2015-12-17)
 
 * Changes

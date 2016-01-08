@@ -155,8 +155,7 @@ static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
  * bcrypt algorithm is designed to consume a large amount of time, the change
  * will likely be negligible.
  */
-static void
-secure_bzero(void *buf, size_t len)
+static void secure_bzero(void *buf, size_t len)
 {
 	if (buf == NULL || len == 0) {
 		return;
@@ -168,6 +167,11 @@ secure_bzero(void *buf, size_t len)
 	}
 }
 
+static int upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info)
+{
+	return 0;
+}
+
 static ErlNifFunc bcrypt_nif_funcs[] =
 {
 	{"bf_init", 3, bf_init},
@@ -175,4 +179,4 @@ static ErlNifFunc bcrypt_nif_funcs[] =
 	{"bf_encrypt", 1, bf_encrypt}
 };
 
-ERL_NIF_INIT(Elixir.Comeonin.Bcrypt, bcrypt_nif_funcs, NULL, NULL, NULL, NULL)
+ERL_NIF_INIT(Elixir.Comeonin.Bcrypt, bcrypt_nif_funcs, NULL, NULL, upgrade, NULL)

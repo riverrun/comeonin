@@ -29,9 +29,7 @@ defmodule Comeonin.Pbkdf2 do
   """
 
   use Bitwise
-  alias Comeonin.Pbkdf2.Base64
-  alias Comeonin.Config
-  alias Comeonin.Tools
+  alias Comeonin.{Pbkdf2.Base64, Config, Tools}
 
   @max_length bsl(1, 32) - 1
   @salt_length 16
