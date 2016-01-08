@@ -23,10 +23,6 @@ Comeonin supports `bcrypt` and `pbkdf2_sha512`.
 See the [Requirements](https://github.com/elixircnx/comeonin/wiki/Requirements)
 page in the wiki for details.
 
-If you are having build errors after updating to a new version of Erlang or Elixir,
-try deleting the `deps/comeonin/priv` (`deps\comeonin\priv` on Windows) directory
-and running `mix deps.compile comeonin`.
-
 ## Installation
 
 1. Add comeonin to your `mix.exs` dependencies
