@@ -47,10 +47,12 @@ page in the wiki for details.
 or pbkdf2, rounds so it does not slow down your test suite. If you have a `config/test.exs`,
 you should add (depending on which algorithm you are using):
 
-    config :comeonin, :bcrypt_log_rounds, 4
-    config :comeonin, :pbkdf2_rounds, 1
+  ```elixir  
+  config :comeonin, :bcrypt_log_rounds, 4
+  config :comeonin, :pbkdf2_rounds, 1
+  ```
 
-NB: do not use the above values in production.
+  NB: do not use the above values in production.
 
 ## Usage
 
