@@ -87,6 +87,12 @@ and is to be used when the username cannot be found. It performs a hash,
 but then returns false. This can be used to make user enumeration more
 difficult.
 
+## Ecto Password Type
+
+If you are using [Ecto](https://hexdocs.pm/ecto) you might want to
+use [comeonin_ecto_password](https://github.com/vic/comeonin_ecto_password) for password
+fields in your model schemas.
+
 ## Documentation
 
 http://hexdocs.pm/comeonin
