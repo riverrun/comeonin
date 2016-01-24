@@ -1,7 +1,8 @@
 defmodule Mix.Tasks.Compile.Comeonin do
   @shortdoc "Compiles Comeonin"
 
-  def run(_) do
+  def run(args) do
+    if "--compile-nif" in args, do: File.rm_rf!("priv")
     File.mkdir("priv")
     {exec, args} = case :os.type do
       {:win32, _} ->
@@ -104,7 +105,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.0.1"
+  @version "2.0.2"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
