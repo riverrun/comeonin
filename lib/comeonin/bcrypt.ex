@@ -46,7 +46,8 @@ defmodule Comeonin.Bcrypt do
     case :erlang.load_nif(path, 0) do
       :ok -> :ok
       _ -> {:error, "The file `bcrypt_nif` failed to load." <>
-        " Run `mix deps.compile comeonin --compile-nif` to try to solve this issue."}
+        " Try recompiling comeonin by running `mix deps.compile comeonin`" <>
+        " and / or `MIX_ENV=test mix deps.compile comeonin`."}
     end
   end
 
