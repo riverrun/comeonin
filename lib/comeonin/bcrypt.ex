@@ -39,6 +39,7 @@ defmodule Comeonin.Bcrypt do
   alias Comeonin.Config
   alias Comeonin.Tools
 
+  @compile {:autoload, false}
   @on_load {:init, 0}
 
   def init do
