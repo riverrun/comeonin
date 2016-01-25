@@ -141,7 +141,7 @@ defmodule Comeonin.Bcrypt do
 
   defp bcrypt(key, salt, prefix, log_rounds) do
     key_len = length(key) + 1
-    if prefix == "2b" and key_len > 73, do: key_len = 73
+    if prefix == '2b' and key_len > 73, do: key_len = 73
     {salt, rounds} = prepare_keys(salt, List.to_integer(log_rounds))
     bf_init(key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds)
