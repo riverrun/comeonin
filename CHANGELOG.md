@@ -2,8 +2,12 @@
 
 ## 2.1.0-dev
 
-* Changes
-  * Added basic upgrade function the NIF library to try to solve the load errors after upgrading Erlang / Elixir.
+* Enhancements
+  * To try to solve the load errors after upgrading Erlang / Elixir:
+    * Force C code to be recompiled every time `deps.compile` is called.
+    * Added basic upgrade function to the NIF library.
+  * To be compatible with the nerves project:
+    * Added CROSSCOMPILE option to the Makefile.
 
 ## 2.0.0 (2015-12-17)
 
