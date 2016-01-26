@@ -4,11 +4,11 @@ defmodule Comeonin.Bcrypt do
 
   To generate a password hash, use the `hashpwsalt` function:
 
-    Comeonin.Bcrypt.hashpwsalt("hard to guess")
+      Comeonin.Bcrypt.hashpwsalt("hard to guess")
 
   To check the password against a password hash, use the `checkpw` function:
 
-    Comeonin.Bcrypt.checkpw("hard to guess", stored_hash)
+      Comeonin.Bcrypt.checkpw("hard to guess", stored_hash)
 
   There is also a `dummy_checkpw`, which can be used to stop an attacker guessing
   a username by timing the responses.
@@ -24,13 +24,25 @@ defmodule Comeonin.Bcrypt do
   be configured to remain slow and resistant to brute-force attacks even as
   computational power increases.
 
-  This bcrypt implementation is based on the latest OpenBSD version, which
-  fixed a small issue that affected some passwords longer than 72 characters.
-
   The computationally intensive code is run in C, using Erlang NIFs. One concern
   about NIFs is that they block the Erlang VM, and so it is better to make
   sure these functions do not run for too long. This bcrypt implementation
   has been adapted so that each NIF runs for as short a time as possible.
+
+  ## Bcrypt versions
+
+  This bcrypt implementation is based on the latest OpenBSD version, which
+  fixed a small issue that affected some passwords longer than 72 characters.
+  By default, it produces hashes with the prefix `$2b$`, and it can check
+  hashes with either the `$2b$` prefix or the older `$2a$` prefix.
+
+  It is also possible to generate hashes with the `$2a$` prefix by running
+  the following command:
+
+      Comeonin.Bcrypt.hashpass("hard to guess", Comeonin.Bcrypt.gen_salt(12, true))
+
+  This option should only be used if you need to generate hashes that are
+  then checked by older libraries.
   """
 
   use Bitwise
@@ -39,6 +51,7 @@ defmodule Comeonin.Bcrypt do
   alias Comeonin.Config
   alias Comeonin.Tools
 
+  @compile {:autoload, false}
   @on_load {:init, 0}
 
   def init do
@@ -57,15 +70,26 @@ defmodule Comeonin.Bcrypt do
   The log_rounds parameter determines the computational complexity
   of the generation of the password hash. Its default is 12, the minimum is 4,
   and the maximum is 31.
+
+  The `legacy` option is for generating salts with the old `$2a$` prefix.
+  Only use this option if you need to generate hashes that are then checked
+  by older libraries.
   """
-  def gen_salt(log_rounds) when log_rounds in 4..31 do
-    :crypto.strong_rand_bytes(16) |> :binary.bin_to_list |> fmt_salt(zero_str(log_rounds))
+  def gen_salt(log_rounds, legacy \\ false)
+  def gen_salt(log_rounds, legacy) when log_rounds in 4..31 do
+    :crypto.strong_rand_bytes(16)
+    |> :binary.bin_to_list
+    |> fmt_salt(zero_str(log_rounds), legacy)
   end
-  def gen_salt(_), do: gen_salt(Config.bcrypt_log_rounds)
+  def gen_salt(_, legacy), do: gen_salt(Config.bcrypt_log_rounds, legacy)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
 
   @doc """
   Hash the password using bcrypt.
+
+  In most cases, you will want to use the `hashpwsalt` function instead.
+  Use this function if you want more control over the generation of the
+  salt.
   """
   def hashpass(password, salt) when is_binary(salt) and is_binary(password) do
     if byte_size(salt) == 29 do
@@ -139,13 +163,16 @@ defmodule Comeonin.Bcrypt do
     |> fmt_hash(salt, prefix, zero_str(log_rounds))
   end
 
-  defp bcrypt(key, salt, prefix, log_rounds) do
+  defp bcrypt(key, salt, prefix, log_rounds) when prefix in ['2b', '2a'] do
     key_len = length(key) + 1
     if prefix == '2b' and key_len > 73, do: key_len = 73
     {salt, rounds} = prepare_keys(salt, List.to_integer(log_rounds))
     bf_init(key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds)
     |> bf_encrypt
+  end
+  defp bcrypt(_, _, prefix, _) do
+    raise ArgumentError, message: "Comeonin Bcrypt does not support the #{prefix} prefix."
   end
 
   defp prepare_keys(salt, log_rounds) when log_rounds in 4..31 do
@@ -164,9 +191,10 @@ defmodule Comeonin.Bcrypt do
   defp zero_str(log_rounds) do
     if log_rounds < 10, do: "0#{log_rounds}", else: "#{log_rounds}"
   end
-  defp fmt_salt(salt, log_rounds) do
-    "$2b$#{log_rounds}$#{Base64.encode(salt)}"
-  end
+
+  defp fmt_salt(salt, log_rounds, false), do: "$2b$#{log_rounds}$#{Base64.encode(salt)}"
+  defp fmt_salt(salt, log_rounds, true), do: "$2a$#{log_rounds}$#{Base64.encode(salt)}"
+
   defp fmt_hash(hash, salt, prefix, log_rounds) do
     "$#{prefix}$#{log_rounds}$#{salt}#{Base64.encode(hash)}"
   end

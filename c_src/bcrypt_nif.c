@@ -62,7 +62,7 @@ static ERL_NIF_TERM bf_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 			!enif_get_ulong(env, argv[1], &key_len_arg) ||
 			!enif_get_string(env, argv[2], salt, sizeof(salt), ERL_NIF_LATIN1))
 		return enif_make_badarg(env);
-	key_len = (uint8_t) key_len_arg;
+	key_len = key_len_arg;
 	salt_len = BCRYPT_MAXSALT;
 
 	if (!enif_alloc_binary(sizeof(blf_ctx), &state))
@@ -90,7 +90,7 @@ static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
 			!enif_get_ulong(env, argv[2], &key_len_arg) ||
 			!enif_get_string(env, argv[3], salt, sizeof(salt), ERL_NIF_LATIN1))
 		return enif_make_badarg(env);
-	key_len = (uint8_t) key_len_arg;
+	key_len = key_len_arg;
 	salt_len = BCRYPT_MAXSALT;
 
 	Blowfish_expand0state((blf_ctx *) state.data, (uint8_t *) key, key_len);

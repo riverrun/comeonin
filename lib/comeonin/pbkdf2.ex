@@ -4,11 +4,11 @@ defmodule Comeonin.Pbkdf2 do
 
   To generate a password hash, use the `hashpwsalt` function:
 
-    Comeonin.Pbkdf2.hashpwsalt("hard to guess")
+      Comeonin.Pbkdf2.hashpwsalt("hard to guess")
 
   To check the password against a password hash, use the `checkpw` function:
 
-    Comeonin.Pbkdf2.checkpw("hard to guess", stored_hash)
+      Comeonin.Pbkdf2.checkpw("hard to guess", stored_hash)
 
   There is also a `dummy_checkpw`, which can be used to stop an attacker guessing
   a username by timing the responses.
@@ -53,6 +53,10 @@ defmodule Comeonin.Pbkdf2 do
 
   @doc """
   Hash the password using pbkdf2_sha512.
+
+  In most cases, you will want to use the `hashpwsalt` function instead.
+  Use this function if you want more control over the generation of the
+  salt or the number of rounds.
   """
   def hashpass(password, salt, rounds \\ Config.pbkdf2_rounds) do
     if is_binary(salt) do

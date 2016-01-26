@@ -36,7 +36,7 @@ page in the wiki for details.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 2.0"} ]
+    [ {:comeonin, "~> 2.1"} ]
   end
   ```
 
@@ -54,7 +54,7 @@ page in the wiki for details.
 or pbkdf2, rounds so it does not slow down your test suite. If you have a `config/test.exs`,
 you should add (depending on which algorithm you are using):
 
-  ```elixir  
+  ```elixir
   config :comeonin, :bcrypt_log_rounds, 4
   config :comeonin, :pbkdf2_rounds, 1
   ```
