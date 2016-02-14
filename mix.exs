@@ -67,20 +67,18 @@ defmodule Mix.Tasks.Compile.Comeonin do
   defp windows_message do
     """
     One option is to install a recent version of Visual Studio (the
-    free Community edition will be enough for this task). Then try running
-    `mix deps.compile comeonin` from the `Developer Command Prompt`.
+    free Community edition will be enough for this task) and then, in
+    Visual Studio:
 
-    If you are using 64-bit erlang, you might need to run the command
-    `vcvarsall.bat amd64` in the Visual Studio {version}\VC directory
-    before running `mix deps.compile`.
-    See: https://msdn.microsoft.com/en-us/library/x4d2c09s.aspx
+    Go to File > New > Project
+    Choose C++, it will prompt to install the module.
+    Close and restart Visual Studio.
+    Go to search > "Developer Command Prompt for VS2015"
+    cd to the VC directory, run `vcvarsall.bat amd64` -- this must be run every time you try to compile comeonin
+    cd over to your project and run `mix deps.get`, and then `mix deps.compile`.
 
-    If you are using Visual Studio 2015, you need to install the C++ build
-    tools before running the `vcvarsall.bat amd64`. Do this by going to
-    "Create New Project" and select "C++" to prompt to install the
-    required dependencies.
-    See: https://msdn.microsoft.com/en-us/library/60k1461a.aspx
-
+    See https://github.com/elixircnx/comeonin/wiki/Requirements for more
+    information.
     """
   end
 
@@ -98,6 +96,8 @@ defmodule Mix.Tasks.Compile.Comeonin do
     `build-essential`. Also install `erlang-dev` package if not
     included in your Erlang/OTP version.
 
+    See https://github.com/elixircnx/comeonin/wiki/Requirements for more
+    information.
     """
   end
 end
@@ -105,7 +105,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.1.0"
+  @version "2.1.1"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.

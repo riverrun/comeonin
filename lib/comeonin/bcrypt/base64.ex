@@ -97,6 +97,6 @@ defmodule Comeonin.Bcrypt.Base64 do
 
   defp b64d_ok(val) when is_integer(val), do: val
   defp b64d_ok(val) do
-    raise ArgumentError, message: "Invalid character: #{val}"
+    raise ArgumentError, "Invalid character: #{val}"
   end
 end
