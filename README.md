@@ -1,4 +1,4 @@
-# Comeonin [![Build Status](https://travis-ci.org/elixircnx/comeonin.svg?branch=master "Build Status")](https://travis-ci.org/elixircnx/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
+# Comeonin [![Build Status](https://travis-ci.org/elixircnx/comeonin.svg?branch=master)](https://travis-ci.org/elixircnx/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 
 Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
 

@@ -50,22 +50,17 @@ defmodule Comeonin do
 
   ## Adjusting the speed / complexity of bcrypt and pbkdf2
 
-  Both bcrypt and pbkdf2 are designed to be computationally intensive and
-  slow. This limits the number of attempts an attacker can make within a
-  certain time frame. In addition, they can be configured to run slower,
-  which can help offset some of the hardware improvements made over time.
+  It is possible to adjust the speed / complexity of bcrypt and pbkdf2 by
+  changing the number of rounds (the number of calculations) used. In most
+  cases, you will not need to change the default number of rounds, but
+  increasing the number of rounds can be useful because it limits the
+  number of attempts an attacker can make within a certain time frame.
+  It is not recommended to set the number of rounds lower than the
+  defaults.
 
-  It is recommended to make the key derivation function as slow as the
-  user can tolerate. The actual recommended time for the function will vary
-  depending on the nature of the application. According to the following [NIST
-  recommendations](http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf),
-  having the function take several seconds might be acceptable if the user
-  only has to login once every session. However, if an application requires
-  the user to login several times an hour, it would probably be better to
-  limit the hashing function to about 250 milliseconds.
-
-  To help you decide how slow to make the function, this module provides
-  convenience timing functions for bcrypt and pbkdf2.
+  To help you see how much time the hashing function takes with different
+  numbers of rounds, this module provides convenience timing functions
+  for bcrypt and pbkdf2.
 
   ## Further information
 
@@ -75,14 +70,13 @@ defmodule Comeonin do
   """
 
   @doc """
-  A function to help the developer decide how many log_rounds to use
+  A function to help the developer decide how many log rounds to use
   when using bcrypt.
 
-  The number of log_rounds can be increased to make the bcrypt hashing
+  The number of log rounds can be increased to make the bcrypt hashing
   function more complex, and slower. The minimum number is 4 and the maximum is 31.
-  The default is 12, but this is not necessarily the recommended number.
-  The ideal number of log_rounds will depend on the nature of your application
-  and the hardware being used.
+  The default is 12, but, depending on the nature of your application and
+  the hardware being used, you might want to increase this.
 
   The `bcrypt_log_rounds` value can be set in the config file. See the
   documentation for `Comeonin.Config` for more details.
@@ -98,14 +92,14 @@ defmodule Comeonin do
   when using pbkdf2.
 
   The number of rounds can be increased to make the pbkdf2 hashing function slower.
-  The maximum number of rounds is 4294967295. The default is 100_000, but this
-  is not necessarily the recommended number. The ideal number of log_rounds
-  will depend on the nature of your application and the hardware being used.
+  The maximum number of rounds is 4294967295. The default is 160_000, but,
+  depending on the nature of your application and the hardware being used,
+  you might want to increase this.
 
   The `pbkdf2_rounds` value can be set in the config file. See the
   documentation for `Comeonin.Config` for more details.
   """
-  def time_pbkdf2(rounds \\ 100_000) do
+  def time_pbkdf2(rounds \\ 160_000) do
     salt = Comeonin.Pbkdf2.gen_salt
     {time, _} = :timer.tc(Comeonin.Pbkdf2, :hashpass, ["password", salt, rounds])
     Mix.shell.info "Rounds: #{rounds}, Time: #{div(time, 1000)} ms"

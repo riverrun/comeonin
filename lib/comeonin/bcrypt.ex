@@ -46,10 +46,7 @@ defmodule Comeonin.Bcrypt do
   """
 
   use Bitwise
-  #alias Comeonin.{Bcrypt.Base64, Config, Tools}
-  alias Comeonin.Bcrypt.Base64
-  alias Comeonin.Config
-  alias Comeonin.Tools
+  alias Comeonin.{Bcrypt.Base64, Config, Tools}
 
   @compile {:autoload, false}
   @on_load {:init, 0}
