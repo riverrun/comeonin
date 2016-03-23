@@ -28,8 +28,8 @@ defmodule Comeonin.TwoFa do
   def check_hotp(token, secret, opts \\ []) do
     case valid_token(token, Keyword.get(opts, :token_length, 6)) do
       true ->
-        {last, tries} = {Keyword.get(opts, :last, 0), Keyword.get(opts, :tries, 5)}
-        check_token(token, secret, last + 1, last + tries + 1, opts)
+        {last, window} = {Keyword.get(opts, :last, 0), Keyword.get(opts, :window, 3)}
+        check_token(token, secret, last + 1, last + window + 1, opts)
       _ -> false
     end
   end
@@ -38,7 +38,7 @@ defmodule Comeonin.TwoFa do
     case valid_token(token, Keyword.get(opts, :token_length, 6)) do
       true ->
         {count, window} = {interval_count(Keyword.get(opts, :interval_length, 30)),
-                           Keyword.get(opts, :window, 5)}
+                           Keyword.get(opts, :window, 1)}
         check_token(token, secret, count - window, count + window, opts)
       _ -> false
     end
@@ -49,7 +49,7 @@ defmodule Comeonin.TwoFa do
     trunc((megasecs * 1000000 + secs) / interval_length)
   end
 
-  def check_token(_token, _secret, current, last, _opts) when current == last do
+  def check_token(_token, _secret, current, last, _opts) when current > last do
     false
   end
   def check_token(token, secret, current, last, opts) do

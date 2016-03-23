@@ -4,7 +4,6 @@ defmodule Comeonin.TwoFaTest do
   alias Comeonin.TwoFa
 
   test "valid otp token" do
-    #assert TwoFa.valid_token(123456, 6) # check type? allow integer?
     assert TwoFa.valid_token("123456", 6)
     refute TwoFa.valid_token("123456", 8)
     assert TwoFa.valid_token("12345678", 8)
@@ -29,7 +28,8 @@ defmodule Comeonin.TwoFaTest do
 
   test "check hotp fails for too small window" do
     refute TwoFa.check_hotp("088239", "MFRGGZDFMZTWQ2LK", last: 10)
-    refute TwoFa.check_hotp("287922", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", last: 4, tries: 1)
+    refute TwoFa.check_hotp("287922", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", last: 4, window: 0)
+    refute TwoFa.check_hotp("287922", "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", last: 3, window: 1)
   end
 
 end
