@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.0
+
+* Enhancements
+  * Added support for one-time passwords (HOTP, TOTP) for use in two factor authentication.
+
+## 2.2.0
+
+* Changes
+  * Improved documentation for Windows builds.
+  * Updated the required Elixir version to 1.2.
+
 ## 2.1.0
 
 * Enhancements

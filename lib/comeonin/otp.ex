@@ -5,9 +5,14 @@ defmodule Comeonin.Otp do
   Module to generate and check HMAC-based one-time passwords and
   time-based one-time passwords, in accordance with
   [RFC 4226](https://tools.ietf.org/html/rfc4226) and
-  [RFC 6238](https://tools.ietf.org/html/rfc6238), for use in two
-  factor authentication.
+  [RFC 6238](https://tools.ietf.org/html/rfc6238).
 
+  ## Two factor authentication
+
+  These one-time passwords are often used together with regular passwords
+  to provide two factor authentication (2FA), which forms a layered approach
+  to user authentication. The advantage of 2FA over just using passwords is
+  that an attacker would face an additional challenge to being authorized.
   """
 
   use Bitwise
