@@ -1,6 +1,13 @@
-defmodule Comeonin.TwoFa do
+defmodule Comeonin.Otp do
   @moduledoc """
   Generate and verify HOTP and TOTP one-time passwords.
+
+  Module to generate and check HMAC-based one-time passwords and
+  time-based one-time passwords, in accordance with
+  [RFC 4226](https://tools.ietf.org/html/rfc4226) and
+  [RFC 6238](https://tools.ietf.org/html/rfc6238), for use in two
+  factor authentication.
+
   """
 
   use Bitwise
@@ -23,9 +30,12 @@ defmodule Comeonin.TwoFa do
   @doc """
   Check the one-time password is valid.
 
-  The one-time password should be at least 6 characters long and only
-  have numeric values.
+  The one-time password should be at least 6 characters long, and it
+  should be a string which only contains numeric values.
   """
+  def valid_token(token, _) when not is_binary(token) do
+    raise ArgumentError, "The token should be a string"
+  end
   def valid_token(token, token_length)
   when token_length >= 6  and token_length == byte_size(token) do
     Regex.match?(~r/^[0-9]+$/, token)
