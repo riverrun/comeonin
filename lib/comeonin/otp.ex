@@ -108,7 +108,8 @@ defmodule Comeonin.Otp do
   * interval_length - the length of each timed interval
     * the default is 30 (seconds)
   * window - the number of attempts, before and after the current one, allowed
-    * the default is 1
+    * the default is 1 (1 interval before and 1 interval after)
+    * you might need to increase this window to allow for clock skew on the server
   """
   def check_totp(token, secret, opts \\ []) do
     valid_token(token, Keyword.get(opts, :token_length, 6)) and
