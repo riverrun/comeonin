@@ -58,7 +58,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     """
     Could not compile Comeonin.
 
-    Please make sure that you are using Erlang / OTP version 17.0 or later
+    Please make sure that you are using Erlang / OTP version 18.0 or later
     and that you have a C compiler installed.
 
     """
@@ -66,16 +66,22 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   defp windows_message do
     """
-    One option is to install a recent version of Visual Studio (the
-    free Community edition will be enough for this task) and then, in
-    Visual Studio:
+    One option is to install a recent version of Visual Studio (you can download
+    the community edition for free). When you install Visual Studio, make sure
+    you also install the C / C++ tools.
 
-    Go to File > New > Project
-    Choose C++, it will prompt to install the module.
-    Close and restart Visual Studio.
-    Go to search > "Developer Command Prompt for VS2015"
-    cd to the VC directory, run `vcvarsall.bat amd64` -- this must be run every time you try to compile comeonin
-    cd over to your project and run `mix deps.get`, and then `mix deps.compile`.
+    After installing VS, look in the `Program Files (x86)` folder and search
+    for `Microsoft Visual Studio`. Note down the full path of the folder with
+    the highest version number.
+
+    Open the `run` command and type in the following command (make sure that
+    the path and version number are correct):
+
+    `cmd /K "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64`
+
+    This should open up a command prompt with the necessary environment variables set,
+    and from which you will be able to run the commands `mix compile`, `mix deps.compile`
+    and `mix test`.
 
     See https://github.com/elixircnx/comeonin/wiki/Requirements for more
     information.
@@ -105,7 +111,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.3.0"
+  @version "2.3.1"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.

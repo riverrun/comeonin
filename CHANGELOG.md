@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.0-dev
+
+* Enhancements
+  * Improved Windows build error messages.
+
 ## 2.3.0
 
 * Enhancements
