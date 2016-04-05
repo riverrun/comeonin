@@ -7,9 +7,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     {exec, args} = case :os.type do
       {:win32, _} ->
         {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
-      {:unix, :freebsd} ->
-        {"gmake", ["priv/bcrypt_nif.so"]}
-      {:unix, :openbsd} ->
+      {:unix, os} when os in [:freebsd, :openbsd] ->
         {"gmake", ["priv/bcrypt_nif.so"]}
       _ ->
         {"make", ["priv/bcrypt_nif.so"]}
