@@ -36,7 +36,7 @@ page in the wiki for details.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 2.3"} ]
+    [ {:comeonin, "~> 2.4"} ]
   end
   ```
 
