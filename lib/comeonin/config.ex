@@ -52,10 +52,11 @@ defmodule Comeonin.Config do
   @doc """
   The number of log rounds the bcrypt function uses. The default
   value of 12 means that 2^12 rounds are used.
+
+  The minimum number of log rounds is 4, and the maximum is 31.
   """
   def bcrypt_log_rounds do
-    rounds = Application.get_env(:comeonin, :bcrypt_log_rounds)
-    if rounds in 4..31, do: rounds, else: 12
+    Application.get_env(:comeonin, :bcrypt_log_rounds, 12)
   end
 
   @doc """

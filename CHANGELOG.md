@@ -1,9 +1,11 @@
 # Changelog
 
-## 2.4.0-dev
+## 2.4.0
 
 * Enhancements
   * Improved Windows build error messages.
+* Changes
+  * Changed behavior for incorrect input to Bcrypt.gen_salt.
 
 ## 2.3.0
 

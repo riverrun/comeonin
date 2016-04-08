@@ -73,12 +73,16 @@ defmodule Comeonin.Bcrypt do
   by older libraries.
   """
   def gen_salt(log_rounds, legacy \\ false)
+  def gen_salt(log_rounds, legacy) when not is_integer(log_rounds) do
+    raise ArgumentError, "Wrong type. log_rounds should be an integer between 4 and 31."
+  end
   def gen_salt(log_rounds, legacy) when log_rounds in 4..31 do
     :crypto.strong_rand_bytes(16)
     |> :binary.bin_to_list
     |> fmt_salt(zero_str(log_rounds), legacy)
   end
-  def gen_salt(_, legacy), do: gen_salt(Config.bcrypt_log_rounds, legacy)
+  def gen_salt(log_rounds, legacy) when log_rounds < 4, do: gen_salt(4, legacy)
+  def gen_salt(log_rounds, legacy) when log_rounds > 31, do: gen_salt(31, legacy)
   def gen_salt, do: gen_salt(Config.bcrypt_log_rounds)
 
   @doc """

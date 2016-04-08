@@ -109,7 +109,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.3.1"
+  @version "2.4.0"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
@@ -135,7 +135,7 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:earmark, "~> 0.1", only: :dev},
+      {:earmark, "~> 0.2", only: :dev},
       {:ex_doc,  "~> 0.11", only: :dev}
     ]
   end
