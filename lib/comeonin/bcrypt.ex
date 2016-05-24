@@ -165,8 +165,7 @@ defmodule Comeonin.Bcrypt do
   end
 
   defp bcrypt(key, salt, prefix, log_rounds) when prefix in ['2b', '2a'] do
-    key_len = length(key) + 1
-    if prefix == '2b' and key_len > 73, do: key_len = 73
+    key_len = key_length(key, prefix)
     {salt, rounds} = prepare_keys(salt, List.to_integer(log_rounds))
     bf_init(key, key_len, salt)
     |> expand_keys(key, key_len, salt, rounds)
@@ -175,6 +174,9 @@ defmodule Comeonin.Bcrypt do
   defp bcrypt(_, _, prefix, _) do
     raise ArgumentError, "Comeonin Bcrypt does not support the #{prefix} prefix."
   end
+
+  defp key_length(key, '2b') when length(key) + 1 > 73, do: 73
+  defp key_length(key, _prefix), do: length(key) + 1
 
   defp prepare_keys(salt, log_rounds) when log_rounds in 4..31 do
     {Base64.decode(salt), bsl(1, log_rounds)}
