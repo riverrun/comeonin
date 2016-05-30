@@ -21,12 +21,10 @@ NIF_SRC=\
 	c_src/bcrypt_nif.c\
 	c_src/blowfish.c
 
-all: comeonin
+all: priv/bcrypt_nif.so
 
 priv/bcrypt_nif.so: $(NIF_SRC)
+	mkdir -p priv
 	$(CC) $(CFLAGS) -shared $(LDFLAGS) -o $@ $(NIF_SRC)
 
-comeonin:
-	mix compile
-
-.PHONY: all comeonin
+.PHONY: all

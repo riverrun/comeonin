@@ -7,17 +7,13 @@
 BCRYPT_PATH = c_src
 
 NMAKE = nmake /$(MAKEFLAGS)
-MIX = mix
 CFLAGS = /O2 /EHsc /I"$(BCRYPT_PATH)"
 
 NIF_SRC=\
 	c_src\bcrypt_nif.c\
 	c_src\blowfish.c
 
-all: comeonin
-
-comeonin:
-	$(MIX) compile
+all: priv\bcrypt_nif.dll
 
 Makefile.auto.win:
 	echo # Auto-generated as part of Makefile.win, do not modify. > $@
@@ -25,6 +21,7 @@ Makefile.auto.win:
 
 !IFDEF ERTS_INCLUDE_PATH
 priv\bcrypt_nif.dll:
+	mkdir priv
 	$(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC)
 !ELSE
 priv\bcrypt_nif.dll: Makefile.auto.win

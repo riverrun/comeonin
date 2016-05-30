@@ -1,4 +1,5 @@
 %{"comeonin_i18n": {:hex, :comeonin_i18n, "0.1.0"},
   "earmark": {:hex, :earmark, "0.2.1", "ba6d26ceb16106d069b289df66751734802777a3cbb6787026dd800ffeb850f3", [:mix], []},
+  "elixir_make": {:git, "https://github.com/elixir-lang/elixir_make.git", "30f9d767c83fdf74d677c004bf6534bbabd90a1d", []},
   "ex_doc": {:hex, :ex_doc, "0.11.5", "0dc51cb84f8312162a2313d6c71573a9afa332333d8a332bb12540861b9834db", [:mix], [{:earmark, "~> 0.1.17 or ~> 0.2", [hex: :earmark, optional: true]}]},
   "gettext": {:hex, :gettext, "0.7.0"}}
