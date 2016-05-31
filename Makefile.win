@@ -21,7 +21,7 @@ Makefile.auto.win:
 
 !IFDEF ERTS_INCLUDE_PATH
 priv\bcrypt_nif.dll:
-	mkdir priv
+	if NOT EXIST "priv" mkdir "priv"
 	$(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC)
 !ELSE
 priv\bcrypt_nif.dll: Makefile.auto.win
