@@ -71,7 +71,7 @@ defmodule Comeonin.Pbkdf2 do
   in the config file.
   """
   def hashpwsalt(password) do
-    hashpass(password, gen_salt, Config.pbkdf2_rounds)
+    hashpass(password, gen_salt(), Config.pbkdf2_rounds)
   end
 
   defp format(hash, salt, rounds) do

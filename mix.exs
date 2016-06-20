@@ -29,17 +29,17 @@ defmodule Mix.Tasks.Compile.Comeonin do
   end
 
   defp nocompiler_error("nmake") do
-    raise Mix.Error, message: nocompiler_message("nmake") <> windows_message
+    raise Mix.Error, message: nocompiler_message("nmake") <> windows_message()
   end
   defp nocompiler_error(exec) do
-    raise Mix.Error, message: nocompiler_message(exec) <> nix_message
+    raise Mix.Error, message: nocompiler_message(exec) <> nix_message()
   end
 
   defp build_error("nmake") do
-    raise Mix.Error, message: build_message <> windows_message
+    raise Mix.Error, message: build_message() <> windows_message()
   end
   defp build_error(_) do
-    raise Mix.Error, message: build_message <> nix_message
+    raise Mix.Error, message: build_message() <> nix_message()
   end
 
   defp nocompiler_message(exec) do
@@ -122,10 +122,10 @@ defmodule Comeonin.Mixfile do
       elixir: "~> 1.2",
       name: "Comeonin",
       description: @description,
-      package: package,
+      package: package(),
       source_url: "https://github.com/elixircnx/comeonin",
       compilers: [:comeonin] ++ Mix.compilers,
-      deps: deps
+      deps: deps()
     ]
   end
 
