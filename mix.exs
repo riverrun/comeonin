@@ -116,17 +116,15 @@ defmodule Comeonin.Mixfile do
   """
 
   def project do
-    [
-      app: :comeonin,
-      version: @version,
-      elixir: "~> 1.2",
-      name: "Comeonin",
-      description: @description,
-      package: package(),
-      source_url: "https://github.com/elixircnx/comeonin",
-      compilers: [:comeonin] ++ Mix.compilers,
-      deps: deps()
-    ]
+    [app: :comeonin,
+     version: @version,
+     elixir: "~> 1.2",
+     name: "Comeonin",
+     description: @description,
+     package: package(),
+     source_url: "https://github.com/elixircnx/comeonin",
+     compilers: [:comeonin] ++ Mix.compilers,
+     deps: deps()]
   end
 
   def application do
@@ -134,19 +132,15 @@ defmodule Comeonin.Mixfile do
   end
 
   defp deps do
-    [
-      {:earmark, "~> 0.2", only: :dev},
-      {:ex_doc,  "~> 0.12", only: :dev}
-    ]
+    [{:earmark, "~> 0.2", only: :dev},
+     {:ex_doc,  "~> 0.12", only: :dev}]
   end
 
   defp package do
-    [
-      files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
-      maintainers: ["David Whitlock"],
-      licenses: ["BSD"],
-      links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
-        "Docs" => "http://hexdocs.pm/comeonin"}
-    ]
+    [files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
+     maintainers: ["David Whitlock"],
+     licenses: ["BSD"],
+     links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
+      "Docs" => "http://hexdocs.pm/comeonin"}]
   end
 end
