@@ -81,7 +81,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     and from which you will be able to run the commands `mix compile`, `mix deps.compile`
     and `mix test`.
 
-    See https://github.com/elixircnx/comeonin/wiki/Requirements for more
+    See https://github.com/riverrun/comeonin/wiki/Requirements for more
     information.
     """
   end
@@ -100,7 +100,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
     `build-essential`. Also install `erlang-dev` package if not
     included in your Erlang/OTP version.
 
-    See https://github.com/elixircnx/comeonin/wiki/Requirements for more
+    See https://github.com/riverrun/comeonin/wiki/Requirements for more
     information.
     """
   end
@@ -109,7 +109,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.5.0"
+  @version "2.5.1"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
@@ -122,7 +122,7 @@ defmodule Comeonin.Mixfile do
      name: "Comeonin",
      description: @description,
      package: package(),
-     source_url: "https://github.com/elixircnx/comeonin",
+     source_url: "https://github.com/riverrun/comeonin",
      compilers: [:comeonin] ++ Mix.compilers,
      deps: deps()]
   end
@@ -140,7 +140,7 @@ defmodule Comeonin.Mixfile do
     [files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
      maintainers: ["David Whitlock"],
      licenses: ["BSD"],
-     links: %{"GitHub" => "https://github.com/elixircnx/comeonin",
+     links: %{"GitHub" => "https://github.com/riverrun/comeonin",
       "Docs" => "http://hexdocs.pm/comeonin"}]
   end
 end

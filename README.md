@@ -1,4 +1,4 @@
-# Comeonin [![Build Status](https://travis-ci.org/elixircnx/comeonin.svg?branch=master)](https://travis-ci.org/elixircnx/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
+# Comeonin [![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 
 Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
 
@@ -22,12 +22,12 @@ Comeonin supports `bcrypt` and `pbkdf2_sha512`.
 
 At the moment, Comeonin does not support Argon2, the winner of the 2015
 Password Hashing Competition, and there are no plans to support it in
-the near future. See [this issue](https://github.com/elixircnx/comeonin/issues/65)
+the near future. See [this issue](https://github.com/riverrun/comeonin/issues/65)
 for more details.
 
 ## Requirements and build errors
 
-See the [Requirements](https://github.com/elixircnx/comeonin/wiki/Requirements)
+See the [Requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
 page in the wiki for details.
 
 ## Installation

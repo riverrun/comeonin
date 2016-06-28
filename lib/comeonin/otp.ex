@@ -52,8 +52,8 @@ defmodule Comeonin.Otp do
 
   There is one option:
 
-  * token_length - the length of the one-time password
-    * the default is 6
+    * token_length - the length of the one-time password
+      * the default is 6
   """
   def gen_hotp(secret, count, opts \\ []) do
     token_length = Keyword.get(opts, :token_length, 6)
@@ -71,10 +71,10 @@ defmodule Comeonin.Otp do
 
   There are two options:
 
-  * token_length - the length of the one-time password
-    * the default is 6
-  * interval_length - the length of each timed interval
-    * the default is 30 (seconds)
+    * token_length - the length of the one-time password
+      * the default is 6
+    * interval_length - the length of each timed interval
+      * the default is 30 (seconds)
   """
   def gen_totp(secret, opts \\ []) do
     gen_hotp(secret, Keyword.get(opts, :interval_length, 30) |> interval_count, opts)
@@ -85,12 +85,12 @@ defmodule Comeonin.Otp do
 
   There are three options:
 
-  * token_length - the length of the one-time password
-    * the default is 6
-  * last - the count when the one-time password was last used
-    * this count needs to be stored server-side
-  * window - the number of future attempts allowed
-    * the default is 3
+    * token_length - the length of the one-time password
+      * the default is 6
+    * last - the count when the one-time password was last used
+      * this count needs to be stored server-side
+    * window - the number of future attempts allowed
+      * the default is 3
   """
   def check_hotp(token, secret, opts \\ []) do
     valid_token(token, Keyword.get(opts, :token_length, 6)) and
@@ -103,13 +103,13 @@ defmodule Comeonin.Otp do
 
   There are three options:
 
-  * token_length - the length of the one-time password
-    * the default is 6
-  * interval_length - the length of each timed interval
-    * the default is 30 (seconds)
-  * window - the number of attempts, before and after the current one, allowed
-    * the default is 1 (1 interval before and 1 interval after)
-    * you might need to increase this window to allow for clock skew on the server
+    * token_length - the length of the one-time password
+      * the default is 6
+    * interval_length - the length of each timed interval
+      * the default is 30 (seconds)
+    * window - the number of attempts, before and after the current one, allowed
+      * the default is 1 (1 interval before and 1 interval after)
+      * you might need to increase this window to allow for clock skew on the server
   """
   def check_totp(token, secret, opts \\ []) do
     valid_token(token, Keyword.get(opts, :token_length, 6)) and

@@ -87,7 +87,7 @@ in order to craft an excellent pull request:
    # Navigate to the newly cloned directory
    cd comeonin
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/elixircnx/comeonin
+   git remote add upstream https://github.com/riverrun/comeonin
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
