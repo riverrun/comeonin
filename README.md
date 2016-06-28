@@ -1,6 +1,6 @@
 # Comeonin [![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 
-Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
+Password hashing (bcrypt, pbkdf2_sha512 and one-time passwords) library for Elixir.
 
 This library is intended to make it very straightforward for developers
 to check users' passwords in as secure a manner as possible.
@@ -36,7 +36,7 @@ page in the wiki for details.
 
   ```elixir
   defp deps do
-    [ {:comeonin, "~> 2.4"} ]
+    [ {:comeonin, "~> 2.5"} ]
   end
   ```
 
