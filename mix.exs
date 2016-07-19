@@ -64,13 +64,14 @@ defmodule Mix.Tasks.Compile.Comeonin do
 
   defp windows_message do
     """
-    One option is to install a recent version of Visual Studio (you can download
-    the community edition for free). When you install Visual Studio, make sure
-    you also install the C / C++ tools.
+    One option is to install a recent version of
+    [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
+    either manually or using [Chocolatey](https://chocolatey.org/) -
+    `choco install VisualCppBuildTools`.
 
-    After installing VS, look in the `Program Files (x86)` folder and search
-    for `Microsoft Visual Studio`. Note down the full path of the folder with
-    the highest version number.
+    After installing Visual C++ Build Tools, look in the `Program Files (x86)`
+    folder and search for `Microsoft Visual Studio`. Note down the full path
+    of the folder with the highest version number.
 
     Open the `run` command and type in the following command (make sure that
     the path and version number are correct):
@@ -109,7 +110,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.5.1"
+  @version "2.5.2"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
