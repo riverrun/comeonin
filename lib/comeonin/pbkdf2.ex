@@ -99,11 +99,13 @@ defmodule Comeonin.Pbkdf2 do
   This always returns false. The reason for implementing this check is
   in order to make user enumeration by timing responses more difficult.
   """
+  @dialyzer({:nowarn_function, dummy_checkpw: 0})
   def dummy_checkpw do
     hashpwsalt("password")
     false
   end
 
+  @dialyzer({:no_match, pbkdf2: 4})
   defp pbkdf2(_password, _salt, _rounds, length) when length > @max_length do
     raise ArgumentError, "length must be less than or equal to #{@max_length}"
   end

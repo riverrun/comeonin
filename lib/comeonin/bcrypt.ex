@@ -128,6 +128,7 @@ defmodule Comeonin.Bcrypt do
   This always returns false. The reason for implementing this check is
   in order to make user enumeration by timing responses more difficult.
   """
+  @dialyzer({:nowarn_function, dummy_checkpw: 0})
   def dummy_checkpw do
     hashpwsalt("password")
     false
@@ -138,20 +139,20 @@ defmodule Comeonin.Bcrypt do
   and then start the key expansion process.
   """
   def bf_init(key, key_len, salt)
-  def bf_init(_, _, _), do: exit(:nif_library_not_loaded)
+  def bf_init(_, _, _), do: :erlang.nif_error(:not_loaded)
 
   @doc """
   The main key expansion function. This function is called
   2^log_rounds times.
   """
   def bf_expand(state, key, key_len, salt)
-  def bf_expand(_, _, _, _), do: exit(:nif_library_not_loaded)
+  def bf_expand(_, _, _, _), do: :erlang.nif_error(:not_loaded)
 
   @doc """
   Encrypt and return the hash.
   """
   def bf_encrypt(state)
-  def bf_encrypt(_), do: exit(:nif_library_not_loaded)
+  def bf_encrypt(_), do: :erlang.nif_error(:not_loaded)
 
   defp hashpw(password, salt) do
     [prefix, log_rounds, salt] = Enum.take(salt, 29) |> :string.tokens('$')
