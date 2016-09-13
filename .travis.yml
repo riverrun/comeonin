@@ -6,6 +6,11 @@ otp_release:
 sudo: false
 script:
   - mix test
+  - mix dialyzer.plt
+  - mix dialyzer --halt-exit-status
 after_script:
   - mix deps.get --only docs
   - MIX_ENV=docs mix inch.report
+cache:
+  directories:
+    - .dialyzer

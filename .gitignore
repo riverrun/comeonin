@@ -2,5 +2,6 @@
 /deps
 /doc
 /priv
+/.dialyzer
 erl_crash.dump
 *.ez
