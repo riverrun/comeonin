@@ -63,7 +63,7 @@ defmodule Mix.Tasks.Compile.Comeonin do
   end
 
   defp windows_message do
-    """
+    ~S"""
     One option is to install a recent version of
     [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
     either manually or using [Chocolatey](https://chocolatey.org/) -
@@ -110,7 +110,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.5.2"
+  @version "2.5.3"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.

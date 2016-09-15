@@ -119,8 +119,7 @@ defmodule Comeonin.Otp do
   end
 
   defp interval_count(interval_length) do
-    {megasecs, secs, _} = :os.timestamp()
-    trunc((megasecs * 1000000 + secs) / interval_length)
+    trunc(System.system_time(:seconds) / interval_length)
   end
 
   defp check_token(_token, _secret, current, last, _opts) when current > last do
