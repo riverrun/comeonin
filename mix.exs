@@ -125,7 +125,8 @@ defmodule Comeonin.Mixfile do
      package: package(),
      source_url: "https://github.com/riverrun/comeonin",
      compilers: [:comeonin] ++ Mix.compilers,
-     deps: deps()]
+     deps: deps(),
+     dialyzer: [plt_file: ".dialyzer/local.plt"]]
   end
 
   def application do
@@ -134,7 +135,8 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [{:earmark, "~> 0.2", only: :dev},
-     {:ex_doc,  "~> 0.12", only: :dev}]
+     {:ex_doc,  "~> 0.12", only: :dev},
+     {:dialyxir, "~> 0.3.5", only: :dev}]
   end
 
   defp package do
