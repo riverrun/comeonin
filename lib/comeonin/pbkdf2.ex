@@ -31,7 +31,6 @@ defmodule Comeonin.Pbkdf2 do
   use Bitwise
   alias Comeonin.{Pbkdf2.Base64, Config, Tools}
 
-  @max_length bsl(1, 32) - 1
   @salt_length 16
 
   @doc """
@@ -105,10 +104,6 @@ defmodule Comeonin.Pbkdf2 do
     false
   end
 
-  @dialyzer({:no_match, pbkdf2: 4})
-  defp pbkdf2(_password, _salt, _rounds, length) when length > @max_length do
-    raise ArgumentError, "length must be less than or equal to #{@max_length}"
-  end
   defp pbkdf2(password, salt, rounds, length) when byte_size(salt) in 16..1024 do
     pbkdf2(password, salt, rounds, length, 1, [], 0)
   end
