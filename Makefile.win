@@ -25,7 +25,7 @@ Makefile.auto.win:
 
 !IFDEF ERTS_INCLUDE_PATH
 priv\bcrypt_nif.dll:
-	$(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC)
+	($(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC) && del Makefile.auto.win) || del Makefile.auto.win
 !ELSE
 priv\bcrypt_nif.dll: Makefile.auto.win
 	$(NMAKE) /F Makefile.win priv\bcrypt_nif.dll
