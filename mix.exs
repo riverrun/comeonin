@@ -6,7 +6,9 @@ defmodule Mix.Tasks.Compile.Comeonin do
     File.mkdir("priv")
     {exec, args} = case :os.type do
       {:win32, _} ->
-        {"nmake", ["/F", "Makefile.win", "priv\\bcrypt_nif.dll"]}
+        erts_include_path = "#{:code.root_dir()}/erts-#{:erlang.system_info(:version)}/include"
+        # note, the && must come immediately after the include path, no whitespace
+        {"cmd", ["/c set ERTS_INCLUDE_PATH=#{erts_include_path}&& nmake /F Makefile.win priv\\bcrypt_nif.dll"]}
       {:unix, os} when os in [:freebsd, :openbsd] ->
         {"gmake", ["priv/bcrypt_nif.so"]}
       _ ->

@@ -1,9 +1,3 @@
-!IF [where /Q Makefile.auto.win]
-# The file doesn't exist, so don't include it.
-!ELSE
-!INCLUDE Makefile.auto.win
-!ENDIF
-
 BCRYPT_PATH = c_src
 
 NMAKE = nmake /$(MAKEFLAGS)
@@ -19,14 +13,5 @@ all: comeonin
 comeonin:
 	$(MIX) compile
 
-Makefile.auto.win:
-	echo # Auto-generated as part of Makefile.win, do not modify. > $@
-	erl -eval "io:format(\"~s~n\", [lists:concat([\"ERTS_INCLUDE_PATH=\", code:root_dir(), \"/erts-\", erlang:system_info(version), \"/include\"])])" -s init stop -noshell >> $@
-
-!IFDEF ERTS_INCLUDE_PATH
 priv\bcrypt_nif.dll:
-	($(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC) && del Makefile.auto.win) || del Makefile.auto.win
-!ELSE
-priv\bcrypt_nif.dll: Makefile.auto.win
-	$(NMAKE) /F Makefile.win priv\bcrypt_nif.dll
-!ENDIF
+	$(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC)
