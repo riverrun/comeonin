@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.6.0
+
+* Enhancements
+  * Improved Windows build to prevent build failure when upgrading Erlang versions.
+
 ## 2.4.0
 
 * Enhancements
