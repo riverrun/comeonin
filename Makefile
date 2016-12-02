@@ -26,6 +26,10 @@ NIF_SRC=\
 all: $(LIB_NAME)
 
 $(LIB_NAME): $(NIF_SRC)
+	mkdir -p priv
 	$(CC) $(CFLAGS) -shared $(LDFLAGS) $^ -o $@
 
-.PHONY: all
+clean:
+	rm -f $(LIB_NAME)
+
+.PHONY: all clean
