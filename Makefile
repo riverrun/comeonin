@@ -3,6 +3,8 @@ CFLAGS = -g -O3 -Wall
 ERLANG_PATH = $(shell erl -eval 'io:format("~s", [lists:concat([code:root_dir(), "/erts-", erlang:system_info(version), "/include"])])' -s init stop -noshell)
 CFLAGS += -I$(ERLANG_PATH)
 CFLAGS += -Ic_src
+
+LIB_NAME = priv/bcrypt_nif.so
 ifneq ($(CROSSCOMPILE),)
     # crosscompiling
     CFLAGS += -fPIC
@@ -21,12 +23,9 @@ NIF_SRC=\
 	c_src/bcrypt_nif.c\
 	c_src/blowfish.c
 
-all: comeonin
+all: $(LIB_NAME)
 
-priv/bcrypt_nif.so: $(NIF_SRC)
-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -o $@ $(NIF_SRC)
+$(LIB_NAME): $(NIF_SRC)
+	$(CC) $(CFLAGS) -shared $(LDFLAGS) $^ -o $@
 
-comeonin:
-	mix compile
-
-.PHONY: all comeonin
+.PHONY: all

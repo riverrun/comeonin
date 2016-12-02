@@ -8,11 +8,11 @@ defmodule Mix.Tasks.Compile.Comeonin do
       {:win32, _} ->
         erts_include_path = "#{:code.root_dir()}/erts-#{:erlang.system_info(:version)}/include"
         # note, the && must come immediately after the include path, no whitespace
-        {"cmd", ["/c set ERTS_INCLUDE_PATH=#{erts_include_path}&& nmake /F Makefile.win priv\\bcrypt_nif.dll"]}
+        {"cmd", ["/c set ERTS_INCLUDE_PATH=#{erts_include_path}&& nmake /F Makefile.win"]}
       {:unix, os} when os in [:freebsd, :openbsd] ->
-        {"gmake", ["priv/bcrypt_nif.so"]}
+        {"gmake", ["all"]}
       _ ->
-        {"make", ["priv/bcrypt_nif.so"]}
+        {"make", ["all"]}
     end
 
     if System.find_executable(exec) do
@@ -112,7 +112,7 @@ end
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "2.6.0"
+  @version "2.6.1"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
