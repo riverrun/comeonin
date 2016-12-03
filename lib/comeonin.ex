@@ -41,11 +41,11 @@ defmodule Comeonin do
 
   ## Choosing an algorithm
 
-  Bcrypt and pbkdf2_sha512 are both highly secure key derivation functions.
+  Bcrypt and pbkdf2_sha512 are both highly secure password hashing functions.
   They have no known vulnerabilities and their algorithms have been used
   and widely reviewed for at least 10 years. They are also designed
   to be `future-adaptable` (see the section below about speed / complexity
-  for more details), and so we do not recommend one over the other.
+  for more details).
 
   However, if your application needs to use a hashing function that has been
   recommended by a recognized standards body, then you will need to
