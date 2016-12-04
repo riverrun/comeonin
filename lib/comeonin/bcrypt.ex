@@ -148,6 +148,9 @@ defmodule Comeonin.Bcrypt do
   def bf_expand(state, key, key_len, salt)
   def bf_expand(_, _, _, _), do: :erlang.nif_error(:not_loaded)
 
+  def bf_expand0(state, key, key_len)
+  def bf_expand0(_, _, _), do: :erlang.nif_error(:not_loaded)
+
   @doc """
   Encrypt and return the hash.
   """
@@ -180,7 +183,10 @@ defmodule Comeonin.Bcrypt do
 
   defp expand_keys(state, _key, _key_len, _salt, 0), do: state
   defp expand_keys(state, key, key_len, salt, rounds) do
-    bf_expand(state, key, key_len, salt)
+    #bf_expand(state, key, key_len, salt)
+    bf_expand0(state, key, key_len)
+    |> bf_expand0(salt, 16)
+    |> IO.inspect
     |> expand_keys(key, key_len, salt, rounds - 1)
   end
 

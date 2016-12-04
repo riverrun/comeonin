@@ -99,6 +99,22 @@ static ERL_NIF_TERM bf_expand(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[
 	return enif_make_binary(env, &state);
 }
 
+static ERL_NIF_TERM bf_expand0(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+	ErlNifBinary state;
+	char key[1024];
+	unsigned int key_len;
+
+	if (argc != 3 || !enif_inspect_binary(env, argv[0], &state) ||
+			!enif_get_string(env, argv[1], key, sizeof(key), ERL_NIF_LATIN1) ||
+			!enif_get_uint(env, argv[2], &key_len))
+		return enif_make_badarg(env);
+
+	Blowfish_expand0state((blf_ctx *) state.data, (uint8_t *) key, (uint8_t) key_len);
+
+	return enif_make_binary(env, &state);
+}
+
 static ERL_NIF_TERM bf_encrypt(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
 	ErlNifBinary state;
@@ -176,6 +192,7 @@ static ErlNifFunc bcrypt_nif_funcs[] =
 {
 	{"bf_init", 3, bf_init},
 	{"bf_expand", 4, bf_expand},
+	{"bf_expand0", 3, bf_expand0},
 	{"bf_encrypt", 1, bf_encrypt}
 };
 
