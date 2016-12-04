@@ -180,7 +180,8 @@ defmodule Comeonin.BcryptTest do
     for {key, key_len} <- [{'', 1}, {'password', 9}] do
       state = Bcrypt.bf_init(key, key_len, salt_as_list)
       assert byte_size(state) == 4168
-      expanded = Bcrypt.bf_expand(state, key, key_len, salt_as_list)
+      expanded = Bcrypt.bf_expand0(state, key, key_len)
+                 |> Bcrypt.bf_expand0(salt_as_list, 16)
       assert byte_size(expanded) == 4168
     end
   end

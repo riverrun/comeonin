@@ -3,6 +3,7 @@
 ## 3.0.0
 
 * Enhancements
+  * Small changes to NIF code to make it more scheduler-friendly.
   * Improved documentation with respect to Argon2.
 * Changes
   * Now using `elixir_make` to help compile the C code.
