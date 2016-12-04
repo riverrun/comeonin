@@ -8,6 +8,9 @@ defmodule Comeonin do
 
   Comeonin supports bcrypt and pbkdf2_sha512.
 
+  Argon2, a potential successor to Bcrypt and Pbkdf2, is available as a
+  [separate package](https://github.com/riverrun/argon2_elixir).
+
   ## Use
 
   Most users will just need to use the `hashpwsalt`, `checkpw` and `dummy_checkpw`
@@ -38,15 +41,19 @@ defmodule Comeonin do
 
   ## Choosing an algorithm
 
-  Bcrypt and pbkdf2_sha512 are both highly secure key derivation functions.
+  Bcrypt and pbkdf2_sha512 are both highly secure password hashing functions.
   They have no known vulnerabilities and their algorithms have been used
   and widely reviewed for at least 10 years. They are also designed
   to be `future-adaptable` (see the section below about speed / complexity
-  for more details), and so we do not recommend one over the other.
+  for more details).
 
   However, if your application needs to use a hashing function that has been
   recommended by a recognized standards body, then you will need to
   use pbkdf2_sha512, which has been recommended by NIST.
+
+  For a comparison with Argon2, see the
+  [Argon2](https://github.com/riverrun/comeonin/wiki/Argon2)
+  page in the Comeonin wiki.
 
   ## Adjusting the speed / complexity of bcrypt and pbkdf2
 

@@ -48,6 +48,8 @@ defmodule Comeonin.Bcrypt do
   use Bitwise
   alias Comeonin.{Bcrypt.Base64, Config, Tools}
 
+  @salt_len 16
+
   @compile {:autoload, false}
   @on_load {:init, 0}
 
@@ -142,11 +144,10 @@ defmodule Comeonin.Bcrypt do
   def bf_init(_, _, _), do: :erlang.nif_error(:not_loaded)
 
   @doc """
-  The main key expansion function. This function is called
-  2^log_rounds times.
+  The main key expansion function.
   """
-  def bf_expand(state, key, key_len, salt)
-  def bf_expand(_, _, _, _), do: :erlang.nif_error(:not_loaded)
+  def bf_expand0(state, input, input_len)
+  def bf_expand0(_, _, _), do: :erlang.nif_error(:not_loaded)
 
   @doc """
   Encrypt and return the hash.
@@ -180,7 +181,8 @@ defmodule Comeonin.Bcrypt do
 
   defp expand_keys(state, _key, _key_len, _salt, 0), do: state
   defp expand_keys(state, key, key_len, salt, rounds) do
-    bf_expand(state, key, key_len, salt)
+    bf_expand0(state, key, key_len)
+    |> bf_expand0(salt, @salt_len)
     |> expand_keys(key, key_len, salt, rounds - 1)
   end
 
