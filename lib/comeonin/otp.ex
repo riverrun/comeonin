@@ -63,7 +63,7 @@ defmodule Comeonin.Otp do
     <<truncated :: size(4)-integer-unit(8)>> = :binary.part(hash, offset, 4)
     (truncated &&& 0x7fffffff) |> rem(trunc(:math.pow(10, token_length)))
     |> :erlang.integer_to_binary
-    |> String.rjust(token_length, ?0)
+    |> String.pad_leading(token_length, "0")
   end
 
   @doc """
