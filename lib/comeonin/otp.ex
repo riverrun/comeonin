@@ -13,6 +13,22 @@ defmodule Comeonin.Otp do
   to provide two factor authentication (2FA), which forms a layered approach
   to user authentication. The advantage of 2FA over just using passwords is
   that an attacker would face an additional challenge to being authorized.
+
+  ## Warning about implementation
+
+  It is important not to allow the one-time password to be reused within
+  the timeframe that it is valid.
+
+  For TOTPs, one method of preventing reuse is to compare the output of
+  check_totp (the `last` value) with the previous output. The output
+  should be greater than the previous `last` value.
+
+  In the case of HOTPs, it is important that the database is locked
+  from the time the `last` value is checked until the `last` value is
+  updated.
+
+  For an example implementation, see the [Openmaize OnetimePass
+  module](https://github.com/riverrun/openmaize/blob/master/lib/openmaize/onetime_pass.ex).
   """
 
   use Bitwise
