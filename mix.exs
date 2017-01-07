@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "3.0.0"
+  @version "3.0.1"
 
   @description """
   Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
