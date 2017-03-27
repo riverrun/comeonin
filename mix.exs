@@ -18,7 +18,7 @@ defmodule Comeonin.Mixfile do
      source_url: "https://github.com/riverrun/comeonin",
      compilers: [:elixir_make] ++ Mix.compilers,
      deps: deps(),
-     dialyzer: [plt_file: ".dialyzer/local.plt"]]
+     dialyzer: [plt_file: ".dialyzer/local.plt", remove_defaults: [:unknown]]]
   end
 
   def application do
