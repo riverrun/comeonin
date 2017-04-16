@@ -32,6 +32,13 @@ Comeonin also supports one-time passwords, for use in two-factor authentication.
 See the [Requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
 page in the wiki for details.
 
+### Docker
+
+You need to build the comeonin app inside the docker image.
+To do this, add the following line to the docker file:
+
+    RUN cd deps/comeonin && make clean && make
+
 ## Installation
 
 1. Add comeonin to your `mix.exs` dependencies

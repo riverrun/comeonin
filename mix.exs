@@ -13,7 +13,6 @@ defmodule Comeonin.Mixfile do
      elixir: "~> 1.2",
      name: "Comeonin",
      description: @description,
-     make_clean: ["clean"],
      package: package(),
      source_url: "https://github.com/riverrun/comeonin",
      compilers: [:elixir_make] ++ Mix.compilers,
