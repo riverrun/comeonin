@@ -23,7 +23,7 @@ NIF_SRC=\
 	c_src/bcrypt_nif.c\
 	c_src/blowfish.c
 
-all: $(LIB_NAME)
+all: clean $(LIB_NAME)
 
 $(LIB_NAME): $(NIF_SRC)
 	mkdir -p priv
