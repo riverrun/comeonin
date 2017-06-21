@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0
+
+* Changes
+  * Now forcing a recompile of C code for Windows users.
+
 ## 3.0.0
 
 * Enhancements
