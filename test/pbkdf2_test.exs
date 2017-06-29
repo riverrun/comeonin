@@ -16,7 +16,7 @@ defmodule Comeonin.Pbkdf2Test do
     assert Pbkdf2.checkpw(wrong2, hash) == false
     assert Pbkdf2.checkpw(wrong3, hash) == false
   end
- 
+
   test "base pbkdf2_sha512 tests" do
     [
       {"passDATAb00AB7YxDTT",
@@ -31,8 +31,7 @@ defmodule Comeonin.Pbkdf2Test do
         "saltKEYbcTcXHCBxtjD2PnBh44AIQ6XUOCESOhXpEp3HrcGMwbjzQKMSaf63IJe",
         100_000,
         "$pbkdf2-sha512$100000$c2FsdEtFWWJjVGNYSENCeHRqRDJQbkJoNDRBSVE2WFVPQ0VTT2hYcEVwM0hyY0dNd2JqelFLTVNhZjYzSUpl$B0R0AchXZuSu1YPeLmv1pnXqvk82GCgclWFvT8H9/m7LwcOYJ4nU/ZQdZYTvU0p4vTeuAlVdlFXo8In9tN.2uw"}
-    ]
-  |> check_vectors
+    ] |> check_vectors
   end
 
   test "Python passlib pbkdf2_sha512 tests" do
@@ -53,21 +52,24 @@ defmodule Comeonin.Pbkdf2Test do
         <<215, 186, 87, 42, 133, 112, 14, 1, 160, 52, 38, 100, 44, 229, 92, 203>>,
         19_000,
         "$pbkdf2-sha512$19000$17pXKoVwDgGgNCZkLOVcyw$TEv9woSaVTsYHLxXnFbWO1oKrUGfUAljkLnqj8W/80BGaFbhccG8B9fZc05RoUo7JQvfcwsNee19g8GD5UxwHA"}
-    ]
-  |> check_vectors
+    ] |> check_vectors
   end
 
   test "Consistency tests" do
-   [{"funferal",
-     <<192, 39, 248, 127, 11, 37, 71, 252, 74, 75, 244, 70, 129, 27, 51, 71>>,
-     "$pbkdf2-sha512$60000$wCf4fwslR/xKS/RGgRszRw$QJHazw8zTaY0HvGQF1Slb07Ug9DFFLjoq63aORwhA.o/OM.e9UpxldolWyCNLv3duHuxpEWoZtGHfm3VTFCqpg"},
-   {"he's N0t the Me551ah!",
-     <<60, 130, 11, 97, 11, 23, 236, 250, 227, 233, 56, 1, 86, 131, 41, 163>>,
-     "$pbkdf2-sha512$60000$PIILYQsX7Prj6TgBVoMpow$tsPUY4uMzTbJuv81xxZzsUGvT1LGjk9EfJuAYoZH9KaCSGH90J8BuQwY4Jb0JZbwOI00BSR4hDBVmn3Z8V.Ywg"},
-   {"ἓν οἶδα ὅτι οὐδὲν οἶδα",
-     <<29, 10, 228, 45, 215, 110, 213, 118, 168, 14, 197, 198, 67, 72, 34, 221>>,
-     "$pbkdf2-sha512$60000$HQrkLddu1XaoDsXGQ0gi3Q$UVkPApVkIkQN0FTQwaKffYoZ5Mbh0712p1GWs9H1Z.fBNQScUWCj/GAUtZDYMkIN3kIi9ORvut.SQ7aBipcpDQ"}]
-    |> check_vectors
+    [
+      {"funferal",
+        <<192, 39, 248, 127, 11, 37, 71, 252, 74, 75, 244, 70, 129, 27, 51, 71>>,
+        60_000,
+        "$pbkdf2-sha512$60000$wCf4fwslR/xKS/RGgRszRw$QJHazw8zTaY0HvGQF1Slb07Ug9DFFLjoq63aORwhA.o/OM.e9UpxldolWyCNLv3duHuxpEWoZtGHfm3VTFCqpg"},
+      {"he's N0t the Me551ah!",
+        <<60, 130, 11, 97, 11, 23, 236, 250, 227, 233, 56, 1, 86, 131, 41, 163>>,
+        60_000,
+        "$pbkdf2-sha512$60000$PIILYQsX7Prj6TgBVoMpow$tsPUY4uMzTbJuv81xxZzsUGvT1LGjk9EfJuAYoZH9KaCSGH90J8BuQwY4Jb0JZbwOI00BSR4hDBVmn3Z8V.Ywg"},
+      {"ἓν οἶδα ὅτι οὐδὲν οἶδα",
+        <<29, 10, 228, 45, 215, 110, 213, 118, 168, 14, 197, 198, 67, 72, 34, 221>>,
+        60_000,
+        "$pbkdf2-sha512$60000$HQrkLddu1XaoDsXGQ0gi3Q$UVkPApVkIkQN0FTQwaKffYoZ5Mbh0712p1GWs9H1Z.fBNQScUWCj/GAUtZDYMkIN3kIi9ORvut.SQ7aBipcpDQ"}
+    ] |> check_vectors
   end
 
   test "pbkdf2 dummy check" do
@@ -86,7 +88,7 @@ defmodule Comeonin.Pbkdf2Test do
 
   test "hashing and checking passwords with non-ascii characters" do
     hash_check_password("Сколько лет, сколько зим", "Сколько лет,сколько зим",
-    "Сколько лет сколько зим", "Сколько лет, сколько")
+                        "Сколько лет сколько зим", "Сколько лет, сколько")
     hash_check_password("สวัสดีครับ", "สวัดีครับ", "สวัสสดีครับ", "วัสดีครับ")
   end
 
