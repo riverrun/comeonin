@@ -112,6 +112,23 @@ defmodule Comeonin.BcryptTest do
     |> check_vectors
   end
 
+  test "salt should be shortened to 128 bits" do
+    [
+      {"test",
+        "$2b$10$1234567899123456789012",
+        "$2b$10$123456789912345678901u.OtL1A1eGK5wmvBKUDYKvuVKI7h2XBu"},
+      {"U*U*",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCCh",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCCeUQ7VjYZ2hd4bLYZdhuPpZMUpEUJDw1S"},
+      {"U*U*",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCCM",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"},
+      {"U*U*",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCCA",
+        "$2a$05$CCCCCCCCCCCCCCCCCCCCC.VGOzA784oUp/Z0DY336zx7pLYAy0lwK"}
+    ] |> check_vectors
+  end
+
   test "Bcrypt dummy check" do
     assert Bcrypt.dummy_checkpw == false
   end

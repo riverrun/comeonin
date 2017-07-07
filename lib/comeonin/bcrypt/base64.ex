@@ -45,6 +45,12 @@ defmodule Comeonin.Bcrypt.Base64 do
   """
   def decode(words), do: decode_l(words, [])
 
+  @doc """
+  """
+  def normalize(salt) do
+    decode(salt) |> encode
+  end
+
   defp b64e(val) do
     elem({?., ?/, ?A, ?B, ?C, ?D, ?E, ?F, ?G, ?H, ?I, ?J, ?K, ?L,
       ?M, ?N, ?O, ?P, ?Q, ?R, ?S, ?T, ?U, ?V, ?W, ?X,

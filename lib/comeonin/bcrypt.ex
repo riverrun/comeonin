@@ -194,6 +194,6 @@ defmodule Comeonin.Bcrypt do
   defp fmt_salt(salt, log_rounds, true), do: "$2a$#{log_rounds}$#{Base64.encode(salt)}"
 
   defp fmt_hash(hash, salt, prefix, log_rounds) do
-    "$#{prefix}$#{log_rounds}$#{salt}#{Base64.encode(hash)}"
+    "$#{prefix}$#{log_rounds}$#{Base64.normalize(salt)}#{Base64.encode(hash)}"
   end
 end
