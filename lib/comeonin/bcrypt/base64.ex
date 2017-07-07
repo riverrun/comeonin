@@ -46,6 +46,16 @@ defmodule Comeonin.Bcrypt.Base64 do
   def decode(words), do: decode_l(words, [])
 
   @doc """
+  Shorten the salt to 128 bits + 4 zeros.
+
+  ## Examples
+
+      iex> Comeonin.Bcrypt.Base64.normalize '0CaBPBIAm2pgeQiCrTSa5O'
+      '0CaBPBIAm2pgeQiCrTSa5O'
+      iex> Comeonin.Bcrypt.Base64.normalize '0CaBPBIAm2pgeQiCrTSa5S'
+      '0CaBPBIAm2pgeQiCrTSa5O'
+      iex> Comeonin.Bcrypt.Base64.normalize '0CaBPBIAm2pgeQiCrTSa5B'
+      '0CaBPBIAm2pgeQiCrTSa5.'
   """
   def normalize(salt) do
     decode(salt) |> encode
