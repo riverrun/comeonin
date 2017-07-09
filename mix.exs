@@ -1,41 +1,47 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "3.2.0"
+  @version "4.0.0"
 
   @description """
-  Password hashing (bcrypt, pbkdf2_sha512) library for Elixir.
+  Password hashing library for Elixir.
   """
 
   def project do
-    [app: :comeonin,
-     version: @version,
-     elixir: "~> 1.2",
-     name: "Comeonin",
-     description: @description,
-     package: package(),
-     source_url: "https://github.com/riverrun/comeonin",
-     compilers: [:elixir_make] ++ Mix.compilers,
-     deps: deps(),
-     dialyzer: [plt_file: ".dialyzer/local.plt", remove_defaults: [:unknown]]]
+    [
+      app: :comeonin,
+      version: @version,
+      elixir: "~> 1.4.5 or ~> 1.5",
+      name: "Comeonin",
+      description: @description,
+      package: package(),
+      source_url: "https://github.com/riverrun/comeonin",
+      deps: deps()
+    ]
   end
 
   def application do
-    [applications: [:crypto, :logger]]
+    [
+      extra_applications: [:logger]
+    ]
   end
 
   defp deps do
-    [{:elixir_make, "~> 0.4", runtime: false},
-     {:earmark, "~> 1.2", only: :dev},
-     {:ex_doc,  "~> 0.16", only: :dev},
-     {:dialyxir, "~> 0.5", only: [:dev], runtime: false}]
+    [
+      {:argon2_elixir, "~> 1.0", optional: true},
+      {:bcrypt_elixir, "~> 0.8", optional: true},
+      {:pbkdf2_elixir, "~> 0.9", optional: true},
+      {:earmark, "~> 1.2", only: :dev},
+      {:ex_doc,  "~> 0.16", only: :dev}
+    ]
   end
 
   defp package do
-    [files: ["lib", "c_src", "mix.exs", "Makefile*", "README.md", "LICENSE"],
-     maintainers: ["David Whitlock"],
-     licenses: ["BSD"],
-     links: %{"GitHub" => "https://github.com/riverrun/comeonin",
-       "Docs" => "http://hexdocs.pm/comeonin"}]
+    [
+      maintainers: ["David Whitlock"],
+      licenses: ["BSD"],
+      links: %{"GitHub" => "https://github.com/riverrun/comeonin",
+        "Docs" => "http://hexdocs.pm/comeonin"}
+    ]
   end
 end
