@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.0
+
+* Enhancements
+  * Shortening user-supplied salts to 128 bits -- to make it compatible with other implementations.
+
 ## 3.1.0
 
 * Changes
