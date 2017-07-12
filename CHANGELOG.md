@@ -1,8 +1,18 @@
 # Changelog
 
-## 3.2.0
+## 4.0.0
 
 * Enhancements
+  * Added support for Argon2 (as an optional dependency -- argon2_elixir)
+  * Added higher-level helper functions to the main Comeonin module
+    * These functions work with maps and should reduce code use when adding password hashes / checking passwords
+  * Improved the statistics function in the main Comeonin module -- `report`
+* Changes
+  * Made all the hashing algorithms optional dependencies
+
+## 3.2.0
+
+* Bug fixes
   * Shortening user-supplied salts to 128 bits -- to make it compatible with other implementations.
 
 ## 3.1.0

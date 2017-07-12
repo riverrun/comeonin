@@ -3,7 +3,7 @@ defmodule ComeoninTest do
 
   def hash_check_password(password, wrong) do
     for crypto <- [Argon2, Bcrypt, Pbkdf2] do
-      hash = Comeonin.create_hash(password, crypto)
+      %{password_hash: hash} = Comeonin.add_hash(%{password: password}, crypto)
       user = %{id: 2, name: "fred", password_hash: hash}
       assert Comeonin.check_pass(user, password, crypto) == {:ok, user}
       assert Comeonin.check_pass(nil, password, crypto) == {:error, "invalid user-identifier"}
@@ -15,8 +15,8 @@ defmodule ComeoninTest do
     changes = %{password: password}
     for crypto <- [Argon2, Bcrypt, Pbkdf2] do
       %{password_hash: hash, password: nil} = Comeonin.add_hash(changes, crypto)
-      assert crypto.verify_hash(hash, password) == true
-      assert crypto.verify_hash(hash, wrong) == false
+      assert crypto.verify_pass(password, hash) == true
+      assert crypto.verify_pass(wrong, hash) == false
     end
   end
 

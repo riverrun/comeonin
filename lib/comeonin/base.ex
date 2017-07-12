@@ -10,15 +10,7 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
 
       defdelegate hashpwsalt(password, opts \\ []), to: module, as: :hash_pwd_salt
 
-      @doc """
-      Check the password by comparing it with the stored hash.
-
-      See the documentation for `#{alg}.verify_hash`
-      for details about the available options.
-      """
-      def checkpw(password, hash, opts \\ []) do
-        unquote(module).verify_hash(hash, password, opts)
-      end
+      defdelegate checkpw(password, hash, opts \\ []), to: module, as: :verify_pass
 
       defdelegate dummy_checkpw(opts \\ []), to: module, as: :no_user_verify
    end

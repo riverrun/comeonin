@@ -23,14 +23,18 @@ defmodule Comeonin do
 
       defp deps do
         [
-          {:comeonin, "~> 3.0"},
+          {:comeonin, "~> 4.0"},
           {:argon2_elixir, "~> 1.0"},
         ]
       end
 
   ## Use
 
-  This module offers three functions: `create_hash`, `add_hash` and `check_pass`.
+  This module offers three functions:
+
+    * add_hash
+    * check_pass
+    * report
 
   ## Choosing an algorithm
 
@@ -86,19 +90,6 @@ defmodule Comeonin do
   """
 
   @doc """
-  Generate a password hash.
-
-  First, a random salt is generated, and then the password and salt
-  are hashed using the crypto module you choose.
-
-  For more information about the available options, see the documentation
-  for the crypto module's `hash_pwd_salt` function.
-  """
-  def create_hash(password, crypto, opts \\ []) do
-    crypto.hash_pwd_salt(password, opts)
-  end
-
-  @doc """
   Add the password hash to a map and set the password to nil.
 
   ## Examples
@@ -119,7 +110,7 @@ defmodule Comeonin do
   Check the password by comparing its hash with a stored password hash,
   within a user struct, or map.
 
-  After finding the password hash in the user struct, the `verify_hash`
+  After finding the password hash in the user struct, the `verify_pass`
   function is run to check the password. Then the function returns
   {:ok, user} or {:error, message}.
 
@@ -129,7 +120,7 @@ defmodule Comeonin do
   `hide_user: false` to the opts.
 
   For more information about the other available options, see the
-  documentation for the crypto module's `verify_hash` function.
+  documentation for the crypto module's `verify_pass` function.
   """
   def check_pass(user, password, crypto, opts \\ [])
   def check_pass(nil, _password, crypto, opts) do
@@ -139,8 +130,15 @@ defmodule Comeonin do
     {:error, "invalid user-identifier"}
   end
   def check_pass(%{password_hash: hash} = user, password, crypto, opts) do
-    crypto.verify_hash(hash, password, opts) and
+    crypto.verify_pass(password, hash, opts) and
     {:ok, user} || {:error, "invalid password"}
   end
 
+  @doc """
+  Print out a report to help you configure the hash function.
+  """
+  def report(crypto, opts \\ []) do
+    mod = Module.concat(crypto, Stats)
+    mod.report(opts)
+  end
 end
