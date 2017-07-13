@@ -32,9 +32,9 @@ defmodule Comeonin do
 
   This module offers three functions:
 
-    * add_hash
-    * check_pass
-    * report
+    * add_hash - hash a password, which is in a map, and add the hash to the map
+    * check_pass - check a password by comparing it with the stored hash, which is in a map
+    * report - print out a report of the hashing algorithm, to help with confiuration
 
   ## Choosing an algorithm
 
@@ -136,6 +136,9 @@ defmodule Comeonin do
 
   @doc """
   Print out a report to help you configure the hash function.
+
+  For more details, see the documentation for the crypto module's
+  `Stats.report` function.
   """
   def report(crypto, opts \\ []) do
     mod = Module.concat(crypto, Stats)

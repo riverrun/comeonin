@@ -6,9 +6,9 @@ This library is intended to make it very straightforward for developers to check
 
 Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
-Features
+## Features
 
-* Comeonin uses the most secure, well-tested, and up-to-date hashing schemes.
+* Comeonin supports the most secure, well-tested, and up-to-date hashing schemes.
     * Argon2 is the winner of the 2015 Password Hashing Competition.
     * Bcrypt and Pbkdf2 have no known vulnerabilities and have been widely tested for over 15 years
 * It is easy to use.
@@ -18,18 +18,22 @@ Features
     * Clear instructions are given on how to use Comeonin.
     * Several recommendations are also given to help developers keep their apps secure.
 
-Installation
+## Differences between version 3 and 4
 
 See the wiki.
 
-Usage
+## Installation
 
 See the wiki.
 
-Documentation
+## Usage
+
+See the wiki.
+
+### Documentation
 
 http://hexdocs.pm/comeonin
 
-License
+### License
 
 BSD. For full details, please read the LICENSE file.

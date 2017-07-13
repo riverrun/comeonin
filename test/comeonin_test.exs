@@ -1,47 +1,51 @@
 defmodule ComeoninTest do
   use ExUnit.Case, async: true
 
-  def hash_check_password(password, wrong) do
-    for crypto <- [Argon2, Bcrypt, Pbkdf2] do
-      %{password_hash: hash} = Comeonin.add_hash(%{password: password}, crypto)
-      user = %{id: 2, name: "fred", password_hash: hash}
-      assert Comeonin.check_pass(user, password, crypto) == {:ok, user}
-      assert Comeonin.check_pass(nil, password, crypto) == {:error, "invalid user-identifier"}
-      assert Comeonin.check_pass(user, wrong, crypto) == {:error, "invalid password"}
-    end
-  end
-
-  def add_hash_map(password, wrong) do
-    changes = %{password: password}
-    for crypto <- [Argon2, Bcrypt, Pbkdf2] do
-      %{password_hash: hash, password: nil} = Comeonin.add_hash(changes, crypto)
-      assert crypto.verify_pass(password, hash) == true
-      assert crypto.verify_pass(wrong, hash) == false
-    end
-  end
+  import ComeoninTestHelper
 
   test "hashing and checking passwords" do
-    hash_check_password("password", "passwor")
-    hash_check_password("hard2guess", "ha rd2guess")
+    wrong_list = ["aged2h$ru", "2dau$ehgr", "rg$deh2au", "2edrah$gu", "$agedhur2", ""]
+    hash_check("hard2guess", wrong_list)
   end
 
   test "hashing and checking passwords with characters from the extended ascii set" do
-    hash_check_password("aáåäeéêëoôö", "aáåäeéêëoö")
-    hash_check_password("aáåä eéêëoôö", "aáåä eéê ëoö")
+    wrong_list = ["eáé åöêô ëaäo", "aäôáö eéoêë å", " aöêôée oåäëá", "åaêöéäëeoô á ", ""]
+    hash_check("aáåä eéê ëoôö", wrong_list)
   end
 
   test "hashing and checking passwords with non-ascii characters" do
-    hash_check_password("Сколько лет, сколько зим", "Сколько лет,сколько зим")
-    hash_check_password("สวัสดีครับ", "สวัดีครับ")
+    wrong_list = ["и Скл;лекьоток к олсомзь", "кеокок  зС омлслтььлок;и", "е  о оиькльлтСо;осккклзм", ""]
+    hash_check("Сколько лет; сколько зим", wrong_list)
   end
 
   test "hashing and checking passwords with mixed characters" do
-    hash_check_password("Я❤três☕ où☔", "Я❤tres☕ où☔")
+    wrong_list = ["Я☕t☔s❤ùo", "o❤ Я☔ùrtês☕", " ùt❤o☕☔srêЯ", "ù☕os êt❤☔rЯ", ""]
+    hash_check("Я❤três☕ où☔", wrong_list)
+  end
+
+  test "check password by using password hash in user map" do
+    wrong_list = ["บดสคสััีวร", "สดรบัีสัคว", "สวดัรคบัสี", "ดรสสีวคบัั", "วรคดสัสีับ", ""]
+    check_pass_check("สวัสดีครับ", wrong_list)
   end
 
   test "add hash to map and set password to nil" do
-    add_hash_map("password", "pass word")
-    add_hash_map("Сколько лет, сколько зим", "Сколько лет,сколько зим")
+    wrong_list = ["êäöéaoeôáåë", "åáoêëäéôeaö", "aäáeåëéöêôo", ""]
+    add_hash_check("aáåäeéêëoôö", wrong_list)
+  end
+
+  test "user obfuscation function always returns false" do
+    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
+      assert crypto.dummy_checkpw() == false
+    end
+  end
+
+  test "opts are passed on to the underlying function" do
+    hash = Comeonin.Argon2.hashpwsalt("", t_cost: 2, m_cost: 12)
+    assert String.starts_with?(hash, "$argon2i$v=19$m=4096,t=2")
+    hash = Comeonin.Bcrypt.hashpwsalt("", log_rounds: 10)
+    assert String.starts_with?(hash, "$2b$10$")
+    hash = Comeonin.Pbkdf2.hashpwsalt("", rounds: 200, digest: :sha256)
+    assert String.starts_with?(hash, "$pbkdf2-sha256$200$")
   end
 
 end
