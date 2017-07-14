@@ -28,9 +28,9 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:argon2_elixir, "~> 1.1", optional: true},
-      {:bcrypt_elixir, "~> 0.10", optional: true},
-      {:pbkdf2_elixir, "~> 0.10", optional: true},
+      {:argon2_elixir, "~> 1.2", optional: true},
+      {:bcrypt_elixir, "~> 0.11", optional: true},
+      {:pbkdf2_elixir, "~> 0.11", optional: true},
       {:earmark, "~> 1.2", only: :dev},
       {:ex_doc,  "~> 0.16", only: :dev}
     ]

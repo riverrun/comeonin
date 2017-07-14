@@ -7,6 +7,7 @@ defmodule Comeonin do
   developers keep their apps secure.
 
   Comeonin supports argon2, bcrypt and pbkdf2 (sha512 and sha256).
+  These are all supported as optional dependencies.
 
   ## Installation
 
@@ -24,7 +25,7 @@ defmodule Comeonin do
       defp deps do
         [
           {:comeonin, "~> 4.0"},
-          {:argon2_elixir, "~> 1.0"},
+          {:argon2_elixir, "~> 1.2"},
         ]
       end
 
@@ -35,6 +36,18 @@ defmodule Comeonin do
     * add_hash - hash a password, which is in a map, and add the hash to the map
     * check_pass - check a password by comparing it with the stored hash, which is in a map
     * report - print out a report of the hashing algorithm, to help with confiuration
+
+  There will also be a module created for the algorithm you install. For example,
+  if you add `argon2_elixir` to your `deps`, a Comeonin.Argon2 module will be
+  created. In this module, there are three functions (similar to previous versions
+  of Comeonin):
+
+    * hashpwsalt - hash a password, using a randomly generated salt
+    * checkpw - check a password by comparing it with the stored hash
+    * dummy_checkpw - perform a dummy check to make user enumeration more difficult
+
+  Finally, you could also use the hashing library directly, without installing
+  Comeonin.
 
   ## Choosing an algorithm
 
@@ -112,15 +125,24 @@ defmodule Comeonin do
 
   After finding the password hash in the user struct, the `verify_pass`
   function is run to check the password. Then the function returns
-  {:ok, user} or {:error, message}.
+  {:ok, user} or {:error, message}. Note that the error message is
+  meant to be used for logging purposes only; it should not be passed
+  on to the end user.
 
   If the first argument is nil, meaning that there is no user with that
   name, a dummy verify function is run to make user enumeration, using
   timing information, more difficult. This can be disabled by adding
   `hide_user: false` to the opts.
 
-  For more information about the other available options, see the
-  documentation for the crypto module's `verify_pass` function.
+  ## Examples
+
+  The following is a simple example using Phoenix 1.3:
+
+      def verify(attrs) do
+        MyApp.Accounts.get_by(attrs)
+        |> Comeonin.check_pass(password, Argon2)
+      end
+
   """
   def check_pass(user, password, crypto, opts \\ [])
   def check_pass(nil, _password, crypto, opts) do
@@ -129,8 +151,8 @@ defmodule Comeonin do
     end
     {:error, "invalid user-identifier"}
   end
-  def check_pass(%{password_hash: hash} = user, password, crypto, opts) do
-    crypto.verify_pass(password, hash, opts) and
+  def check_pass(%{password_hash: hash} = user, password, crypto, _) do
+    crypto.verify_pass(password, hash) and
     {:ok, user} || {:error, "invalid password"}
   end
 
