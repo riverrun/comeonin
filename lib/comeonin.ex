@@ -31,23 +31,18 @@ defmodule Comeonin do
 
   ## Use
 
-  This module offers three functions:
+  Each module offers the following six functions (the first two are new
+  to version 4):
 
-    * add_hash - hash a password, which is in a map, and add the hash to the map
+    * add_hash - hash a password and return it in a map with the password set to nil
     * check_pass - check a password by comparing it with the stored hash, which is in a map
-    * report - print out a report of the hashing algorithm, to help with confiuration
-
-  There will also be a module created for the algorithm you install. For example,
-  if you add `argon2_elixir` to your `deps`, a Comeonin.Argon2 module will be
-  created. In this module, there are three functions (similar to previous versions
-  of Comeonin):
-
     * hashpwsalt - hash a password, using a randomly generated salt
     * checkpw - check a password by comparing it with the stored hash
     * dummy_checkpw - perform a dummy check to make user enumeration more difficult
+    * report - print out a report of the hashing algorithm, to help with configuration
 
-  Finally, you could also use the hashing library directly, without installing
-  Comeonin.
+  For a lower-level API, you could also use the hashing dependency directly,
+  without installing Comeonin.
 
   ## Choosing an algorithm
 
@@ -81,11 +76,6 @@ defmodule Comeonin do
   be configured to remain slow and resistant to brute-force attacks even as
   computational power increases.
 
-  The computationally intensive code is run in C, using Erlang NIFs. One concern
-  about NIFs is that they block the Erlang VM, and so it is better to make
-  sure these functions do not run for too long. This bcrypt implementation
-  has been adapted so that each NIF runs for as short a time as possible.
-
   ### Pbkdf2
 
   Pbkdf2 is a password-based key derivation function
@@ -102,68 +92,4 @@ defmodule Comeonin do
   for links to further information about these and related issues.
   """
 
-  @doc """
-  Add the password hash to a map and set the password to nil.
-
-  ## Examples
-
-  In the following example, this function is used with an Ecto changeset:
-
-      defp put_pass_hash(%Ecto.Changeset{valid?: true, changes:
-          %{password: password}} = changeset) do
-        change(changeset, Comeonin.add_hash(password))
-      end
-      defp put_pass_hash(changeset), do: changeset
-  """
-  def add_hash(%{password: password}, crypto, opts \\ []) do
-    %{password_hash: crypto.hash_pwd_salt(password, opts), password: nil}
-  end
-
-  @doc """
-  Check the password by comparing its hash with a stored password hash,
-  within a user struct, or map.
-
-  After finding the password hash in the user struct, the `verify_pass`
-  function is run to check the password. Then the function returns
-  {:ok, user} or {:error, message}. Note that the error message is
-  meant to be used for logging purposes only; it should not be passed
-  on to the end user.
-
-  If the first argument is nil, meaning that there is no user with that
-  name, a dummy verify function is run to make user enumeration, using
-  timing information, more difficult. This can be disabled by adding
-  `hide_user: false` to the opts.
-
-  ## Examples
-
-  The following is a simple example using Phoenix 1.3:
-
-      def verify(attrs) do
-        MyApp.Accounts.get_by(attrs)
-        |> Comeonin.check_pass(password, Argon2)
-      end
-
-  """
-  def check_pass(user, password, crypto, opts \\ [])
-  def check_pass(nil, _password, crypto, opts) do
-    unless opts[:hide_user] == false do
-      crypto.no_user_verify(opts)
-    end
-    {:error, "invalid user-identifier"}
-  end
-  def check_pass(%{password_hash: hash} = user, password, crypto, _) do
-    crypto.verify_pass(password, hash) and
-    {:ok, user} || {:error, "invalid password"}
-  end
-
-  @doc """
-  Print out a report to help you configure the hash function.
-
-  For more details, see the documentation for the crypto module's
-  `Stats.report` function.
-  """
-  def report(crypto, opts \\ []) do
-    mod = Module.concat(crypto, Stats)
-    mod.report(opts)
-  end
 end
