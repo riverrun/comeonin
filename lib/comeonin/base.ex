@@ -9,7 +9,8 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       """
 
       @doc """
-      Hash a password and return it in a map with the password set to nil.
+      Hash a password and return it in a map, with the key set to `:password_hash`
+      and the password set to nil.
 
       ## Examples
 
@@ -20,14 +21,28 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
             change(changeset, Comeonin.#{alg}.add_hash(password))
           end
           defp put_pass_hash(changeset), do: changeset
+
       """
       def add_hash(password, opts \\ []) do
         %{password_hash: unquote(module).hash_pwd_salt(password, opts), password: nil}
       end
 
       @doc """
-      Check the password by comparing its hash with a stored password hash,
-      within a user struct, or map.
+      Hash a password and return it in a map, with the key set to `:encoded_password`
+      and the password set to nil.
+
+      See the example for `add_hash`.
+      """
+      def add_encoded(password, opts \\ []) do
+        %{encoded_password: unquote(module).hash_pwd_salt(password, opts), password: nil}
+      end
+
+      @doc """
+      Check the password by comparing its hash with the password hash found
+      in a user struct, or map.
+
+      The password hash's key needs to be either `:password_hash` or
+      `:encrypted_password`.
 
       After finding the password hash in the user struct, the password
       is checked by comparing it with the hash. Then the function returns
@@ -52,32 +67,52 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       """
       def check_pass(user, password, opts \\ [])
       def check_pass(nil, _password, opts) do
-        unless opts[:hide_user] == false do
-          unquote(module).no_user_verify(opts)
-        end
+        unless opts[:hide_user] == false, do: unquote(module).no_user_verify(opts)
         {:error, "invalid user-identifier"}
       end
-      def check_pass(%{password_hash: hash} = user, password, _) do
-        unquote(module).verify_pass(password, hash) and
-        {:ok, user} || {:error, "invalid password"}
+      def check_pass(user, password, _) do
+        with {:ok, hash} <- get_hash(user) do
+          unquote(module).verify_pass(password, hash) and
+          {:ok, user} || {:error, "invalid password"}
+        end
       end
 
       @doc """
       Print out a report to help you configure the hash function.
 
-      For more details, see the documentation for `#{alg}.Stats.report`
-      function.
+      For more details, see the documentation for `#{alg}.Stats.report`.
       """
       def report(opts \\ []) do
         mod = Module.concat(unquote(module), Stats)
         mod.report(opts)
       end
 
+      @doc """
+      Hash the password with a randomly-generated salt.
+
+      For more details, see the documentation for `#{alg}.hash_pwd_salt`
+      and `#{alg}.Base.hash_password`.
+      """
       defdelegate hashpwsalt(password, opts \\ []), to: module, as: :hash_pwd_salt
 
+      @doc """
+      Check the password by comparing it with the stored hash.
+
+      For more details, see the documentation for `#{alg}.verify_pass`.
+      """
       defdelegate checkpw(password, hash), to: module, as: :verify_pass
 
+      @doc """
+      Run a dummy check, which always returns false, to make user enumeration
+      more difficult.
+
+      For more details, see the documentation for `#{alg}.no_user_verify`.
+      """
       defdelegate dummy_checkpw(opts \\ []), to: module, as: :no_user_verify
+
+      defp get_hash(%{password_hash: hash}), do: {:ok, hash}
+      defp get_hash(%{encoded_password: hash}), do: {:ok, hash}
+      defp get_hash(_), do: {:error, "no password hash found in the user struct"}
     end
   end
 end

@@ -4,9 +4,9 @@
 
 * Enhancements
   * Added support for Argon2 (as an optional dependency -- argon2_elixir)
-  * Added higher-level helper functions to the main Comeonin module
-    * These functions work with maps and should reduce code use when adding password hashes / checking passwords
-  * Improved the statistics function in the main Comeonin module -- `report`
+  * Added higher-level helper functions to each algorithm's module
+    * These functions accept / return maps and should reduce code use when adding password hashes / checking passwords
+  * Improved the statistics function in each module -- `report`
 * Changes
   * Made all the hashing algorithms optional dependencies
   * Moved the configuration to the separate dependency libraries

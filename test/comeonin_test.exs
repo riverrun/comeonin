@@ -23,7 +23,7 @@ defmodule ComeoninTest do
     hash_check("Я❤três☕ où☔", wrong_list)
   end
 
-  test "check password by using password hash in user map" do
+  test "check password using check_pass, which uses the user map as input" do
     wrong_list = ["บดสคสััีวร", "สดรบัีสัคว", "สวดัรคบัสี", "ดรสสีวคบัั", "วรคดสัสีับ", ""]
     check_pass_check("สวัสดีครับ", wrong_list)
   end
@@ -46,6 +46,20 @@ defmodule ComeoninTest do
     assert String.starts_with?(hash, "$2b$10$")
     hash = Comeonin.Pbkdf2.hashpwsalt("", rounds: 200, digest: :sha256)
     assert String.starts_with?(hash, "$pbkdf2-sha256$200$")
+  end
+
+  test "add_hash and check_pass" do
+    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
+      assert {:ok, _} = crypto.add_hash("password") |> crypto.check_pass("password")
+      assert {:error, "invalid password"} = crypto.add_hash("pass") |> crypto.check_pass("password")
+    end
+  end
+
+  test "add_encoded and check_pass" do
+    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
+      assert {:ok, _} = crypto.add_encoded("password") |> crypto.check_pass("password")
+      assert {:error, "invalid password"} = crypto.add_encoded("pass") |> crypto.check_pass("password")
+    end
   end
 
 end
