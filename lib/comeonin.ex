@@ -19,6 +19,11 @@ defmodule Comeonin do
     * bcrypt - [bcrypt_elixir](https://github.com/riverrun/bcrypt_elixir)
     * pbkdf2 - [pbkdf2_elixir](https://github.com/riverrun/pbkdf2_elixir)
 
+  If you choose argon2 or bcrypt, you will need to have a C compiler
+  installed. Argon2 also requires dirty scheduler support, which is
+  provided by default in Erlang 20. You do not need to have a C compiler
+  installed to use pbkdf2.
+
   Then add `comeonin` and the library you choose to the `deps` section
   of your `mix.exs` file, as in the following example.
 
@@ -31,8 +36,7 @@ defmodule Comeonin do
 
   ## Use
 
-  Each module offers the following six functions (the first two are new
-  to version 4):
+  Each module offers the following functions (the first two are new to version 4):
 
     * add_hash - hash a password and return it in a map with the password set to nil
     * check_pass - check a password by comparing it with the stored hash, which is in a map
@@ -46,8 +50,8 @@ defmodule Comeonin do
 
   ## Choosing an algorithm
 
-  The algorithms Argon2, Bcrypt and Pbkdf2 are all very strong password hashing
-  functions.
+  The algorithms Argon2, Bcrypt and Pbkdf2 are currently considered to
+  be the strongest password hashing functions.
 
   Argon2 is a lot newer, and this can be considered to be both an advantage
   and a disadvantage. On the one hand, Argon2 benefits from more recent

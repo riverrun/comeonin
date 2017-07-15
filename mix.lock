@@ -3,4 +3,4 @@
   "earmark": {:hex, :earmark, "1.2.2", "f718159d6b65068e8daeef709ccddae5f7fdc770707d82e7d126f584cd925b74", [:mix], []},
   "elixir_make": {:hex, :elixir_make, "0.4.0", "992f38fabe705bb45821a728f20914c554b276838433349d4f2341f7a687cddf", [:mix], []},
   "ex_doc": {:hex, :ex_doc, "0.16.2", "3b3e210ebcd85a7c76b4e73f85c5640c011d2a0b2f06dcdf5acdb2ae904e5084", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, optional: false]}]},
-  "pbkdf2_elixir": {:hex, :pbkdf2_elixir, "0.11.0", "e0f16d12f9ab650eaaa0172c6d65736e59b10188eb037c491c11fecfbc781c37", [:mix], []}}
+  "pbkdf2_elixir": {:hex, :pbkdf2_elixir, "0.11.1", "960e96f2063c794131e6729a32b0a3e6e43f6e2ff53ce399c935ec886e598775", [:mix], []}}

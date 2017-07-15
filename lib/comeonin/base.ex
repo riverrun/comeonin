@@ -9,8 +9,16 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       """
 
       @doc """
-      Hash a password and return it in a map, with the key set to `:password_hash`
-      and the password set to nil.
+      Hash a password and return it in a map, with the password set to nil.
+
+      ## Options
+
+      This function uses `#{alg}.hash_pwd_salt` as the hashing function.
+      In addition to the options for hash_pwd_salt, there is also the following
+      option:
+
+        * hash_key - the name of the key for the password hash
+          * the default is :password_hash
 
       ## Examples
 
@@ -24,17 +32,8 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
 
       """
       def add_hash(password, opts \\ []) do
-        %{password_hash: unquote(module).hash_pwd_salt(password, opts), password: nil}
-      end
-
-      @doc """
-      Hash a password and return it in a map, with the key set to `:encoded_password`
-      and the password set to nil.
-
-      See the example for `add_hash`.
-      """
-      def add_encoded(password, opts \\ []) do
-        %{encoded_password: unquote(module).hash_pwd_salt(password, opts), password: nil}
+        hash_key = opts[:hash_key] || :password_hash
+        %{hash_key => unquote(module).hash_pwd_salt(password, opts), :password => nil}
       end
 
       @doc """
@@ -111,7 +110,7 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       defdelegate dummy_checkpw(opts \\ []), to: module, as: :no_user_verify
 
       defp get_hash(%{password_hash: hash}), do: {:ok, hash}
-      defp get_hash(%{encoded_password: hash}), do: {:ok, hash}
+      defp get_hash(%{encrypted_password: hash}), do: {:ok, hash}
       defp get_hash(_), do: {:error, "no password hash found in the user struct"}
     end
   end

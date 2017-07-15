@@ -3,6 +3,8 @@ defmodule ComeoninTest do
 
   import ComeoninTestHelper
 
+  @algs [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2]
+
   test "hashing and checking passwords" do
     wrong_list = ["aged2h$ru", "2dau$ehgr", "rg$deh2au", "2edrah$gu", "$agedhur2", ""]
     hash_check("hard2guess", wrong_list)
@@ -34,7 +36,7 @@ defmodule ComeoninTest do
   end
 
   test "user obfuscation function always returns false" do
-    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
+    for crypto <- @algs do
       assert crypto.dummy_checkpw() == false
     end
   end
@@ -49,16 +51,20 @@ defmodule ComeoninTest do
   end
 
   test "add_hash and check_pass" do
-    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
-      assert {:ok, _} = crypto.add_hash("password") |> crypto.check_pass("password")
+    for crypto <- @algs do
+      assert {:ok, user} = crypto.add_hash("password") |> crypto.check_pass("password")
       assert {:error, "invalid password"} = crypto.add_hash("pass") |> crypto.check_pass("password")
+      assert Map.has_key?(user, :password_hash)
     end
   end
 
-  test "add_encoded and check_pass" do
-    for crypto <- [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2] do
-      assert {:ok, _} = crypto.add_encoded("password") |> crypto.check_pass("password")
-      assert {:error, "invalid password"} = crypto.add_encoded("pass") |> crypto.check_pass("password")
+  test "add_hash with a custom hash_key and check_pass" do
+    for crypto <- @algs do
+      assert {:ok, user} = crypto.add_hash("password", hash_key: :encrypted_password)
+                           |> crypto.check_pass("password")
+      assert {:error, "invalid password"} = crypto.add_hash("pass", hash_key: :encrypted_password)
+                                            |> crypto.check_pass("password")
+      assert Map.has_key?(user, :encrypted_password)
     end
   end
 
