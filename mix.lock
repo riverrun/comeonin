@@ -1,6 +1,6 @@
-%{"comeonin_i18n": {:hex, :comeonin_i18n, "0.1.0"},
-  "dialyxir": {:hex, :dialyxir, "0.5.0", "5bc543f9c28ecd51b99cc1a685a3c2a1a93216990347f259406a910cf048d1d7", [:mix], []},
+%{"argon2_elixir": {:hex, :argon2_elixir, "1.2.0", "2474790ad4eb165032d09fdbe5ab89be852a39e7b20abdaaab3d1ea2f85f19e2", [:make, :mix], [{:elixir_make, "~> 0.4", [hex: :elixir_make, optional: false]}]},
+  "bcrypt_elixir": {:hex, :bcrypt_elixir, "0.11.0", "1df7637a5b0eaadcfb16561b1d6d36344c669b6b6c7fe318b26a53325ffe6090", [:make, :mix], [{:elixir_make, "~> 0.4", [hex: :elixir_make, optional: false]}]},
   "earmark": {:hex, :earmark, "1.2.2", "f718159d6b65068e8daeef709ccddae5f7fdc770707d82e7d126f584cd925b74", [:mix], []},
   "elixir_make": {:hex, :elixir_make, "0.4.0", "992f38fabe705bb45821a728f20914c554b276838433349d4f2341f7a687cddf", [:mix], []},
   "ex_doc": {:hex, :ex_doc, "0.16.2", "3b3e210ebcd85a7c76b4e73f85c5640c011d2a0b2f06dcdf5acdb2ae904e5084", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, optional: false]}]},
-  "gettext": {:hex, :gettext, "0.7.0"}}
+  "pbkdf2_elixir": {:hex, :pbkdf2_elixir, "0.11.1", "960e96f2063c794131e6729a32b0a3e6e43f6e2ff53ce399c935ec886e598775", [:mix], []}}
