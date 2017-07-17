@@ -6,33 +6,8 @@ defmodule Comeonin do
   It also provides extensive documentation to help
   developers keep their apps secure.
 
-  Comeonin supports argon2, bcrypt and pbkdf2 (sha512 and sha256).
+  Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
   These are all supported as optional dependencies.
-
-  ## Installation
-
-  First, you need to decide which algorithm to use (see the
-  `Choosing an algorithm` section for more information about
-  each algorithm):
-
-    * argon2 - [argon2_elixir](https://github.com/riverrun/argon2_elixir)
-    * bcrypt - [bcrypt_elixir](https://github.com/riverrun/bcrypt_elixir)
-    * pbkdf2 - [pbkdf2_elixir](https://github.com/riverrun/pbkdf2_elixir)
-
-  If you choose argon2 or bcrypt, you will need to have a C compiler
-  installed. Argon2 also requires dirty scheduler support, which is
-  provided by default in Erlang 20. You do not need to have a C compiler
-  installed to use pbkdf2.
-
-  Then add `comeonin` and the library you choose to the `deps` section
-  of your `mix.exs` file, as in the following example.
-
-      defp deps do
-        [
-          {:comeonin, "~> 4.0"},
-          {:argon2_elixir, "~> 1.2"},
-        ]
-      end
 
   ## Use
 
@@ -50,7 +25,7 @@ defmodule Comeonin do
 
   ## Choosing an algorithm
 
-  The algorithms Argon2, Bcrypt and Pbkdf2 are currently considered to
+  The algorithms Argon2, Bcrypt and Pbkdf2 are generally considered to
   be the strongest password hashing functions.
 
   Argon2 is a lot newer, and this can be considered to be both an advantage
