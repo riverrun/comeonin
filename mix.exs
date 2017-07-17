@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "4.0.0"
+  @version "4.0.0-rc.0"
 
   @description """
   Password hashing library for Elixir.
@@ -11,7 +11,7 @@ defmodule Comeonin.Mixfile do
     [
       app: :comeonin,
       version: @version,
-      elixir: "~> 1.4.5 or ~> 1.5",
+      elixir: "~> 1.4",
       name: "Comeonin",
       description: @description,
       package: package(),

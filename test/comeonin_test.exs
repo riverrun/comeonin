@@ -1,6 +1,7 @@
 defmodule ComeoninTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureIO
   import ComeoninTestHelper
 
   @algs [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2]
@@ -66,6 +67,27 @@ defmodule ComeoninTest do
                                             |> crypto.check_pass("password")
       assert Map.has_key?(user, :encrypted_password)
     end
+  end
+
+  test "print stats report" do
+    for crypto <- @algs do
+      report = capture_io(fn -> crypto.report() end)
+      assert report =~ "Verification OK"
+    end
+  end
+
+  test "print stats report with options" do
+    report = capture_io(fn -> Comeonin.Pbkdf2.report([digest: :sha256]) end)
+    assert report =~ "Digest:\t\tpbkdf2-sha256\n"
+    assert report =~ "Digest length:\t32\n"
+    assert report =~ "Verification OK"
+    report = capture_io(fn -> Comeonin.Argon2.report([t_cost: 8, m_cost: 18]) end)
+    assert report =~ "Iterations:\t8\n"
+    assert report =~ "Memory:\t\t256 MiB\n"
+    assert report =~ "Verification OK"
+    report = capture_io(fn -> Comeonin.Bcrypt.report(log_rounds: 10) end)
+    assert report =~ "Hash:\t\t$2b$10$"
+    assert report =~ "Verification OK"
   end
 
 end
