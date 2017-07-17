@@ -18,13 +18,9 @@ Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
     * Clear instructions are given on how to use Comeonin.
     * Several recommendations are also given to help developers keep their apps secure.
 
-## Installation
+## Installation and Use
 
-See the wiki.
-
-## Usage
-
-See the wiki.
+See the [Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for details.
 
 ### Documentation
 
