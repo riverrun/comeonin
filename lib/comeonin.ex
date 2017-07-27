@@ -50,17 +50,18 @@ defmodule Comeonin do
 
   ### Bcrypt
 
-  Bcrypt is a key derivation function for passwords designed by Niels Provos
-  and David Mazières. Bcrypt is an adaptive function, which means that it can
-  be configured to remain slow and resistant to brute-force attacks even as
-  computational power increases.
+  Bcrypt is a well-tested password-based key derivation function designed
+  by Niels Provos and David Mazières. Bcrypt is an adaptive function, which
+  means that it can be configured to remain slow and resistant to brute-force
+  attacks even as computational power increases.
 
   ### Pbkdf2
 
-  Pbkdf2 is a password-based key derivation function
+  Pbkdf2 is a well-tested password-based key derivation function
   that uses a password, a variable-length salt and an iteration
   count and applies a pseudorandom function to these to
-  produce a key.
+  produce a key. Like Bcrypt, it can be configured to remain slow
+  as computational power increases.
 
   The original implementation used SHA-1 as the pseudorandom function,
   but this version uses HMAC-SHA-512, the default, or HMAC-SHA-256.

@@ -2,7 +2,8 @@
 
 Password hashing library for Elixir.
 
-This library is intended to make it very straightforward for developers to check users' passwords in as secure a manner as possible.
+This library is intended to make it very straightforward for developers to check users'
+passwords in as secure a manner as possible.
 
 Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
