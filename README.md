@@ -21,20 +21,19 @@ Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
 ## Installation and Use
 
-First, you need to decide which algorithm to use (see the
-`Choosing an algorithm` section for more information about
-each algorithm):
+First, you need to decide which algorithm to use (see
+[Choosing an algorithm](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-algorithm)
+for more information):
 
     * Argon2 - [argon2_elixir](https://github.com/riverrun/argon2_elixir)
     * Bcrypt - [bcrypt_elixir](https://github.com/riverrun/bcrypt_elixir)
     * Pbkdf2 - [pbkdf2_elixir](https://github.com/riverrun/pbkdf2_elixir)
 
-If you choose Argon2 or Bcrypt, you will need to have a C compiler
-installed. Argon2 also requires dirty scheduler support, which is
-provided by default in Erlang 20. You do not need to have a C compiler
-installed to use Pbkdf2.
+If you choose Argon2 or Bcrypt, you will need to have a C compiler installed.
+Argon2 also requires dirty scheduler support, which is provided by default
+in Erlang 20. You do not need to have a C compiler installed to use Pbkdf2.
 
-Then add `comeonin` and the library you choose to the `deps` section
+Then add `comeonin` and the library (algorithm) you choose to the `deps` section
 of your `mix.exs` file, as in the following example.
 
       defp deps do
@@ -44,7 +43,9 @@ of your `mix.exs` file, as in the following example.
         ]
       end
 
-For more information see the [Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for details.
+For more information about how to use Comeonin, see the
+[Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for details.
+The wiki also offers useful information about password hashing research.
 
 ### Documentation
 
