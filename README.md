@@ -7,6 +7,16 @@ passwords in as secure a manner as possible.
 
 Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
+## Changes in version 4
+
+There have been a few changes in version 4. When upgrading, you will
+need to make the following changes:
+
+* Add the algorithm you want to use - Argon2, Bcrypt or Pbkdf2 - to
+the `deps` in your mix.exs file (see 2 in Installation and Use).
+* Change any entries in the config to now use the dependency
+(see 3 in Installation and Use).
+
 ## Features
 
 * Comeonin supports the most secure, well-tested, and up-to-date password hashing schemes.
@@ -19,9 +29,9 @@ Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
     * Clear instructions are given on how to use Comeonin.
     * Several recommendations are also given to help developers keep their apps secure.
 
-## Installation and Use
+## Installation
 
-First, you need to decide which algorithm to use (see
+1. Decide which algorithm to use (see
 [Choosing an algorithm](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-algorithm)
 for more information):
 
@@ -33,19 +43,49 @@ If you choose Argon2 or Bcrypt, you will need to have a C compiler installed.
 Argon2 also requires dirty scheduler support, which is provided by default
 in Erlang 20. You do not need to have a C compiler installed to use Pbkdf2.
 
-Then add `comeonin` and the library (algorithm) you choose to the `deps` section
-of your `mix.exs` file, as in the following example.
+2. Add `comeonin` and the library (algorithm) you choose to the `deps` section
+of your mix.exs file, as in the following example.
 
-      defp deps do
-        [
-          {:comeonin, "~> 4.0"},
-          {:bcrypt_elixir, "~> 0.12.0"},
-        ]
-      end
+```elixir
+defp deps do
+[
+  {:comeonin, "~> 4.0"},
+  {:bcrypt_elixir, "~> 0.12.0"},
+]
+end
+```
 
-For more information about how to use Comeonin, see the
-[Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for details.
-The wiki also offers useful information about password hashing research.
+3. Optional: during tests (and tests only), you may want to reduce the number of rounds
+so it does not slow down your test suite. If you have a config/test.exs, you should
+add (depending on which algorithm you are using):
+
+```elixir
+config :argon2_elixir,
+  t_cost: 2,
+  m_cost: 12
+config :bcrypt_elixir, :log_rounds, 4
+config :pbkdf2_elixir, :rounds, 1
+```
+
+NB: do not use the above values in production.
+
+If you have any problems building Comeonin, see the
+[Comeonin wiki](https://github.com/riverrun/comeonin/wiki/Requirements).
+
+## Use
+
+Each module (Comeonin.Argon2, Comeonin.Bcrypt and Comeonin.Pbkdf2) offers the
+following functions (the first two are new to version 4):
+
+    * add_hash - hash a password and return it in a map with the password set to nil
+    * check_pass - check a password by comparing it with the stored hash, which is in a map
+    * hashpwsalt - hash a password, using a randomly generated salt
+    * checkpw - check a password by comparing it with the stored hash
+    * dummy_checkpw - perform a dummy check to make user enumeration more difficult
+    * report - print out a report of the hashing algorithm, to help with configuration
+
+For a lower-level API, you could also use the hashing dependency directly,
+without installing Comeonin.
 
 ### Documentation
 
