@@ -54,7 +54,7 @@ of your mix.exs file, as in the following example.
 defp deps do
 [
   {:comeonin, "~> 4.0"},
-  {:bcrypt_elixir, "~> 0.12.0"},
+  {:argon2_elixir, "~> 1.2"},
 ]
 end
 ```
