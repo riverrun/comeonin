@@ -40,8 +40,12 @@ for more information):
     * Pbkdf2 - [pbkdf2_elixir](https://github.com/riverrun/pbkdf2_elixir)
 
 If you choose Argon2 or Bcrypt, you will need to have a C compiler installed.
-Argon2 also requires dirty scheduler support, which is provided by default
-in Erlang 20. You do not need to have a C compiler installed to use Pbkdf2.
+
+Argon2 and Bcrypt version 1.0 also require dirty scheduler support, which
+is provided by default in Erlang 20. Bcrypt version 0.12 can be used with
+older versions of Erlang.
+
+You do not need to have a C compiler installed to use Pbkdf2.
 
 2. Add `comeonin` and the library (algorithm) you choose to the `deps` section
 of your mix.exs file, as in the following example.
