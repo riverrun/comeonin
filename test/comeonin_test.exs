@@ -1,5 +1,5 @@
 defmodule ComeoninTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
 
   import ExUnit.CaptureIO
   import ComeoninTestHelper
@@ -66,6 +66,24 @@ defmodule ComeoninTest do
       assert {:error, "invalid password"} = crypto.add_hash("pass", hash_key: :encrypted_password)
                                             |> crypto.check_pass("password")
       assert Map.has_key?(user, :encrypted_password)
+    end
+  end
+
+  test "check_pass with invalid hash_key" do
+    for crypto <- @algs do
+      {:error, message} = crypto.add_hash("password", hash_key: :unconventional_name)
+                          |> crypto.check_pass("password")
+      assert message =~ "no password hash found"
+    end
+  end
+
+  test "check_pass with password that is too long or not a string" do
+    password = String.duplicate("password", 128) <> "1"
+    for crypto <- @algs do
+      assert {:error, message} = crypto.add_hash("pass") |> crypto.check_pass(nil)
+      assert message =~ "password is too long or it is not a string"
+      assert {:error, message} = crypto.add_hash("pass") |> crypto.check_pass(password)
+      assert message =~ "password is too long"
     end
   end
 

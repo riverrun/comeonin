@@ -23,9 +23,58 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
         * hash_key - the name of the key for the password hash
           * the default is :password_hash
 
-      ## Examples
+      ## Example with Ecto
 
-      In the following example, this function is used with an Ecto changeset:
+      In this example, the `create_changeset` function below shows how a new
+      user can be created:
+
+          def create_changeset(%User{} = user, attrs) do
+            user
+            |> changeset(attrs)
+            |> validate_password(:password)
+            |> put_pass_hash()
+          end
+
+      The `validating the password` section will then look at writing
+      a custom validator (validate_password), and the `adding the password hash`
+      section will cover the use of the `add_hash` function (in put_pass_hash).
+
+      ### Validating the password
+
+      This section can be skipped if you are using a frontend solution
+      to validating the password.
+
+      The following is a basic example of the `validate_password`
+      function:
+
+          def validate_password(changeset, field, options \\ []) do
+            validate_change(changeset, field, fn _, password ->
+              case valid_password?(password) do
+                {:ok, _} -> []
+                {:error, msg} -> [{field, options[:message] || msg}]
+              end
+            end)
+          end
+
+      In the example below, the `valid_password?` function checks that
+      the password is at least 8 characters long and that it is less
+      than 1024 bytes long (in order to combat denial-of-service attacks).
+
+          defp valid_password?(password) when byte_size(password) in 8..1024 do
+            {:ok, password}
+          end
+          defp valid_password?(_), do: {:error, "The password is too short"}
+
+      Alternatively, you could use a dedicated password strength checker,
+      such as `not_qwerty123`.
+
+      For more information about password strength rules, see the latest
+      [NIST guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html).
+
+      ### Adding the password hash
+
+      In the following example, `add_hash` is used in the put_pass_hash
+      function:
 
           defp put_pass_hash(%Ecto.Changeset{valid?: true, changes:
               %{password: password}} = changeset) do
@@ -72,11 +121,14 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
         unless opts[:hide_user] == false, do: unquote(module).no_user_verify(opts)
         {:error, "invalid user-identifier"}
       end
-      def check_pass(user, password, _) do
+      def check_pass(user, password, _) when byte_size(password) < 1025 do
         with {:ok, hash} <- get_hash(user) do
           unquote(module).verify_pass(password, hash) and
           {:ok, user} || {:error, "invalid password"}
         end
+      end
+      def check_pass(_, _, _) do
+        {:error, "password is too long or it is not a string"}
       end
 
       @doc """
