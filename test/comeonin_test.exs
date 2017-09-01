@@ -77,13 +77,10 @@ defmodule ComeoninTest do
     end
   end
 
-  test "check_pass with password that is too long or not a string" do
-    password = String.duplicate("password", 128) <> "1"
+  test "check_pass with password that is not a string" do
     for crypto <- @algs do
       assert {:error, message} = crypto.add_hash("pass") |> crypto.check_pass(nil)
-      assert message =~ "password is too long or it is not a string"
-      assert {:error, message} = crypto.add_hash("pass") |> crypto.check_pass(password)
-      assert message =~ "password is too long"
+      assert message =~ "password is not a string"
     end
   end
 

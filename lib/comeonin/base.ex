@@ -57,10 +57,9 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
           end
 
       In the example below, the `valid_password?` function checks that
-      the password is at least 8 characters long and that it is less
-      than 1024 bytes long (in order to combat denial-of-service attacks).
+      the password is at least 8 characters long.
 
-          defp valid_password?(password) when byte_size(password) in 8..1024 do
+          defp valid_password?(password) when byte_size(password) > 7 do
             {:ok, password}
           end
           defp valid_password?(_), do: {:error, "The password is too short"}
@@ -121,14 +120,14 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
         unless opts[:hide_user] == false, do: unquote(module).no_user_verify(opts)
         {:error, "invalid user-identifier"}
       end
-      def check_pass(user, password, _) when byte_size(password) < 1025 do
+      def check_pass(user, password, _) when is_binary(password) do
         with {:ok, hash} <- get_hash(user) do
           unquote(module).verify_pass(password, hash) and
           {:ok, user} || {:error, "invalid password"}
         end
       end
       def check_pass(_, _, _) do
-        {:error, "password is too long or it is not a string"}
+        {:error, "password is not a string"}
       end
 
       @doc """
