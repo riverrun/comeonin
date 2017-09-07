@@ -7,16 +7,6 @@ passwords in as secure a manner as possible.
 
 Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
-## Changes in version 4
-
-There have been a few changes in version 4. When upgrading, you will
-need to make the following changes:
-
-* Add the algorithm you want to use - Argon2, Bcrypt or Pbkdf2 - to
-the `deps` in your mix.exs file (see 2 in Installation and Use).
-* Change any entries in the config to now use the dependency
-(see 3 in Installation and Use).
-
 ## Features
 
 * Comeonin supports the most secure, well-tested, and up-to-date password hashing schemes.
@@ -27,7 +17,18 @@ the `deps` in your mix.exs file (see 2 in Installation and Use).
     * Each function has sensible, secure defaults.
 * It provides excellent documentation.
     * Clear instructions are given on how to use Comeonin.
-    * Several recommendations are also given to help developers keep their apps secure.
+    * Relevant research is summarized in the documentation and [wiki](https://github.com/riverrun/comeonin/wiki).
+        * References are also provided in [this section](https://github.com/riverrun/comeonin/wiki/References) of the wiki.
+
+## Changes in version 4
+
+There have been a few changes in version 4. When upgrading, you will
+need to make the following changes:
+
+* Add the algorithm you want to use - Argon2, Bcrypt or Pbkdf2 - to
+the `deps` in your mix.exs file (see 2 in `Installation` below).
+* Change any entries in the config to now use the dependency
+(see 3 in `Installation` below).
 
 ## Installation
 

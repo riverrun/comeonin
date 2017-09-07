@@ -65,7 +65,7 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
           defp valid_password?(_), do: {:error, "The password is too short"}
 
       Alternatively, you could use a dedicated password strength checker,
-      such as `not_qwerty123`.
+      such as [not_qwerty123](https://github.com/riverrun/not_qwerty123).
 
       For more information about password strength rules, see the latest
       [NIST guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html).
