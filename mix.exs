@@ -40,8 +40,7 @@ defmodule Comeonin.Mixfile do
     [
       maintainers: ["David Whitlock"],
       licenses: ["BSD"],
-      links: %{"GitHub" => "https://github.com/riverrun/comeonin",
-        "Docs" => "http://hexdocs.pm/comeonin"}
+      links: %{"GitHub" => "https://github.com/riverrun/comeonin"}
     ]
   end
 end
