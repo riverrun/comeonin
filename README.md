@@ -30,6 +30,9 @@ the `deps` in your mix.exs file (see 2 in `Installation` below).
 * Change any entries in the config to now use the dependency
 (see 3 in `Installation` below).
 
+For more information about these changes, see
+[this page](https://riverrun.github.io/projects/comeonin/2017/09/03/comeonin-v4.html).
+
 ## Installation
 
 1. Decide which algorithm to use (see
