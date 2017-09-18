@@ -22,8 +22,17 @@ Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 
 ## Changes in version 4
 
-There have been a few changes in version 4. When upgrading, you will
-need to make the following changes:
+There were several changes in version 4. These are summarized below:
+
+* Added support for Argon2 (as an **optional** dependency -- argon2_elixir)
+* Added higher-level helper functions -- `add_hash` and `check_pass`
+* Improved the statistics function in each module -- `report`
+* Made all the hashing algorithms **optional** dependencies
+* Moved the configuration to the separate dependency libraries
+* Removed support for one-time passwords
+    * This is now a separate library - [OneTimePassEcto]("https://github.com/riverrun/one_time_pass_ecto")
+
+When upgrading to version 4, you will need to make the following changes:
 
 * Add the algorithm you want to use - Argon2, Bcrypt or Pbkdf2 - to
 the `deps` in your mix.exs file (see 2 in `Installation` below).
