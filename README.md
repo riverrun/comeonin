@@ -104,6 +104,10 @@ following functions (the first two are new to version 4):
 For a lower-level API, you could also use the hashing dependency directly,
 without installing Comeonin.
 
+## Deployment
+
+See the [deployment guide](https://github.com/riverrun/comeonin/wiki/Deployment).
+
 ### Documentation
 
 http://hexdocs.pm/comeonin
