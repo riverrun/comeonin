@@ -12,6 +12,7 @@ defmodule Comeonin.Mixfile do
       app: :comeonin,
       version: @version,
       elixir: "~> 1.4",
+      start_permanent: Mix.env == :prod,
       name: "Comeonin",
       description: @description,
       package: package(),
@@ -31,8 +32,7 @@ defmodule Comeonin.Mixfile do
       {:argon2_elixir, "~> 1.2", optional: true},
       {:bcrypt_elixir, "~> 0.12.1 or ~> 1.0", optional: true},
       {:pbkdf2_elixir, "~> 0.12", optional: true},
-      {:earmark, "~> 1.2", only: :dev},
-      {:ex_doc,  "~> 0.16", only: :dev}
+      {:ex_doc, "~> 0.18", only: :dev, runtime: false}
     ]
   end
 

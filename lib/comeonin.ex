@@ -3,8 +3,8 @@ defmodule Comeonin do
   Comeonin is a password hashing library that aims to make the
   secure validation of passwords as straightforward as possible.
 
-  It also provides extensive documentation to help
-  developers keep their apps secure.
+  It also provides extensive documentation to help developers keep
+  their apps secure.
 
   Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
   These are all supported as optional dependencies.
@@ -26,7 +26,7 @@ defmodule Comeonin do
   ## Choosing an algorithm
 
   The algorithms Argon2, Bcrypt and Pbkdf2 are generally considered to
-  be the strongest password hashing functions.
+  be the strongest currently available password hashing functions.
 
   Argon2 is a lot newer, and this can be considered to be both an advantage
   and a disadvantage. On the one hand, Argon2 benefits from more recent

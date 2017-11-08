@@ -6,7 +6,7 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       Password hashing module using the #{alg} algorithm.
 
       For more information about the #{alg} algorithm, see the `Choosing
-      an algorithm` section in the Comeonin docs.
+      an algorithm` section in the Comeonin documentation.
 
       For a lower-level API, see `#{alg}.Base`.
       """
