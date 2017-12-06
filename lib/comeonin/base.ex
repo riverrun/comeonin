@@ -96,11 +96,11 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
 
       After finding the password hash in the user struct, the password
       is checked by comparing it with the hash. Then the function returns
-      {:ok, user} or {:error, message}. Note that the error message is
+      `{:ok, user}` or `{:error, message}`. Note that the error message is
       meant to be used for logging purposes only; it should not be passed
       on to the end user.
 
-      If the first argument is nil, meaning that there is no user with that
+      If the first argument is `nil`, meaning that there is no user with that
       name, a dummy verify function is run to make user enumeration, using
       timing information, more difficult. This can be disabled by adding
       `hide_user: false` to the opts.
