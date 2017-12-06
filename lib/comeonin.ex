@@ -13,12 +13,12 @@ defmodule Comeonin do
 
   Each module offers the following functions (the first two are new to version 4):
 
-    * add_hash - hash a password and return it in a map with the password set to nil
-    * check_pass - check a password by comparing it with the stored hash, which is in a map
-    * hashpwsalt - hash a password, using a randomly generated salt
-    * checkpw - check a password by comparing it with the stored hash
-    * dummy_checkpw - perform a dummy check to make user enumeration more difficult
-    * report - print out a report of the hashing algorithm, to help with configuration
+    * `:add_hash` - hash a password and return it in a map with the password set to nil
+    * `:check_pass` - check a password by comparing it with the stored hash, which is in a map
+    * `:hashpwsalt` - hash a password, using a randomly generated salt
+    * `:checkpw` - check a password by comparing it with the stored hash
+    * `:dummy_checkpw` - perform a dummy check to make user enumeration more difficult
+    * `:report` - print out a report of the hashing algorithm, to help with configuration
 
   For a lower-level API, you could also use the hashing dependency directly,
   without installing Comeonin.

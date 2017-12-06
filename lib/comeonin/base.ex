@@ -20,8 +20,8 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       In addition to the options for hash_pwd_salt, there is also the following
       option:
 
-        * hash_key - the name of the key for the password hash
-          * the default is :password_hash
+        * `:hash_key` - the name of the key for the password hash
+          * the default is `:password_hash`
 
       ## Example with Ecto
 
