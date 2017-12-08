@@ -12,7 +12,7 @@ defmodule Comeonin.Mixfile do
       app: :comeonin,
       version: @version,
       elixir: "~> 1.4",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       name: "Comeonin",
       description: @description,
       package: package(),

@@ -17,7 +17,13 @@ defmodule ComeoninTest do
   end
 
   test "hashing and checking passwords with non-ascii characters" do
-    wrong_list = ["и Скл;лекьоток к олсомзь", "кеокок  зС омлслтььлок;и", "е  о оиькльлтСо;осккклзм", ""]
+    wrong_list = [
+      "и Скл;лекьоток к олсомзь",
+      "кеокок  зС омлслтььлок;и",
+      "е  о оиькльлтСо;осккклзм",
+      ""
+    ]
+
     hash_check("Сколько лет; сколько зим", wrong_list)
   end
 
@@ -54,25 +60,34 @@ defmodule ComeoninTest do
   test "add_hash and check_pass" do
     for crypto <- @algs do
       assert {:ok, user} = crypto.add_hash("password") |> crypto.check_pass("password")
-      assert {:error, "invalid password"} = crypto.add_hash("pass") |> crypto.check_pass("password")
+
+      assert {:error, "invalid password"} =
+               crypto.add_hash("pass") |> crypto.check_pass("password")
+
       assert Map.has_key?(user, :password_hash)
     end
   end
 
   test "add_hash with a custom hash_key and check_pass" do
     for crypto <- @algs do
-      assert {:ok, user} = crypto.add_hash("password", hash_key: :encrypted_password)
-                           |> crypto.check_pass("password")
-      assert {:error, "invalid password"} = crypto.add_hash("pass", hash_key: :encrypted_password)
-                                            |> crypto.check_pass("password")
+      assert {:ok, user} =
+               crypto.add_hash("password", hash_key: :encrypted_password)
+               |> crypto.check_pass("password")
+
+      assert {:error, "invalid password"} =
+               crypto.add_hash("pass", hash_key: :encrypted_password)
+               |> crypto.check_pass("password")
+
       assert Map.has_key?(user, :encrypted_password)
     end
   end
 
   test "check_pass with invalid hash_key" do
     for crypto <- @algs do
-      {:error, message} = crypto.add_hash("password", hash_key: :unconventional_name)
-                          |> crypto.check_pass("password")
+      {:error, message} =
+        crypto.add_hash("password", hash_key: :unconventional_name)
+        |> crypto.check_pass("password")
+
       assert message =~ "no password hash found"
     end
   end
@@ -92,11 +107,11 @@ defmodule ComeoninTest do
   end
 
   test "print stats report with options" do
-    report = capture_io(fn -> Comeonin.Pbkdf2.report([digest: :sha256]) end)
+    report = capture_io(fn -> Comeonin.Pbkdf2.report(digest: :sha256) end)
     assert report =~ "Digest:\t\tpbkdf2-sha256\n"
     assert report =~ "Digest length:\t32\n"
     assert report =~ "Verification OK"
-    report = capture_io(fn -> Comeonin.Argon2.report([t_cost: 8, m_cost: 18]) end)
+    report = capture_io(fn -> Comeonin.Argon2.report(t_cost: 8, m_cost: 18) end)
     assert report =~ "Iterations:\t8\n"
     assert report =~ "Memory:\t\t256 MiB\n"
     assert report =~ "Verification OK"
@@ -104,5 +119,4 @@ defmodule ComeoninTest do
     assert report =~ "Hash:\t\t$2b$10$"
     assert report =~ "Verification OK"
   end
-
 end

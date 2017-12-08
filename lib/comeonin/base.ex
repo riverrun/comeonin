@@ -1,6 +1,7 @@
 for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}] do
   if Code.ensure_loaded?(module) do
     mod = Module.concat(Comeonin, module)
+
     defmodule mod do
       @moduledoc """
       Password hashing module using the #{alg} algorithm.
@@ -116,16 +117,19 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
 
       """
       def check_pass(user, password, opts \\ [])
+
       def check_pass(nil, _password, opts) do
         unless opts[:hide_user] == false, do: unquote(module).no_user_verify(opts)
         {:error, "invalid user-identifier"}
       end
+
       def check_pass(user, password, _) when is_binary(password) do
         with {:ok, hash} <- get_hash(user) do
-          unquote(module).verify_pass(password, hash) and
-          {:ok, user} || {:error, "invalid password"}
+          (unquote(module).verify_pass(password, hash) and {:ok, user}) ||
+            {:error, "invalid password"}
         end
       end
+
       def check_pass(_, _, _) do
         {:error, "password is not a string"}
       end

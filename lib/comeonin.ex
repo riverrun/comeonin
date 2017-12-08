@@ -79,5 +79,4 @@ defmodule Comeonin do
   Visit our [wiki](https://github.com/riverrun/comeonin/wiki)
   for links to further information about these and related issues.
   """
-
 end
