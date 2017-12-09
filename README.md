@@ -18,7 +18,7 @@ Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
 * It provides excellent documentation.
   * Clear instructions are given on how to use Comeonin.
   * Relevant research is summarized in the documentation and [wiki](https://github.com/riverrun/comeonin/wiki).
-      * References are also provided in [this section](https://github.com/riverrun/comeonin/wiki/References) of the wiki.
+    * References are also provided in [this section](https://github.com/riverrun/comeonin/wiki/References) of the wiki.
 
 ## Changes in version 4
 
@@ -80,11 +80,13 @@ add (depending on which algorithm you are using):
 config :argon2_elixir,
   t_cost: 2,
   m_cost: 12
-config :bcrypt_elixir, :log_rounds, 4
-config :pbkdf2_elixir, :rounds, 1
+config :bcrypt_elixir, log_rounds: 4
+config :pbkdf2_elixir, rounds: 1
 ```
 
 NB: do not use the above values in production.
+
+### Problems / build errors
 
 If you have any problems building Comeonin, see the
 [Comeonin wiki](https://github.com/riverrun/comeonin/wiki/Requirements).
@@ -94,12 +96,12 @@ If you have any problems building Comeonin, see the
 Each module (Comeonin.Argon2, Comeonin.Bcrypt and Comeonin.Pbkdf2) offers the
 following functions (the first two are new to version 4):
 
-* add_hash - hash a password and return it in a map with the password set to nil
-* check_pass - check a password by comparing it with the stored hash, which is in a map
-* hashpwsalt - hash a password, using a randomly generated salt
-* checkpw - check a password by comparing it with the stored hash
-* dummy_checkpw - perform a dummy check to make user enumeration more difficult
-* report - print out a report of the hashing algorithm, to help with configuration
+* `add_hash` - hash a password and return it in a map with the password set to nil
+* `check_pass` - check a password by comparing it with the stored hash, which is in a map
+* `hashpwsalt` - hash a password, using a randomly generated salt
+* `checkpw` - check a password by comparing it with the stored hash
+* `dummy_checkpw` - perform a dummy check to make user enumeration more difficult
+* `report` - print out a report of the hashing algorithm, to help with configuration
 
 For a lower-level API, you could also use the hashing dependency directly,
 without installing Comeonin.
