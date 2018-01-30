@@ -92,19 +92,19 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       Check the password by comparing its hash with the password hash found
       in a user struct, or map.
 
-      The password hash's key needs to be either `:password_hash` or
-      `:encrypted_password`.
-
       After finding the password hash in the user struct, the password
       is checked by comparing it with the hash. Then the function returns
       `{:ok, user}` or `{:error, message}`. Note that the error message is
       meant to be used for logging purposes only; it should not be passed
       on to the end user.
 
-      If the first argument is `nil`, meaning that there is no user with that
-      name, a dummy verify function is run to make user enumeration, using
-      timing information, more difficult. This can be disabled by adding
-      `hide_user: false` to the opts.
+      ## Options
+
+        * `:hide_user` - run a dummy verify function if the user is not found
+          * see the documentation for `#{alg}.no_user_verify` for more details
+          * the default is true
+        * `:hash_key` - the name of the key for the password hash - in the user struct
+          * if you use `:password_hash` or `:encrypted_password`, you do not need to set this
 
       ## Examples
 
@@ -123,8 +123,8 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
         {:error, "invalid user-identifier"}
       end
 
-      def check_pass(user, password, _) when is_binary(password) do
-        with {:ok, hash} <- get_hash(user) do
+      def check_pass(user, password, opts) when is_binary(password) do
+        with {:ok, hash} <- get_hash(user, opts[:hash_key]) do
           (unquote(module).verify_pass(password, hash) and {:ok, user}) ||
             {:error, "invalid password"}
         end
@@ -167,9 +167,13 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       """
       defdelegate dummy_checkpw(opts \\ []), to: module, as: :no_user_verify
 
-      defp get_hash(%{password_hash: hash}), do: {:ok, hash}
-      defp get_hash(%{encrypted_password: hash}), do: {:ok, hash}
-      defp get_hash(_), do: {:error, "no password hash found in the user struct"}
+      defp get_hash(%{password_hash: hash}, _), do: {:ok, hash}
+      defp get_hash(%{encrypted_password: hash}, _), do: {:ok, hash}
+      defp get_hash(_, nil), do: {:error, "no password hash found in the user struct"}
+      defp get_hash(user, hash_key), do: Map.get(user, hash_key) |> get_hash()
+
+      defp get_hash(nil), do: {:error, "no password hash found in the user struct"}
+      defp get_hash(hash), do: {:ok, hash}
     end
   end
 end

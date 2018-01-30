@@ -82,6 +82,16 @@ defmodule ComeoninTest do
     end
   end
 
+  test "check_pass with custom hash_key" do
+    for crypto <- @algs do
+      assert {:ok, user} =
+               crypto.add_hash("password", hash_key: :custom_hash)
+               |> crypto.check_pass("password", hash_key: :custom_hash)
+
+      assert Map.has_key?(user, :custom_hash)
+    end
+  end
+
   test "check_pass with invalid hash_key" do
     for crypto <- @algs do
       {:error, message} =
