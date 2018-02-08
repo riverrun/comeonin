@@ -1,12 +1,18 @@
 # Changelog
 
+## 4.1.0
+
+* Enhancements
+  * added `hash_key` option to `check_pass`
+    * as with version 4.0, `check_pass` will use `:password_hash` / `:encrypted_password` if present
+
 ## 4.0.0
 
 * Enhancements
-  * Added support for Argon2 (as an optional dependency -- argon2_elixir)
+  * Added support for Argon2 (as an optional dependency - argon2_elixir)
   * Added higher-level helper functions to each algorithm's module
     * These functions accept / return maps and should reduce code use when adding password hashes / checking passwords
-  * Improved the statistics function in each module -- `report`
+  * Improved the statistics function in each module - `report`
 * Changes
   * Made all the hashing algorithms optional dependencies
   * Moved the configuration to the separate dependency libraries
@@ -16,7 +22,7 @@
 ## 3.2.0
 
 * Bug fixes
-  * Shortening user-supplied salts to 128 bits -- to make it compatible with other implementations
+  * Shortening user-supplied salts to 128 bits - making it compatible with other implementations
 
 ## 3.1.0
 
@@ -102,7 +108,7 @@
 
 * Enhancements
   * Added a common option to the `strong_password` check. This checks for passwords that are easy to guess, or common
-  * Improved random password generator -- added a check to ensure it is strong and set the minimum length to 8 characters
+  * Improved random password generator - added a check to ensure it is strong and set the minimum length to 8 characters
 
 ## 1.1.4 (2015-09-25)
 
