@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "4.1.0"
+  @version "4.1.1"
 
   @description """
   Password hashing library for Elixir.

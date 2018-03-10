@@ -124,9 +124,13 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       end
 
       def check_pass(user, password, opts) when is_binary(password) do
-        with {:ok, hash} <- get_hash(user, opts[:hash_key]) do
-          (unquote(module).verify_pass(password, hash) and {:ok, user}) ||
-            {:error, "invalid password"}
+        case get_hash(user, opts[:hash_key]) do
+          {:ok, hash} ->
+            (unquote(module).verify_pass(password, hash) and {:ok, user}) ||
+              {:error, "invalid password"}
+
+          _ ->
+            {:error, "no password hash found in the user struct"}
         end
       end
 
@@ -169,10 +173,10 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
 
       defp get_hash(%{password_hash: hash}, _), do: {:ok, hash}
       defp get_hash(%{encrypted_password: hash}, _), do: {:ok, hash}
-      defp get_hash(_, nil), do: {:error, "no password hash found in the user struct"}
+      defp get_hash(_, nil), do: nil
       defp get_hash(user, hash_key), do: Map.get(user, hash_key) |> get_hash()
 
-      defp get_hash(nil), do: {:error, "no password hash found in the user struct"}
+      defp get_hash(nil), do: nil
       defp get_hash(hash), do: {:ok, hash}
     end
   end

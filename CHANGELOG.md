@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.1
+
+* Changes
+  * changed `check_pass` with statement to case - in an attempt to suppress dialyzer warnings
+
 ## 4.1.0
 
 * Enhancements
