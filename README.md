@@ -66,8 +66,8 @@ of your mix.exs file, as in the following example.
 ```elixir
 defp deps do
 [
-  {:comeonin, "~> 4.0"},
-  {:argon2_elixir, "~> 1.2"},
+  {:comeonin, "~> 4.1"},
+  {:argon2_elixir, "~> 1.3"},
 ]
 end
 ```
@@ -77,9 +77,7 @@ so it does not slow down your test suite. If you have a config/test.exs, you sho
 add (depending on which algorithm you are using):
 
 ```elixir
-config :argon2_elixir,
-  t_cost: 1,
-  m_cost: 8
+config :argon2_elixir, t_cost: 2, m_cost: 8
 config :bcrypt_elixir, log_rounds: 4
 config :pbkdf2_elixir, rounds: 1
 ```
@@ -106,9 +104,26 @@ following functions (the first two are new to version 4):
 For a lower-level API, you could also use the hashing dependency directly,
 without installing Comeonin.
 
-## Deployment
+### Deployment
 
 See the [deployment guide](https://github.com/riverrun/comeonin/wiki/Deployment).
+
+### Contributing
+
+There are many ways you can contribute to the development of Comeonin, including:
+
+* reporting issues
+* improving documentation
+* sharing your experiences with others
+* [making a financial contribution](#donations)
+
+## Donations
+
+You can support the ongoing maintenance of this project by
+[making donations through Patreon](https://www.patreon.com/riverrun).
+
+Patreon, by default, will bill you on a monthly basis. If you prefer to make a one-off payment,
+see [this guide](https://support.patreon.com/hc/en-us/articles/204606215-Can-I-make-a-one-time-payment-).
 
 ### Documentation
 
