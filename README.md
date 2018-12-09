@@ -108,7 +108,7 @@ without installing Comeonin.
 
 See the [deployment guide](https://github.com/riverrun/comeonin/wiki/Deployment).
 
-### Contributing
+## Contributing
 
 There are many ways you can contribute to the development of Comeonin, including:
 
