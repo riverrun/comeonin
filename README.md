@@ -1,11 +1,11 @@
-# Comeonin [![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin) [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin) [![Join the chat at https://gitter.im/comeonin/Lobby](https://badges.gitter.im/comeonin/Lobby.svg)](https://gitter.im/comeonin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Comeonin
 
-Password hashing library for Elixir.
+[![Patreon](https://img.shields.io/badge/patreon-donate-brightgreen.svg)](https://www.patreon.com/riverrun)
+[![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
+[![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin)
 
-This library is intended to make it very straightforward for developers to check users'
-passwords in as secure a manner as possible.
-
-Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
+Comeonin is a password hashing library for Elixir. It supports Argon2,
+Bcrypt and Pbkdf2 (sha512 and sha256).
 
 ## Features
 
