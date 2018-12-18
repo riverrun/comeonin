@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "4.1.1"
+  @version "4.1.2"
 
   @description """
   Password hashing library for Elixir.
@@ -32,7 +32,7 @@ defmodule Comeonin.Mixfile do
       {:argon2_elixir, "~> 1.2", optional: true},
       {:bcrypt_elixir, "~> 0.12.1 or ~> 1.0", optional: true},
       {:pbkdf2_elixir, "~> 0.12", optional: true},
-      {:ex_doc, "~> 0.18", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
 
