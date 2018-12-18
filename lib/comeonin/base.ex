@@ -171,8 +171,8 @@ for {module, alg} <- [{Argon2, "Argon2"}, {Bcrypt, "Bcrypt"}, {Pbkdf2, "Pbkdf2"}
       """
       defdelegate dummy_checkpw(opts \\ []), to: module, as: :no_user_verify
 
-      defp get_hash(%{password_hash: hash}, _), do: {:ok, hash}
-      defp get_hash(%{encrypted_password: hash}, _), do: {:ok, hash}
+      defp get_hash(%{password_hash: hash}, nil), do: {:ok, hash}
+      defp get_hash(%{encrypted_password: hash}, nil), do: {:ok, hash}
       defp get_hash(_, nil), do: nil
       defp get_hash(user, hash_key), do: Map.get(user, hash_key) |> get_hash()
 
