@@ -1,6 +1,6 @@
 # Comeonin
 
-[![Patreon](https://img.shields.io/badge/patreon-donate-brightgreen.svg)](https://www.patreon.com/riverrun)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/alovedalongthe)
 [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 [![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin)
 [![Join the chat at https://gitter.im/comeonin/Lobby](https://badges.gitter.im/comeonin/Lobby.svg)](https://gitter.im/comeonin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -120,11 +120,8 @@ There are many ways you can contribute to the development of Comeonin, including
 
 ## Donations
 
-You can support the ongoing maintenance of this project by
-[making donations through Patreon](https://www.patreon.com/riverrun).
-
-Patreon, by default, will bill you on a monthly basis. If you prefer to make a one-off payment,
-see [this guide](https://support.patreon.com/hc/en-us/articles/204606215-Can-I-make-a-one-time-payment-).
+If you would like to buy me a cup of coffee, you can
+do so through [paypal](https://www.paypal.me/alovedalongthe)
 
 ### Documentation
 
