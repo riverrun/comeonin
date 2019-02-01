@@ -1,17 +1,14 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "4.1.2"
-
-  @description """
-  Password hashing library for Elixir.
-  """
+  @version "5.0.0"
+  @description "A specification for password hashing libraries"
 
   def project do
     [
       app: :comeonin,
       version: @version,
-      elixir: "~> 1.4",
+      elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       name: "Comeonin",
       description: @description,
@@ -29,9 +26,6 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:argon2_elixir, "~> 1.2", optional: true},
-      {:bcrypt_elixir, "~> 0.12.1 or ~> 1.0", optional: true},
-      {:pbkdf2_elixir, "~> 0.12", optional: true},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end

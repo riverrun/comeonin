@@ -1,42 +1,41 @@
 ExUnit.start()
 
-defmodule ComeoninTestHelper do
-  use ExUnit.Case
+defmodule Comeonin.TestHash do
+  use Comeonin
 
-  @algs [Comeonin.Argon2, Comeonin.Bcrypt, Comeonin.Pbkdf2]
-
-  def check_pass_check(password, wrong_list) do
-    for crypto <- @algs do
-      hash = crypto.hashpwsalt(password)
-      user = %{id: 2, name: "fred", password_hash: hash}
-      assert crypto.check_pass(user, password) == {:ok, user}
-      assert crypto.check_pass(nil, password) == {:error, "invalid user-identifier"}
-
-      for wrong <- wrong_list do
-        assert crypto.check_pass(user, wrong) == {:error, "invalid password"}
-      end
-    end
+  @impl true
+  def hash_pwd_salt(password, _opts \\ []) do
+    password
   end
 
-  def add_hash_check(password, wrong_list) do
-    for crypto <- @algs do
-      %{password_hash: hash, password: nil} = crypto.add_hash(password)
-      assert crypto.checkpw(password, hash)
+  @impl true
+  def verify_pass(password, hash) do
+    password == hash
+  end
+end
 
-      for wrong <- wrong_list do
-        refute crypto.checkpw(wrong, hash)
-      end
-    end
+defmodule Comeonin.OverrideHash do
+  use Comeonin
+
+  @impl true
+  def add_hash(password, opts) do
+    hash_key = opts[:hash_key] || :password_hash
+    %{hash_key => hash_pwd_salt(password, opts), :password => "FILTERED"}
   end
 
-  def hash_check(password, wrong_list) do
-    for crypto <- @algs do
-      hash = crypto.hashpwsalt(password)
-      assert crypto.checkpw(password, hash)
+  @impl true
+  def check_pass(user, password, opts) do
+    with {:ok, user} <- super(user, password, opts),
+         do: {:ok, Map.drop(user, [:password_hash])}
+  end
 
-      for wrong <- wrong_list do
-        refute crypto.checkpw(wrong, hash)
-      end
-    end
+  @impl true
+  def hash_pwd_salt(password, _opts \\ []) do
+    password
+  end
+
+  @impl true
+  def verify_pass(password, hash) do
+    password == hash
   end
 end
