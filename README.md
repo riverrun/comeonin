@@ -13,8 +13,8 @@ Comeonin has been updated to version 5.
 In this version, Comeonin now provides two behaviours, Comeonin and
 Comeonin.PasswordHash, which password hash libraries then implement.
 
-See the UPGRADE_v5.md file for information about you can upgrade to
-version 5.
+See the [UPGRADE_v5 guide](https://github.com/riverrun/comeonin/blob/master/UPGRADE_v5.md)
+for information about you can upgrade to version 5.
 
 ## Password hashing algorithms
 
