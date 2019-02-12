@@ -5,7 +5,7 @@ defmodule Comeonin do
   ## Further information
 
   Visit our [wiki](https://github.com/riverrun/comeonin/wiki)
-  for links to further information about these and related issues.
+  for links to further information.
   """
 
   @type opts :: keyword

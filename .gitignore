@@ -1,7 +1,8 @@
-/_build
-/deps
-/doc
-/priv
-/.dialyzer
+/_build/
+/cover/
+/deps/
+/doc/
+/priv/
+/.fetch
 erl_crash.dump
 *.ez

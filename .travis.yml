@@ -1,14 +1,5 @@
 language: elixir
-sudo: false
-
 elixir:
-  - 1.7.3
-
+  - 1.8.1
 otp_release:
   - 21.1
-
-script:
-  - mix test
-
-notifications:
-  email: false
