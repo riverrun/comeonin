@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0
+
+* Enhancements
+  * updated Comeonin to be a specification for password hashing libraries
+    * it offers the Comeonin and Comeonin.PasswordHash behaviours
+
+## 4.1.2
+
+* Bug fixes
+  * made sure that the `hash_key` option is used if present
+
 ## 4.1.1
 
 * Changes

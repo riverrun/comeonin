@@ -1,82 +1,128 @@
 defmodule Comeonin do
   @moduledoc """
-  Comeonin is a password hashing library that aims to make the
-  secure validation of passwords as straightforward as possible.
-
-  It also provides extensive documentation to help developers keep
-  their apps secure.
-
-  Comeonin supports Argon2, Bcrypt and Pbkdf2 (sha512 and sha256).
-  These are all supported as optional dependencies.
-
-  ## Use
-
-  Each module offers the following functions (the first two are new to version 4):
-
-    * `:add_hash` - hash a password and return it in a map with the password set to nil
-    * `:check_pass` - check a password by comparing it with the stored hash, which is in a map
-    * `:hashpwsalt` - hash a password, using a randomly generated salt
-    * `:checkpw` - check a password by comparing it with the stored hash
-    * `:dummy_checkpw` - perform a dummy check to make user enumeration more difficult
-    * `:report` - print out a report of the hashing algorithm, to help with configuration
-
-  For a lower-level API, you could also use the hashing dependency directly,
-  without installing Comeonin.
-
-  ## Choosing an algorithm
-
-  The algorithms Argon2, Bcrypt and Pbkdf2 are generally considered to
-  be the strongest currently available password hashing functions.
-
-  Argon2 is a lot newer, and this can be considered to be both an advantage
-  and a disadvantage. On the one hand, Argon2 benefits from more recent
-  research. On the other hand, Argon2 has not received the same amount
-  of scrutiny that Bcrypt / Pbkdf2 has.
-
-  ### Argon2
-
-  Argon2 is the winner of the [Password Hashing Competition (PHC)](https://password-hashing.net).
-
-  Argon2 is a memory-hard password hashing function which can be used to hash
-  passwords for credential storage, key derivation, or other applications.
-
-  Being memory-hard means that it is not only computationally expensive,
-  but it also uses a lot of memory (which can be configured). This means
-  that it is much more difficult to attack Argon2 hashes using GPUs or
-  dedicated hardware.
-
-  More information is available at the [Argon2 reference C implementation
-  repository](https://github.com/P-H-C/phc-winner-argon2)
-
-  ### Bcrypt
-
-  Bcrypt is a well-tested password-based key derivation function designed
-  by Niels Provos and David Mazières. Bcrypt is an adaptive function, which
-  means that it can be configured to remain slow and resistant to brute-force
-  attacks even as computational power increases.
-
-  Bcrypt has no known vulnerabilities and has been widely tested for
-  over 15 years. However, as it has a low memory use, it is susceptible
-  to GPU cracking attacks.
-
-  ### Pbkdf2
-
-  Pbkdf2 is a well-tested password-based key derivation function
-  that uses a password, a variable-length salt and an iteration
-  count and applies a pseudorandom function to these to
-  produce a key. Like Bcrypt, it can be configured to remain slow
-  as computational power increases.
-
-  Pbkdf2 has no known vulnerabilities and has been widely tested for
-  over 15 years. However, like Bcrypt, as it has a low memory use,
-  it is susceptible to GPU cracking attacks.
-
-  The original implementation used SHA-1 as the pseudorandom function,
-  but this version uses HMAC-SHA-512, the default, or HMAC-SHA-256.
+  Defines a behaviour for higher-level password hashing functions.
 
   ## Further information
 
   Visit our [wiki](https://github.com/riverrun/comeonin/wiki)
-  for links to further information about these and related issues.
+  for links to further information.
   """
+
+  @type opts :: keyword
+  @type password :: binary
+  @type user_struct :: map | nil
+
+  @doc """
+  Hashes a password and returns the password hash in a map, with the
+  password set to nil.
+
+  In the default implementation, the key for the password hash is
+  `:password_hash`. A different key can be used by using the `hash_key`
+  option.
+
+  ## Example with Ecto
+
+  The `put_pass_hash` function below is an example of how you can use
+  `add_hash` to add the password hash to the Ecto changeset.
+
+      defp put_pass_hash(%Ecto.Changeset{valid?: true, changes:
+          %{password: password}} = changeset) do
+        change(changeset, add_hash(password))
+      end
+
+      defp put_pass_hash(changeset), do: changeset
+
+  This function will return a changeset with `%{password_hash: password_hash, password: nil}`
+  added to the `changes` map.
+  """
+  @callback add_hash(password, opts) :: map
+
+  @doc """
+  Checks the password by comparing its hash with the password hash found
+  in a user struct, or map.
+
+  The first argument to `check_pass` should be a user struct, a regular
+  map, or nil.
+
+  In the default implementation, if the input to the first argument,
+  the user struct, is nil, then the `no_user_verify` function is run,
+  so as to prevent user enumeration. This can be disabled by setting
+  the `hide_user` option to false.
+  """
+  @callback check_pass(user_struct, password, opts) :: {:ok, map} | {:error, String.t()}
+
+  @doc """
+  Runs the password hash function, but always returns false.
+
+  This function is intended to make it more difficult for any potential
+  attacker to find valid usernames by using timing attacks. This function
+  is only useful if it is used as part of a policy of hiding usernames.
+
+  ## Hiding usernames
+
+  In addition to keeping passwords secret, hiding the precise username
+  can help make online attacks more difficult. An attacker would then
+  have to guess a username / password combination, rather than just
+  a password, to gain access.
+
+  This does not mean that the username should be kept completely secret.
+  Adding a short numerical suffix to a user's name, for example, would be
+  sufficient to increase the attacker's work considerably.
+
+  If you are implementing a policy of hiding usernames, it is important
+  to make sure that the username is not revealed by any other part of
+  your application.
+  """
+  @callback no_user_verify(opts) :: false
+
+  defmacro __using__(_) do
+    quote do
+      @behaviour Comeonin
+      @behaviour Comeonin.PasswordHash
+
+      @impl Comeonin
+      def add_hash(password, opts \\ []) do
+        hash_key = opts[:hash_key] || :password_hash
+        %{hash_key => hash_pwd_salt(password, opts), :password => nil}
+      end
+
+      @impl Comeonin
+      def check_pass(user, password, opts \\ [])
+
+      def check_pass(nil, _password, opts) do
+        unless opts[:hide_user] == false, do: no_user_verify(opts)
+        {:error, "invalid user-identifier"}
+      end
+
+      def check_pass(user, password, opts) when is_binary(password) do
+        case get_hash(user, opts[:hash_key]) do
+          {:ok, hash} ->
+            if verify_pass(password, hash), do: {:ok, user}, else: {:error, "invalid password"}
+
+          _ ->
+            {:error, "no password hash found in the user struct"}
+        end
+      end
+
+      def check_pass(_, _, _) do
+        {:error, "password is not a string"}
+      end
+
+      defp get_hash(%{password_hash: hash}, nil), do: {:ok, hash}
+      defp get_hash(%{encrypted_password: hash}, nil), do: {:ok, hash}
+      defp get_hash(_, nil), do: nil
+
+      defp get_hash(user, hash_key) do
+        if hash = Map.get(user, hash_key), do: {:ok, hash}
+      end
+
+      @impl Comeonin
+      def no_user_verify(opts \\ []) do
+        hash_pwd_salt("", opts)
+        false
+      end
+
+      defoverridable Comeonin
+    end
+  end
 end
