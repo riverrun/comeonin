@@ -6,34 +6,51 @@
 
 Comeonin is a specification for password hashing libraries.
 
-## News
+For information about hashing passwords in your app, see
+[Password hashing libraries](#password-hashing-libraries).
 
-Comeonin has been updated to version 5.
+## Changes in version 5
 
-In this version, Comeonin now provides two behaviours, Comeonin and
+In version 5.0, Comeonin now provides two behaviours, Comeonin and
 Comeonin.PasswordHash, which password hash libraries then implement.
+
+With these changes, Comeonin is now a dependency of the password hashing
+library you choose to use, and in most cases, you will not use it
+directly.
 
 See the [UPGRADE_v5 guide](https://github.com/riverrun/comeonin/blob/master/UPGRADE_v5.md)
 for information about you can upgrade to version 5.
 
-## Password hashing algorithms
+## Password hashing libraries
 
-We recommend you use one of the following password hashing libraries.
+The following libraries all implement the Comeonin and Comeonin.PasswordHash
+behaviours:
 
-* Argon2 - [argon2_elixir](http://hexdocs.pm/argon2_elixir)
-* Bcrypt - [bcrypt_elixir](http://hexdocs.pm/bcrypt_elixir)
-* Pbkdf2 - [pbkdf2_elixir](http://hexdocs.pm/pbkdf2_elixir)
+* Argon2 - argon2_elixir
+  * [docs](https://hexdocs.pm/argon2_elixir)
+  * [source](https://github.com/riverrun/argon2_elixir)
+* Bcrypt - bcrypt_elixir
+  * [docs](https://hexdocs.pm/bcrypt_elixir)
+  * [source](https://github.com/riverrun/bcrypt_elixir)
+* Pbkdf2 - pbkdf2_elixir
+  * [docs](https://hexdocs.pm/pbkdf2_elixir)
+  * [source](https://github.com/riverrun/pbkdf2_elixir)
 
-Argon2 is considered to be the strongest password hashing algorithm,
-but Bcrypt and Pbkdf2 are viable alternatives. For more information, see
-[Choosing an algorithm](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-algorithm).
+Argon2 is currently considered to be the strongest password hashing function,
+and it is the one we recommend.
+
+Bcrypt and Pbkdf2 are viable alternatives, but they are less resistant than Argon2,
+to attacks using GPUs or dedicated hardware.
+
+For more information, see
+[Choosing a library](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library).
 
 ## Comeonin wiki
 
 See the [Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for more
 information on the following topics:
 
-* [algorithms](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-algorithm)
+* [password hashing libraries](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library)
 * [requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
 * [deployment](https://github.com/riverrun/comeonin/wiki/Deployment)
   * including information about using Docker
@@ -56,7 +73,7 @@ and you would like to buy me a cup of coffee, you can do so through
 
 ### Documentation
 
-http://hexdocs.pm/comeonin
+https://hexdocs.pm/comeonin
 
 ### License
 

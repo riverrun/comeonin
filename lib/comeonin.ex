@@ -1,11 +1,6 @@
 defmodule Comeonin do
   @moduledoc """
   Defines a behaviour for higher-level password hashing functions.
-
-  ## Further information
-
-  Visit our [wiki](https://github.com/riverrun/comeonin/wiki)
-  for links to further information.
   """
 
   @type opts :: keyword
@@ -48,6 +43,19 @@ defmodule Comeonin do
   the user struct, is nil, then the `no_user_verify` function is run,
   so as to prevent user enumeration. This can be disabled by setting
   the `hide_user` option to false.
+
+  ## Example
+
+  The following is an example of calling this function with no options:
+
+    def verify_user(%{"password" => password} = params) do
+      params
+      |> Accounts.get_by()
+      |> check_pass(password)
+    end
+
+  The `Accounts.get_by` function in this example takes the user parameters
+  (for example, email and password) as input and returns a user struct or nil.
   """
   @callback check_pass(user_struct, password, opts) :: {:ok, map} | {:error, String.t()}
 
