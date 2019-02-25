@@ -2,10 +2,10 @@
 # version 5.0.
 
 for {alg, version} <- [
-  {"Argon2", "{:argon2_elixir, \"~> 2.0\"}"},
-  {"Bcrypt", "{:bcrypt_elixir, \"~> 2.0\"}"},
-  {"Pbkdf2", "{:pbkdf2_elixir, \"~> 1.0\"}"}
-] do
+      {"Argon2", "{:argon2_elixir, \"~> 2.0\"}"},
+      {"Bcrypt", "{:bcrypt_elixir, \"~> 2.0\"}"},
+      {"Pbkdf2", "{:pbkdf2_elixir, \"~> 1.0\"}"}
+    ] do
   module = Module.concat([alg])
   mod = Module.concat(Comeonin, module)
 
@@ -28,11 +28,11 @@ for {alg, version} <- [
     def dummy_checkpw(_ \\ []), do: warning(:dummy_checkpw, :no_user_verify)
 
     defp warning(old, new) do
-      IO.warn """
+      IO.warn("""
       #{inspect(__MODULE__)}.#{old} has been removed.
       Add #{unquote(version)} to the deps in your mix.exs file,
       and use #{inspect(unquote(module))}.#{new} instead.
-      """
+      """)
     end
   end
 end

@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "5.0.0"
+  @version "5.1.0"
   @description "A specification for password hashing libraries"
 
   def project do
