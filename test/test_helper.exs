@@ -14,6 +14,20 @@ defmodule Comeonin.TestHash do
   end
 end
 
+defmodule Comeonin.FailHash do
+  use Comeonin
+
+  @impl true
+  def hash_pwd_salt(password, _opts \\ []) do
+    password
+  end
+
+  @impl true
+  def verify_pass(password, hash) do
+    password != hash
+  end
+end
+
 defmodule Comeonin.OverrideHash do
   use Comeonin
 

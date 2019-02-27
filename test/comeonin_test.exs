@@ -49,4 +49,10 @@ defmodule ComeoninTest do
     assert {:ok, user_1} = OverrideHash.check_pass(user, "password")
     assert user_1 == %{}
   end
+
+  test "old functions raise when called" do
+    assert_raise ArgumentError, ~r/has been removed/, fn ->
+      Comeonin.Argon2.hashpwsalt("password")
+    end
+  end
 end

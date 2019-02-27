@@ -13,26 +13,26 @@ for {alg, version} <- [
     @moduledoc false
 
     @doc false
-    def add_hash(_, _ \\ []), do: warning(:add_hash, :add_hash)
+    def add_hash(_, _ \\ []), do: error(:add_hash, :add_hash)
 
     @doc false
-    def check_pass(_, _, _ \\ []), do: warning(:check_pass, :check_pass)
+    def check_pass(_, _, _ \\ []), do: error(:check_pass, :check_pass)
 
     @doc false
-    def hashpwsalt(_, _ \\ []), do: warning(:hashpwsalt, :hash_pwd_salt)
+    def hashpwsalt(_, _ \\ []), do: error(:hashpwsalt, :hash_pwd_salt)
 
     @doc false
-    def checkpw(_, _), do: warning(:checkpw, :verify_pass)
+    def checkpw(_, _), do: error(:checkpw, :verify_pass)
 
     @doc false
-    def dummy_checkpw(_ \\ []), do: warning(:dummy_checkpw, :no_user_verify)
+    def dummy_checkpw(_ \\ []), do: error(:dummy_checkpw, :no_user_verify)
 
-    defp warning(old, new) do
-      IO.warn("""
+    defp error(old, new) do
+      raise ArgumentError, """
       #{inspect(__MODULE__)}.#{old} has been removed.
       Add #{unquote(version)} to the deps in your mix.exs file,
       and use #{inspect(unquote(module))}.#{new} instead.
-      """)
+      """
     end
   end
 end
