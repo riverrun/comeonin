@@ -14,7 +14,10 @@ defmodule Comeonin.Mixfile do
       description: @description,
       package: package(),
       source_url: "https://github.com/riverrun/comeonin",
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ]
     ]
   end
 
@@ -26,7 +29,8 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false}
     ]
   end
 

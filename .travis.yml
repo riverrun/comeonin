@@ -1,5 +1,20 @@
 language: elixir
+
 elixir:
-  - 1.8.1
+  - 1.7
+  - 1.8
+
 otp_release:
   - 21.1
+
+script:
+  - mix compile --warnings-as-errors
+  - mix format --check-formatted
+  - mix test
+  - mix dialyzer --halt-exit-status
+
+cache:
+  directories:
+    - priv/plts
+
+sudo: false

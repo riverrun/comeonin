@@ -11,6 +11,7 @@ for {alg, version} <- [
 
   defmodule mod do
     @moduledoc false
+    @dialyzer :no_return
 
     @doc false
     def add_hash(_, _ \\ []), do: error(:add_hash, :add_hash)
