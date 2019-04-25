@@ -48,14 +48,32 @@ defmodule Comeonin do
 
   The following is an example of calling this function with no options:
 
-    def verify_user(%{"password" => password} = params) do
-      params
-      |> Accounts.get_by()
-      |> check_pass(password)
-    end
+  ```elixir
+  def verify_user(%{"password" => password} = params) do
+    params
+    |> Accounts.get_by()
+    |> check_pass(password)
+  end
+  ```
 
   The `Accounts.get_by` function in this example takes the user parameters
   (for example, email and password) as input and returns a user struct or nil.
+
+  If your user map stores the password in the key `:pw_hash` instead of the
+  default `password`, you can do
+
+  ```elixir
+  case check_pass(user, hash_key: :pw_hash) do
+    {:ok, user} ->
+      # user is not nil and the password is verified
+      {:ok, user}
+
+    {:error, msg} ->
+      # User was nil or the password did not hash to the value in :pw_hash.
+      # The string value of msg will tell you which.
+      {:error, msg}
+  end
+  ```
   """
   @callback check_pass(user_struct, password, opts) :: {:ok, map} | {:error, String.t()}
 
