@@ -60,7 +60,7 @@ defmodule Comeonin do
   (for example, email and password) as input and returns a user struct or nil.
 
   If your user map stores the password in the key `:pw_hash` instead of the
-  default `password`, you can do
+  default `password_hash`, you can do
 
   ```elixir
   case check_pass(user, hash_key: :pw_hash) do
