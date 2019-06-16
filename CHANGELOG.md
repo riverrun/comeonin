@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0
+
+* Enhancements
+  * add a behaviour_test module to be used by implementations of the Comeonin behaviours
+
 ## 5.0.0
 
 * Enhancements

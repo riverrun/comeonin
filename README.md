@@ -11,7 +11,7 @@ For information about hashing passwords in your app, see
 
 ## Changes in version 5
 
-In version 5.0, Comeonin now provides two behaviours, Comeonin and
+In version 5.0 and above, Comeonin now provides two behaviours, Comeonin and
 Comeonin.PasswordHash, which password hash libraries then implement.
 
 With these changes, Comeonin is now a dependency of the password hashing
@@ -50,6 +50,8 @@ For more information, see
 See the [Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for more
 information on the following topics:
 
+* [hashing passwords](https://github.com/riverrun/comeonin/wiki/Hashing-passwords)
+  * a general guide to hashing passwords in your Elixir app
 * [password hashing libraries](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library)
 * [requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
 * [deployment](https://github.com/riverrun/comeonin/wiki/Deployment)
