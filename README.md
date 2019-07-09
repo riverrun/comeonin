@@ -1,7 +1,7 @@
 # Comeonin
 
 [![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
-[![Build Status](https://travis-ci.org/riverrun/comeonin.svg?branch=master)](https://travis-ci.org/riverrun/comeonin)
+[![Build Status](https://travis-ci.com/riverrun/comeonin.svg?branch=master)](https://travis-ci.com/riverrun/comeonin)
 [![Join the chat at https://gitter.im/comeonin/Lobby](https://badges.gitter.im/comeonin/Lobby.svg)](https://gitter.im/comeonin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Comeonin is a specification for password hashing libraries.
