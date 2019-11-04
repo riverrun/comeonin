@@ -40,8 +40,13 @@ Argon2 is currently considered to be the strongest password hashing function,
 and it is the one we recommend.
 
 Bcrypt and Pbkdf2 are viable alternatives, but they are less resistant than Argon2,
-to attacks using GPUs or dedicated hardware. Note Pbkdf2 does not have native
-dependencies, so it may be easier to install on operating systems such as Windows.
+to attacks using GPUs or dedicated hardware.
+
+### Windows users
+
+On Windows, it can be time-consuming and problematic to setup the environment needed
+to compile the C code in Argon2 and Bcrypt. For this reason, it is often easier to install
+Pbkdf2, which has no C dependencies.
 
 For more information, see
 [Choosing a library](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library).
