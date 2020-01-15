@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.2.0
+
+* Enhancements
+  * updated documentation for the Comeonin module
+
 ## 5.1.0
 
 * Enhancements
