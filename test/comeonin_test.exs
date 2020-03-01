@@ -4,12 +4,12 @@ defmodule ComeoninTest do
   alias Comeonin.{OverrideHash, TestHash}
 
   test "add_hash with default arguments" do
-    assert %{password_hash: hash, password: nil} = TestHash.add_hash("password")
+    assert %{password_hash: hash} = TestHash.add_hash("password")
     assert TestHash.verify_pass("password", hash)
   end
 
   test "add_hash with custom hash_key" do
-    assert %{encrypted_password: hash, password: nil} =
+    assert %{encrypted_password: hash} =
              TestHash.add_hash("password", hash_key: :encrypted_password)
 
     assert TestHash.verify_pass("password", hash)

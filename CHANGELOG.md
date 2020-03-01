@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.3.0
+
+* Changes
+  * changed `add_hash` so that it does NOT set the password to nil
+
 ## 5.2.0
 
 * Enhancements

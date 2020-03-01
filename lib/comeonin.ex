@@ -64,15 +64,14 @@ defmodule Comeonin do
 
           defp put_pass_hash(changeset), do: changeset
 
-      This function will return a changeset with `%{password_hash: password_hash, password: nil}`
+      This function will return a changeset with `%{password_hash: password_hash}`
       added to the `changes` map.
       """
       @impl Comeonin
       def add_hash(password, opts \\ []) do
         hash_key = opts[:hash_key] || :password_hash
-        %{hash_key => hash_pwd_salt(password, opts), :password => nil}
+        %{hash_key => hash_pwd_salt(password, opts)}
       end
-
 
       @doc """
       Checks the password, using `verify_pass/2`, by comparing the hash with
@@ -131,7 +130,6 @@ defmodule Comeonin do
       defp get_hash(user, hash_key) do
         if hash = Map.get(user, hash_key), do: {:ok, hash}
       end
-
 
       @doc """
       Runs the password hash function, but always returns false.

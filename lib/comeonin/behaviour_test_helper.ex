@@ -36,11 +36,10 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the add_hash function creates a map with the password set
-  to nil and the password_hash correctly set.
+  Checks that the add_hash function creates a map with the password_hash set.
   """
   def add_hash_creates_map(module, password) do
-    %{password_hash: hash, password: nil} = module.add_hash(password)
+    %{password_hash: hash} = module.add_hash(password)
     module.verify_pass(password, hash)
   end
 
