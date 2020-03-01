@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "5.3.0"
+  @version "5.3.1"
   @description "A specification for password hashing libraries"
 
   def project do
@@ -36,6 +36,7 @@ defmodule Comeonin.Mixfile do
 
   defp package do
     [
+      files: ["lib", "mix.exs", "CHANGELOG.md", "README.md", "LICENSE"],
       maintainers: ["David Whitlock"],
       licenses: ["BSD"],
       links: %{"GitHub" => "https://github.com/riverrun/comeonin"}
