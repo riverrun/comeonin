@@ -1,14 +1,14 @@
 # Upgrading to version 5
 
-In versin 5 of Comeonin, in most cases, you will not call Comeonin directly,
+In version 5 of Comeonin, in most cases, you will not call Comeonin directly,
 and so you will be able to remove it from your app.
 
-Follow the instructions below to upgrade.
+Follow the instructions below to upgrade:
 
-1. remove `:comeonin` from the `deps` function in your mix.exs file.
-2. update `:argon2_elixir` to version 2.0, `:bcrypt_elixir` to version 2.0,
+1. Remove `:comeonin` from the `deps` function in your mix.exs file.
+2. Update `:argon2_elixir` to version 2.0, `:bcrypt_elixir` to version 2.0,
 or `:pbkdf2_elixir` to version 1.0.
-3. using the conversion tables below, edit the hashing functions.
+3. Using the conversion tables below, edit the hashing functions.
 
 | Comeonin v4 | Comeonin v5 |
 | :---------- | :---------- |

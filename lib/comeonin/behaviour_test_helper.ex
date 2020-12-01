@@ -18,14 +18,14 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the verify_pass function returns true for correct password.
+  Checks that the `verify_pass/2` function returns true for correct password.
   """
   def correct_password_true(module, password) do
     module.verify_pass(password, module.hash_pwd_salt(password))
   end
 
   @doc """
-  Checks that the verify_pass function returns false for incorrect passwords.
+  Checks that the `verify_pass/2` function returns false for incorrect passwords.
   """
   def wrong_password_false(module, password) do
     hash = module.hash_pwd_salt(password)
@@ -36,7 +36,7 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the add_hash function creates a map with the password_hash set.
+  Checks that the `add_hash/2` function creates a map with the `password_hash` set.
   """
   def add_hash_creates_map(module, password) do
     %{password_hash: hash} = module.add_hash(password)
@@ -44,7 +44,7 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the check_pass function returns the user for correct passwords.
+  Checks that the `check_pass/3` function returns the user for correct passwords.
   """
   def check_pass_returns_user(module, password) do
     hash = module.hash_pwd_salt(password)
@@ -53,7 +53,7 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the check_pass function returns an error for incorrect passwords.
+  Checks that the `check_pass/3` function returns an error for incorrect passwords.
   """
   def check_pass_returns_error(module, password) do
     hash = module.hash_pwd_salt(password)
@@ -65,7 +65,7 @@ defmodule Comeonin.BehaviourTestHelper do
   end
 
   @doc """
-  Checks that the check_pass function returns an error when no user is found.
+  Checks that the `check_pass/3` function returns an error when no user is found.
   """
   def check_pass_nil_user(module) do
     module.check_pass(nil, "password") == {:error, "invalid user-identifier"}

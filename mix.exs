@@ -3,6 +3,7 @@ defmodule Comeonin.Mixfile do
 
   @version "5.3.1"
   @description "A specification for password hashing libraries"
+  @source_url "https://github.com/riverrun/comeonin"
 
   def project do
     [
@@ -13,8 +14,8 @@ defmodule Comeonin.Mixfile do
       name: "Comeonin",
       description: @description,
       package: package(),
-      source_url: "https://github.com/riverrun/comeonin",
       deps: deps(),
+      docs: docs(),
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ]
@@ -39,7 +40,19 @@ defmodule Comeonin.Mixfile do
       files: ["lib", "mix.exs", "CHANGELOG.md", "README.md", "LICENSE"],
       maintainers: ["David Whitlock"],
       licenses: ["BSD"],
-      links: %{"GitHub" => "https://github.com/riverrun/comeonin"}
+      links: %{
+        "Changelog" => "#{@source_url}/blob/master/CHANGELOG.md",
+        "GitHub" => @source_url
+      }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      extras: ["README.md", "UPGRADE_v5.md", "CHANGELOG.md"]
     ]
   end
 end

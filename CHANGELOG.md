@@ -151,7 +151,7 @@
 * Changes
   * Divided the `strong password` check into two parts: minimum length and check for punctuation
   characters and digits
-  * Removed configutation values for password length for generated passwords and minimum length of passwords
+  * Removed configuration values for password length for generated passwords and minimum length of passwords
   for the password check
 
 ## 1.0.5 (2015-07-14)
