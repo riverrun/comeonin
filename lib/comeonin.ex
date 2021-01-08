@@ -16,7 +16,7 @@ defmodule Comeonin do
   Checks the password by comparing its hash with the password hash found
   in a user struct, or map.
 
-  The first argument to `check_pass` should be a user struct, a regular
+  The first argument to `check_pass/3` should be a user struct, a regular
   map, or nil.
   """
   @callback check_pass(user_struct, password, opts) :: {:ok, map} | {:error, String.t()}
@@ -78,7 +78,7 @@ defmodule Comeonin do
       the password hash found in a user struct, or map.
 
       This is a convenience function that takes a user struct, or map, as input
-      and seemlessly handles the cases where no user is found.
+      and seamlessly handles the cases where no user is found.
 
       ## Options
 

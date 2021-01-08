@@ -1,7 +1,11 @@
 # Comeonin
 
-[![Hex.pm Version](http://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
 [![Build Status](https://travis-ci.com/riverrun/comeonin.svg?branch=master)](https://travis-ci.com/riverrun/comeonin)
+[![Module Version](https://img.shields.io/hexpm/v/comeonin.svg)](https://hex.pm/packages/comeonin)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/comeonin/)
+[![Total Download](https://img.shields.io/hexpm/dt/comeonin.svg)](https://hex.pm/packages/comeonin)
+[![License](https://img.shields.io/hexpm/l/comeonin.svg)](https://github.com/riverrun/comeonin/blob/master/LICENSE)
+[![Last Updated](https://img.shields.io/github/last-commit/riverrun/comeonin.svg)](https://github.com/riverrun/comeonin/commits/master)
 [![Join the chat at https://gitter.im/comeonin/Lobby](https://badges.gitter.im/comeonin/Lobby.svg)](https://gitter.im/comeonin/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Comeonin is a specification for password hashing libraries.
@@ -56,32 +60,26 @@ For more information, see
 See the [Comeonin wiki](https://github.com/riverrun/comeonin/wiki) for more
 information on the following topics:
 
-* [hashing passwords](https://github.com/riverrun/comeonin/wiki/Hashing-passwords)
-  * a general guide to hashing passwords in your Elixir app
-* [password hashing libraries](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library)
-* [requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
-* [deployment](https://github.com/riverrun/comeonin/wiki/Deployment)
-  * including information about using Docker
-* [references](https://github.com/riverrun/comeonin/wiki/References)
+* [Hashing passwords](https://github.com/riverrun/comeonin/wiki/Hashing-passwords) - a general guide to hashing passwords in your Elixir app
+* [Password hashing libraries](https://github.com/riverrun/comeonin/wiki/Choosing-the-password-hashing-library)
+* [Requirements](https://github.com/riverrun/comeonin/wiki/Requirements)
+* [Deployment](https://github.com/riverrun/comeonin/wiki/Deployment) - including information about using Docker
+* [References](https://github.com/riverrun/comeonin/wiki/References)
 
 ## Contributing
 
 There are many ways you can contribute to the development of Comeonin, including:
 
-* reporting issues
-* improving documentation
-* sharing your experiences with others
-* [making a financial contribution](#donations)
+* Reporting issues
+* Improving documentation
+* Sharing your experiences with others
+* [Making a financial contribution](#donations)
 
 ## Donations
 
 First of all, I would like to emphasize that this software is offered
 free of charge. However, if you find it useful, and you would like to
-buy me a cup of coffee, you can do so at [paypal](https://www.paypal.me/alovedalongthe).
-
-### Documentation
-
-https://hexdocs.pm/comeonin
+buy me a cup of coffee, you can do so at [PayPal](https://www.paypal.me/alovedalongthe).
 
 ### License
 
