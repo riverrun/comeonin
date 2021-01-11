@@ -39,7 +39,7 @@ defmodule Comeonin.Mixfile do
     [
       files: ["lib", "mix.exs", "CHANGELOG.md", "README.md", "LICENSE"],
       maintainers: ["David Whitlock"],
-      licenses: ["BSD"],
+      licenses: ["BSD-3-Clause"],
       links: %{
         "Changelog" => "#{@source_url}/blob/master/CHANGELOG.md",
         "GitHub" => @source_url
