@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "5.3.1"
+  @version "5.3.2"
   @description "A specification for password hashing libraries"
   @source_url "https://github.com/riverrun/comeonin"
 
@@ -30,8 +30,8 @@ defmodule Comeonin.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.20", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false}
     ]
   end
 
