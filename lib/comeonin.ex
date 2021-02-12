@@ -7,18 +7,10 @@ defmodule Comeonin do
   @type password :: binary
   @type user_struct :: map | nil
 
-  @doc """
-  Hashes a password and returns the password hash in a map.
-  """
+  @doc deprecated: "This function will be removed in the next major version."
   @callback add_hash(password, opts) :: map
 
-  @doc """
-  Checks the password by comparing its hash with the password hash found
-  in a user struct, or map.
-
-  The first argument to `check_pass/3` should be a user struct, a regular
-  map, or nil.
-  """
+  @doc deprecated: "This function will be removed in the next major version."
   @callback check_pass(user_struct, password, opts) :: {:ok, map} | {:error, String.t()}
 
   @doc """
@@ -35,73 +27,15 @@ defmodule Comeonin do
       @behaviour Comeonin
       @behaviour Comeonin.PasswordHash
 
-      @doc """
-      Hashes a password, using `hash_pwd_salt/2`, and returns the password hash in a map.
-
-      This is a convenience function that is especially useful when used with
-      Ecto changesets.
-
-      ## Options
-
-      In addition to the `:hash_key` option show below, this function also takes
-      options that are then passed on to the `hash_pwd_salt/2` function in this
-      module.
-
-      See the documentation for `hash_pwd_salt/2` for further details.
-
-        * `:hash_key` - the password hash identifier
-          * the default is `:password_hash`
-
-      ## Example with Ecto
-
-      The `put_pass_hash` function below is an example of how you can use
-      `add_hash` to add the password hash to the Ecto changeset.
-
-          defp put_pass_hash(%Ecto.Changeset{valid?: true, changes:
-              %{password: password}} = changeset) do
-            change(changeset, add_hash(password))
-          end
-
-          defp put_pass_hash(changeset), do: changeset
-
-      This function will return a changeset with `%{password_hash: password_hash}`
-      added to the `changes` map.
-      """
       @impl Comeonin
+      @deprecated "This function will be removed in the next major version."
       def add_hash(password, opts \\ []) do
         hash_key = opts[:hash_key] || :password_hash
         %{hash_key => hash_pwd_salt(password, opts)}
       end
 
-      @doc """
-      Checks the password, using `verify_pass/2`, by comparing the hash with
-      the password hash found in a user struct, or map.
-
-      This is a convenience function that takes a user struct, or map, as input
-      and seamlessly handles the cases where no user is found.
-
-      ## Options
-
-        * `:hash_key` - the password hash identifier
-          * this does not need to be set if the key is `:password_hash` or `:encrypted_password`
-        * `:hide_user` - run the `no_user_verify/1` function if no user is found
-          * the default is true
-
-      ## Example
-
-      The following is an example of using this function to verify a user's
-      password:
-
-          def verify_user(%{"password" => password} = params) do
-            params
-            |> Accounts.get_by()
-            |> check_pass(password)
-          end
-
-      The `Accounts.get_by` function in this example takes the user parameters
-      (for example, email and password) as input and returns a user struct or nil.
-      """
       @impl Comeonin
+      @deprecated "This function will be removed in the next major version."
       def check_pass(user, password, opts \\ [])
 
       def check_pass(nil, _password, opts) do

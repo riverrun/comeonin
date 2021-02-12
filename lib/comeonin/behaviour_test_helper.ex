@@ -38,6 +38,7 @@ defmodule Comeonin.BehaviourTestHelper do
   @doc """
   Checks that the `add_hash/2` function creates a map with the `password_hash` set.
   """
+  @doc deprecated: "This function will be removed in the next major version."
   def add_hash_creates_map(module, password) do
     %{password_hash: hash} = module.add_hash(password)
     module.verify_pass(password, hash)
@@ -46,6 +47,7 @@ defmodule Comeonin.BehaviourTestHelper do
   @doc """
   Checks that the `check_pass/3` function returns the user for correct passwords.
   """
+  @doc deprecated: "This function will be removed in the next major version."
   def check_pass_returns_user(module, password) do
     hash = module.hash_pwd_salt(password)
     user = %{id: 2, name: "fred", password_hash: hash}
@@ -55,6 +57,7 @@ defmodule Comeonin.BehaviourTestHelper do
   @doc """
   Checks that the `check_pass/3` function returns an error for incorrect passwords.
   """
+  @doc deprecated: "This function will be removed in the next major version."
   def check_pass_returns_error(module, password) do
     hash = module.hash_pwd_salt(password)
     user = %{id: 2, name: "fred", password_hash: hash}
@@ -67,6 +70,7 @@ defmodule Comeonin.BehaviourTestHelper do
   @doc """
   Checks that the `check_pass/3` function returns an error when no user is found.
   """
+  @doc deprecated: "This function will be removed in the next major version."
   def check_pass_nil_user(module) do
     module.check_pass(nil, "password") == {:error, "invalid user-identifier"}
   end

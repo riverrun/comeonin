@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.4.0
+
+* Changes
+  * Added deprecation warnings to add_hash and check_pass
+
 ## 5.3.3
 
 * Changes
