@@ -72,25 +72,15 @@ defmodule Comeonin do
       attacker to find valid usernames by using timing attacks. This function
       is only useful if it is used as part of a policy of hiding usernames.
 
+      There are concerns about this function using too many resources (CPU and
+      memory). An alternative approach is to create a function that adds a sleep
+      calculated to make the time spent running the function the same as if the
+      hash function was run.
+
       ## Options
 
       This function should be called with the same options as those used by
       `hash_pwd_salt/2`.
-
-      ## Hiding usernames
-
-      In addition to keeping passwords secret, hiding the precise username
-      can help make online attacks more difficult. An attacker would then
-      have to guess a username / password combination, rather than just
-      a password, to gain access.
-
-      This does not mean that the username should be kept completely secret.
-      Adding a short numerical suffix to a user's name, for example, would be
-      sufficient to increase the attacker's work considerably.
-
-      If you are implementing a policy of hiding usernames, it is important
-      to make sure that the username is not revealed by any other part of
-      your application.
       """
       @impl Comeonin
       def no_user_verify(opts \\ []) do

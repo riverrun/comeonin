@@ -1,7 +1,7 @@
 defmodule Comeonin.Mixfile do
   use Mix.Project
 
-  @version "5.4.0"
+  @version "5.5.0"
   @description "A specification for password hashing libraries"
   @source_url "https://github.com/riverrun/comeonin"
 

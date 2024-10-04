@@ -83,6 +83,6 @@ defmodule Comeonin.BehaviourTestHelper do
 
   defp slices(password) do
     ranges = [{1, -1}, {0, -2}, {2, -1}, {2, -2}]
-    for {first, last} <- ranges, do: String.slice(password, first..last)
+    for {first, last} <- ranges, do: String.slice(password, first..last//1)
   end
 end
