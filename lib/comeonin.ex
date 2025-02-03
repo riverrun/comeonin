@@ -28,14 +28,14 @@ defmodule Comeonin do
       @behaviour Comeonin.PasswordHash
 
       @impl Comeonin
-      @deprecated "This function will be removed in the next major version."
+      @deprecated "Use hash_pwd_salt(password, opts) to generate a new hash and set it on the password_hash field"
       def add_hash(password, opts \\ []) do
         hash_key = opts[:hash_key] || :password_hash
         %{hash_key => hash_pwd_salt(password, opts)}
       end
 
       @impl Comeonin
-      @deprecated "This function will be removed in the next major version."
+      @deprecated "Use verify_pass(password, hash) instead, where hash is typically the value of the stored hash, such as user.password_hash"
       def check_pass(user, password, opts \\ [])
 
       def check_pass(nil, _password, opts) do
